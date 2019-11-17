@@ -1,4 +1,5 @@
 ﻿using prensaestudiantil.Web.Data.Entities;
+using prensaestudiantil.Web.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,49 +10,56 @@ namespace prensaestudiantil.Web.Data
     public class SeedDb
     {
         private readonly DataContext _context;
+        private readonly IUserHelper _userHelper;
 
-        public SeedDb(DataContext context)
+        public SeedDb(
+            DataContext context, 
+            IUserHelper userHelper
+            )
         {
             _context = context;
+            _userHelper = userHelper;
         }
 
         public async Task SeedAsync()
         {
             await _context.Database.EnsureCreatedAsync();
 
-            await CheckWritersAsync();
+            await CheckRole("Manager");
+            await CheckRole("Writer");
+            await CheckUserAsync("Sevann", "Radhak", "sevann.radhak@gmail.com", "54 9 11 73627795");
+            await CheckUserAsync("Prensa", "Estudiantil", "prensaestudiantil@hotmail.com", "54 9 11 73627795");
             await CheckPublicationCategoriesAsync();
             await CheckPublicationnsAsync();
             await CheckYoutubeVideosAsync();
         }
 
-        private async Task CheckWritersAsync()
+        private async Task CheckRole(string roleName)
         {
-            if (!_context.Writers.Any())
+            await _userHelper.CheckRoleAsync(roleName);
+        }
+
+        private async Task<User> CheckUserAsync(string firstName, string lastName, string email, string phoneNumber)
+        {
+            var user = await _userHelper.GetUserByEmailAsync(email);
+            if (user == null)
             {
-                Writer w1 = new Writer
+                user = new User
                 {
-                    Address = "Universidad Industrial de Santander",
-                    Document = "11010",
-                    FirstName = "Prensa",
+                    Email = email,
+                    FirstName = firstName,
+                    LastName = lastName,
                     IsEnabled = true,
-                    LastName = "Estudiantil"
+                    PhoneNumber = phoneNumber,
+                    UserName = email
                 };
-                Writer w2 = new Writer
-                {
-                    Address = "Santiago del Estero 690",
-                    CellPhone = "54 9 11 73627795",
-                    Document = "202020",
-                    FirstName = "Sevann",
-                    IsEnabled = true,
-                    LastName = "Radhak"
-                };
-
-                _context.Writers.Add(w1);
-                _context.Writers.Add(w2);
-
-                await _context.SaveChangesAsync();
+                // TODO: Change password and hardcode user data by configuration
+                await _userHelper.AddUserAsync(user, "123456");
+                await _userHelper.AddUserToRoleAsync(user, "Manager");
+                await _userHelper.AddUserToRoleAsync(user, "Writer");
             }
+
+            return user;
         }
 
         private async Task CheckPublicationCategoriesAsync()
@@ -78,18 +86,19 @@ namespace prensaestudiantil.Web.Data
         {
             if (!_context.Publications.Any())
             {
-                Writer writer = _context.Writers.FirstOrDefault();
+                User user = _context.Users.FirstOrDefault();
                 PublicationCategory pc = _context.PublicationCategories.FirstOrDefault();
-                PublicationCategory pOpinion = _context.PublicationCategories.Where(p => p.Name == "Opinion").FirstOrDefault();
+                PublicationCategory pOpinion = _context.PublicationCategories.Where(p => p.Name == "Opinión").FirstOrDefault();
 
                 if (pOpinion == null)
                 {
                     _context.PublicationCategories.Add(new PublicationCategory { Name = "Opinión" });
-                    pOpinion = _context.PublicationCategories.Where(p => p.Name == "Opinion").FirstOrDefault();
+                    pOpinion = _context.PublicationCategories.Where(p => p.Name == "Opinión").FirstOrDefault();
                 }
 
                 Publication publication1 = new Publication
                 {
+                    // TODO: Verify if need an initial image and configure it
                     Body = "La investigación fue mandatada por la Unidad de Trauma Ocular del Hospital del Salvador, " +
                         "entidad que ha recibido a muchos de los heridos en las protestas." +
                         "En el estudio del Departamento de Ingeniería Mecánica de la Facultad de Ciencias Físicas y Matemáticas de la " +
@@ -104,13 +113,14 @@ namespace prensaestudiantil.Web.Data
                     Header = "En medio de la condena social a Carabineros a causa de los más de 200 heridos con traumas oculares en casi " +
                     "un mes de manifestaciones, hoy un estudio acreditó la composición de los balines que utiliza la policía.",
                     PublicationCategory = pc,
-                    Writer = writer,
+                    User = user,
                     Title = "Perdigones utilizados por carabineros contra manifestantes contienen solo un 20 " +
                         "por ciento de goma según estudio"
                 };
 
                 Publication publication2 = new Publication
                 {
+                    // TODO: Verify if need an initial image and configure it
                     Author = "Brodsky",
                     Body = "La investigación fue mandatada por la Unidad de Trauma Ocular del Hospital del Salvador, " +
                         "entidad que ha recibido a muchos de los heridos en las protestas." +
@@ -126,8 +136,8 @@ namespace prensaestudiantil.Web.Data
                     Header = "Hago memoria para no abundar en el ruido y el humo, considerando que una nueva temporada de odiosidad " +
                     "mutua se ha declarado en el país. Me interesa en particular el campo cultural donde trabajo, que es el de los " +
                     "escritores y escritoras, poetas y críticos, intelectuales y columnistas.",
-                    PublicationCategory = pc,
-                    Writer = writer,
+                    PublicationCategory = pOpinion,
+                    User = user,
                     Title = "Cancha rayada: Sobre el odio, la funa y el opio de los intelectuales"
                 };
 
@@ -142,13 +152,13 @@ namespace prensaestudiantil.Web.Data
         {
             if (!_context.YoutubeVideos.Any())
             {
-                Writer writer = _context.Writers.FirstOrDefault();
+                User user = _context.Users.FirstOrDefault();
 
                 _context.YoutubeVideos.Add(new YoutubeVideo
                 {
                     Name = "Cuidar el campus es tarea de todos #ViveLaUIS",
                     URL = "0rr6bQkPzFY",
-                    Writer = writer
+                    User = user
                 });
 
                 await _context.SaveChangesAsync();

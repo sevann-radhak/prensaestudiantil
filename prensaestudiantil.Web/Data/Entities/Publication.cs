@@ -35,7 +35,7 @@ namespace prensaestudiantil.Web.Data.Entities
         public DateTime? LastUpdate { get; set; }
 
         [Display(Name = "Main Image")]
-        public string ImagePath { get; set; }
+        public string ImageUrl { get; set; }
 
         //public HttpPostedFileBase ImageFile{ get; set; }
 
@@ -52,22 +52,22 @@ namespace prensaestudiantil.Web.Data.Entities
         [DisplayFormat(DataFormatString = "{0:yyyy/MM/dd HH:mm:ss}", ApplyFormatInEditMode = true)]
         public DateTime DateLocal => Date.ToLocalTime();
 
+        // TODO: Change the path when publish
+        public string ImageFullPath => $"https://TBD.azurewebsites.net{ImageUrl.Substring(1)}";
+
+        [Display(Name = "User")]
+        public User User { get; set; }
+
+        //[Display(Name = "Last User edited")]
+        //public User UserPublicationEdit { get; set; }
+
         //TODO modify and fix the last update date
         //[Display(Name = "Publication Date")]
         //[DisplayFormat(DataFormatString = "{0:yyyy/MM/dd HH:mm:ss}", ApplyFormatInEditMode = true)]
         //public DateTime? LastUpdateLocal => LastUpdate ?? LastUpdate.ToLocalTime();
 
-        //[Display(Name = "Usuario")]
-        //public string UserPublication { get; set; }
-
-        //[Display(Name = "Usuario")]
-        //public string UserPublicationEdit { get; set; }
-
         // Foreing keys
-        public virtual PublicationCategory PublicationCategory { get; set; }
-
-        public virtual Writer Writer { get; set; }
-
-        public virtual ICollection<PublicationImage> PublicationImages { get; set; }
+        public PublicationCategory PublicationCategory { get; set; }
+        public ICollection<PublicationImage> PublicationImages { get; set; }
     }
 }
