@@ -39,6 +39,9 @@ namespace prensaestudiantil.Web
                 cfg.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
             });
 
+            // Execute seed
+            services.AddTransient<SeedDb>();
+
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
 

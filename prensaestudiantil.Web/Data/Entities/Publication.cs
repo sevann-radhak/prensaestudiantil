@@ -43,7 +43,7 @@ namespace prensaestudiantil.Web.Data.Entities
         [MaxLength(150, ErrorMessage = "The {0} field can not have more than {1} characters.")]
         public string ImageDescription { get; set; }
 
-        // Only for Opinion Publications
+        // Only for external references for author
         [Display(Name = "Author")]
         [MaxLength(60, ErrorMessage = "The {0} field can not have more than {1} characters.")]
         public string Author { get; set; }
