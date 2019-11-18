@@ -17,9 +17,11 @@ namespace prensaestudiantil.Web.Data.Entities
 
         [Display(Name = "Header")]
         [Required(ErrorMessage = "The field {0} is mandatory.")]
+        [DataType(DataType.MultilineText)]
         public string Header { get; set; }
 
         [Display(Name = "Body")]
+        [DataType(DataType.MultilineText)]
         public string Body { get; set; }
 
         [Display(Name = "Footer")]
@@ -55,7 +57,7 @@ namespace prensaestudiantil.Web.Data.Entities
         // TODO: Change the path when publish
         public string ImageFullPath => string.IsNullOrEmpty(ImageUrl)
             ? $"{string.Empty}"
-            //? $"https://TBD.azurewebsites.net{ImageUrl.Substring(1)}"
+             //? $"https://TBD.azurewebsites.net{ImageUrl.Substring(1)}"
              : $"https://TBD.azurewebsites.net{ImageUrl.Substring(1)}";
 
         [Display(Name = "User")]
@@ -65,12 +67,15 @@ namespace prensaestudiantil.Web.Data.Entities
         //public User UserPublicationEdit { get; set; }
 
         //TODO modify and fix the last update date
-        //[Display(Name = "Publication Date")]
+        //[Display(Name = "Modified")]
         //[DisplayFormat(DataFormatString = "{0:yyyy/MM/dd HH:mm:ss}", ApplyFormatInEditMode = true)]
-        //public DateTime? LastUpdateLocal => LastUpdate ?? LastUpdate.ToLocalTime();
+        //public DateTime LastUpdateLocal => string.IsNullOrEmpty(LastUpdate.ToString())
+        //    ? null
+        //    : LastUpdate.ToLocalTime();
 
         // Foreing keys
         public PublicationCategory PublicationCategory { get; set; }
+
         public ICollection<PublicationImage> PublicationImages { get; set; }
     }
 }

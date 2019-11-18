@@ -1,10 +1,8 @@
-﻿using prensaestudiantil.Web.Data;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using prensaestudiantil.Web.Data;
 using prensaestudiantil.Web.Data.Entities;
 using prensaestudiantil.Web.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace prensaestudiantil.Web.Helpers
 {
@@ -19,7 +17,7 @@ namespace prensaestudiantil.Web.Helpers
 
         public async Task<Publication> ToPublicationAsync(PublicationViewModel model, bool isNew)
         {
-            Publication publication = new Publication 
+            Publication publication = new Publication
             {
                 Author = model.Author,
                 Body = model.Body,
@@ -41,7 +39,7 @@ namespace prensaestudiantil.Web.Helpers
 
         public PublicationViewModel ToPublicationViewModel(Publication model, bool isNew)
         {
-            PublicationViewModel publication = new PublicationViewModel
+            PublicationViewModel publicationViewModel = new PublicationViewModel
             {
                 Author = model.Author,
                 Body = model.Body,
@@ -59,7 +57,7 @@ namespace prensaestudiantil.Web.Helpers
                 User = model.User
             };
 
-            return publication;
+            return publicationViewModel;
         }
     }
 }

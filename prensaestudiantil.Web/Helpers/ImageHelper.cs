@@ -21,7 +21,7 @@ namespace prensaestudiantil.Web.Helpers
                 await imageFile.CopyToAsync(stream);
             }
 
-            return $"~/images/Properties/{file}";
+            return $"~/images/Publications/{file}";
         }
     }
 }
