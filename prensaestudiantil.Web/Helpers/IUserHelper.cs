@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using prensaestudiantil.Web.Data.Entities;
+using prensaestudiantil.Web.Models;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace prensaestudiantil.Web.Helpers
@@ -12,8 +14,17 @@ namespace prensaestudiantil.Web.Helpers
 
         Task CheckRoleAsync(string roleName);
 
+        Task<IList<string>> GetRolesAsync(string email);
+
+        Task<bool> IsInRoleAsync(string email, string roleName);
+
         Task<User> GetUserByEmailAsync(string email);
 
         Task<bool> IsUserInRoleAsync(User user, string roleName);
+
+        Task<SignInResult> LoginAsync(LoginViewModel model);
+
+        Task LogoutAsync();
+
     }
 }

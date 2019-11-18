@@ -17,6 +17,8 @@ namespace prensaestudiantil.Web.Data
 
         public DbSet<PublicationImage> PublicationImages { get; set; }
 
+        public DbSet<User> Users { get; set; }
+
         public DbSet<Publication> Publications { get; set; }
 
         //public DbSet<Writer> Writers { get; set; }

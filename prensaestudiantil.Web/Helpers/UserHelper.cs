@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using prensaestudiantil.Web.Data;
 using prensaestudiantil.Web.Data.Entities;
+using prensaestudiantil.Web.Models;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -10,34 +12,25 @@ namespace prensaestudiantil.Web.Helpers
     {
         private readonly DataContext _context;
         private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly SignInManager<User> _signInManager;
         private readonly UserManager<User> _userManager;
 
         public UserHelper(
             DataContext dataContext,
             UserManager<User> userManager,
-            RoleManager<IdentityRole> roleManager
+            RoleManager<IdentityRole> roleManager,
+            SignInManager<User> signInManager
             )
         {
             _context = dataContext;
             _roleManager = roleManager;
+            _signInManager = signInManager;
             _userManager = userManager;
         }
 
         public async Task<IdentityResult> AddUserAsync(User user, string password)
         {
-            //await ModelAddUserAsync(user);
             return await _userManager.CreateAsync(user, password);
-        }
-
-        public async Task ModelAddUserAsync(User user)
-        {
-            var userTemp = _context.Users.Where(u => u.Email == user.Email).FirstOrDefault();
-            if (userTemp == null)
-            {
-                _context.Users.Add(user);
-
-                await _context.SaveChangesAsync();
-            }
         }
 
         public async Task AddUserToRoleAsync(User user, string roleName)
@@ -54,14 +47,51 @@ namespace prensaestudiantil.Web.Helpers
             }
         }
 
+        public async Task<IList<string>> GetRolesAsync(string email)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+            if(user == null)
+            {
+                return null;
+            }
+
+            return await _userManager.GetRolesAsync(user);
+        }
+
         public async Task<User> GetUserByEmailAsync(string email)
         {
             return await _userManager.FindByEmailAsync(email);
+        }
+
+        public async Task<bool> IsInRoleAsync(string email, string roleName)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user == null)
+            {
+                return false;
+            }
+
+            return await _userManager.IsInRoleAsync(user, roleName);
+        }
+
+        public async Task<SignInResult> LoginAsync(LoginViewModel model)
+        {
+            return await _signInManager.PasswordSignInAsync(
+                model.Username,
+                model.Password,
+                model.RememberMe,
+                false);
+        }
+
+        public async Task LogoutAsync()
+        {
+            await _signInManager.SignOutAsync();
         }
 
         public async Task<bool> IsUserInRoleAsync(User user, string roleName)
         {
             return await _userManager.IsInRoleAsync(user, roleName);
         }
+
     }
 }
