@@ -53,7 +53,10 @@ namespace prensaestudiantil.Web.Data.Entities
         public DateTime DateLocal => Date.ToLocalTime();
 
         // TODO: Change the path when publish
-        public string ImageFullPath => $"https://TBD.azurewebsites.net{ImageUrl.Substring(1)}";
+        public string ImageFullPath => string.IsNullOrEmpty(ImageUrl)
+            ? $"{string.Empty}"
+            //? $"https://TBD.azurewebsites.net{ImageUrl.Substring(1)}"
+             : $"https://TBD.azurewebsites.net{ImageUrl.Substring(1)}";
 
         [Display(Name = "User")]
         public User User { get; set; }

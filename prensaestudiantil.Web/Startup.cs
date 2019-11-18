@@ -51,6 +51,9 @@ namespace prensaestudiantil.Web
             // Injections
             services.AddTransient<SeedDb>(); // Execute seed
             services.AddScoped<IUserHelper, UserHelper>(); // All about users and roles managment
+            services.AddScoped<ICombosHelper, CombosHelper>();
+            services.AddScoped<IConverterHelper, ConverterHelper>();
+            services.AddScoped<IImageHelper, ImageHelper>();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }

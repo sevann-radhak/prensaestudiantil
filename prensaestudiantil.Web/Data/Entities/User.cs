@@ -30,7 +30,9 @@ namespace prensaestudiantil.Web.Data.Entities
         [Display(Name = "Name")]
         public string FullName => $"{FirstName} {LastName}";
         // TODO: Change the path when publish
-        public string ImageFullPath => $"https://TBD.azurewebsites.net{ImageUrl.Substring(1)}";
+        public string ImageFullPath => string.IsNullOrEmpty(ImageUrl)
+             ? $"https://TBD.azurewebsites.net/images/Users/noImage.png"
+             : $"https://TBD.azurewebsites.net{ImageUrl.Substring(1)}";
 
         [NotMapped]
         [Display(Name = "Roles")]

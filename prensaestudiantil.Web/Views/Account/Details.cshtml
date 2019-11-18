@@ -37,9 +37,16 @@
             Roles
         </dt>
         <dd>
-            @foreach (var role in Model.Roles)
+            @if (Model.Roles.Count > 0)
             {
-                <span style="margin-right: 4px"> @role </span>
+                foreach (var role in Model.Roles)
+                {
+                    <span style="margin-right: 4px"> @role </span>
+                }
+            }
+            else
+            {
+                <span>No roles found.</span>
             }
         </dd>
     </dl>
