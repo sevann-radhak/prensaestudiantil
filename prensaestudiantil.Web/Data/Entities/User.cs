@@ -7,9 +7,6 @@ namespace prensaestudiantil.Web.Data.Entities
 {
     public class User : IdentityUser
     {
-        //[Key]
-        //public int MUserId { get; set; }
-
         [Display(Name = "First Name")]
         [MaxLength(60, ErrorMessage = "The {0} field can not have more than {1} characters.")]
         [Required(ErrorMessage = "The field {0} is mandatory.")]

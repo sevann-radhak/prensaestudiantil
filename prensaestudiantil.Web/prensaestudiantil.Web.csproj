@@ -14,4 +14,8 @@
     <Folder Include="wwwroot\images\Publications\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\prensaestudiantil.Common\prensaestudiantil.Common.csproj" />
+  </ItemGroup>
+
 </Project>
