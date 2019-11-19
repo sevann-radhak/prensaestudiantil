@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -6,8 +8,6 @@ using prensaestudiantil.Common.Models;
 using prensaestudiantil.Web.Data;
 using prensaestudiantil.Web.Data.Entities;
 using prensaestudiantil.Web.Helpers;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace prensaestudiantil.Web.Controllers.API
 {
@@ -57,14 +57,14 @@ namespace prensaestudiantil.Web.Controllers.API
                 });
             }
 
-            UserResponse response = new UserResponse 
+            UserResponse response = new UserResponse
             {
                 Id = user.Id,
                 FirstName = user.FirstName,
                 ImageUrl = user.ImageFullPath,
                 LastName = user.LastName,
                 IsManager = await _userHelper.IsInRoleAsync(user.Email, "Manager"),
-                Publications = user.Publications?.Select(p => new PublicationResponse 
+                Publications = user.Publications?.Select(p => new PublicationResponse
                 {
                     Author = p.Author,
                     Body = p.Body,
@@ -76,7 +76,7 @@ namespace prensaestudiantil.Web.Controllers.API
                     ImageUrl = p.ImageUrl,
                     LastUpdate = p.LastUpdate,
                     PublicationCategory = p.PublicationCategory.Name,
-                    PublicationImages = p.PublicationImages?.Select(pi => new PublicationImageResponse 
+                    PublicationImages = p.PublicationImages?.Select(pi => new PublicationImageResponse
                     {
                         Description = pi.Description,
                         Id = pi.Id,
@@ -86,7 +86,7 @@ namespace prensaestudiantil.Web.Controllers.API
                     User = p.User.FullName
                 }).ToList(),
                 Roles = await _userHelper.GetRolesAsync(user.Email),
-                YoutubeVideos = user.YoutubeVideos?.Select(y => new YoutubeVideoResponse 
+                YoutubeVideos = user.YoutubeVideos?.Select(y => new YoutubeVideoResponse
                 {
                     Name = y.Name,
                     URL = y.URL
