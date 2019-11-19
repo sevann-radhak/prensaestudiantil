@@ -43,22 +43,64 @@ namespace prensaestudiantil.Web.Controllers
                 .ToListAsync());
         }
 
-        // GET: Publications/Details/5
-        public async Task<IActionResult> Details(int? id)
+        [HttpGet]
+        public async Task<IActionResult> AddEditImages(int? id)
         {
-            if (id == null)
+            if (id == null || !PublicationExists(id.Value))
             {
                 return NotFound();
             }
 
             var publication = await _dataContext.Publications
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (publication == null)
+                .Include(p => p.PublicationImages)
+                .Where(p => p.Id == id.Value)
+                .FirstOrDefaultAsync();
+
+            PublicationImageViewModel model = new PublicationImageViewModel
             {
-                return NotFound();
+                PublicationId = id.Value,
+                PublicationTitle = publication.Title,
+                PublicationImages = publication.PublicationImages == null
+                    ? null
+                    : publication.PublicationImages.ToList()
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddEditImages(PublicationImageViewModel model)
+        {
+            // TODO: fix error when refresh page after adding an image (add twice)
+            var publication = await _dataContext.Publications
+                .FindAsync(model.PublicationId);
+
+            if (model.ImageFile != null)
+            {
+                _dataContext.PublicationImages.Add(new PublicationImage
+                {
+                    Description = model.Description,
+                    ImageUrl = await _imageHelper.UploadImageAsync(model.ImageFile),
+                    Publication = publication
+                });
+
+                try
+                {
+                    await _dataContext.SaveChangesAsync();
+                }
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError(string.Empty, ex.Message);
+                    return View(model);
+                }
+
             }
 
-            return View(publication);
+            model.PublicationImages = _dataContext.PublicationImages
+                .Where(pi => pi.Publication == publication).ToList();
+
+            return View(model);
         }
 
         // GET: Publications/Create
@@ -82,7 +124,7 @@ namespace prensaestudiantil.Web.Controllers
             if (ModelState.IsValid)
             {
                 var user = await _userHelper.GetUserByEmailAsync(User.Identity.Name);
-                if(user == null)
+                if (user == null)
                 {
                     ModelState.AddModelError(string.Empty, "User not found. Call support.");
                     model.PublicationCategories = _combosHelper.GetComboPublicationCategories();
@@ -117,8 +159,8 @@ namespace prensaestudiantil.Web.Controllers
                     .Include(p => p.User)
                     .LastOrDefaultAsync();
 
-                return addImages 
-                    ? RedirectToAction($"{nameof(AddImages)}/{publication.Id}")
+                return addImages
+                    ? RedirectToAction($"{nameof(AddEditImages)}/{publication.Id}")
                     : RedirectToAction(nameof(Index));
             }
 
@@ -126,75 +168,104 @@ namespace prensaestudiantil.Web.Controllers
             return View(model);
         }
 
-
-        //public async Task<IActionResult> CreateAndAddImages(PublicationViewModel model)
-        //{
-        //    if (ModelState.IsValid)
-        //    {
-        //        var user = await _userHelper.GetUserByEmailAsync(User.Identity.Name);
-        //        if (user == null)
-        //        {
-        //            ModelState.AddModelError(string.Empty, "User not found. Call support.");
-        //            model.PublicationCategories = _combosHelper.GetComboPublicationCategories();
-
-        //            return View(model);
-        //        }
-        //        if (model.ImageFile != null)
-        //        {
-        //            model.ImageUrl = await _imageHelper.UploadImageAsync(model.ImageFile);
-        //        }
-
-        //        model.Date = DateTime.Now.ToUniversalTime();
-        //        model.UserId = user.Id;
-
-        //        var prueba = await _converterHelper.ToPublicationAsync(model, true);
-
-        //        _dataContext.Publications.Add(prueba);
-
-        //        try
-        //        {
-        //            await _dataContext.SaveChangesAsync();
-        //            var example = prueba.Id;
-        //        }
-        //        catch (Exception ex)
-        //        {
-        //            ModelState.AddModelError(string.Empty, ex.Message);
-        //            model.PublicationCategories = _combosHelper.GetComboPublicationCategories();
-        //            return View(model);
-        //        }
-
-        //        return RedirectToAction(nameof(Index));
-        //    }
-
-        //    model.PublicationCategories = _combosHelper.GetComboPublicationCategories();
-        //    return null;
-        //}
-
-        // GET: Publications/Edit/5
-
-        public async Task<IActionResult> AddImages(int? id)
-        {
-            if(id == null || !PublicationExists(id.Value))
-            {
-                return NotFound();
-            }
-
-            Publication model = await _dataContext.Publications
-                .Include(p => p.PublicationImages)
-                .Where(p => p.Id == id.Value)
-               .FirstOrDefaultAsync();
-
-            return View(model);
-        }
-
-        public async Task<IActionResult> Edit(int? id)
+        // GET: Publications/Delete/5
+        public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            if (!PublicationExists(id.Value))
+            var publication = await _dataContext.Publications.FindAsync(id.Value);
+
+            if (publication == null)
+            {
+                return NotFound();
+            }
+
+            _dataContext.Publications.Remove(publication);
+
+            try
+            {
+                await _dataContext.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                if ((ex.InnerException != null
+                    && ex.InnerException.InnerException != null
+                    && ex.InnerException.InnerException.Message.Contains("REFERENCE"))
+                    ||
+                    (ex.InnerException != null && ex.InnerException.Message.Contains("REFERENCE"))
+                   )
+                {
+                    TempData["Error"] = "Can not delete this record because has related records";
+                }
+                else
+                {
+                    TempData["Error"] = $"Can not delete this record. Call support! {ex}";
+                }
+                return RedirectToAction(nameof(Index));
+            }
+
+            TempData["Success"] = "Publications deleted successfully!";
+            return RedirectToAction(nameof(Index));
+        }
+
+        public async Task<IActionResult> DeletePublicationImage(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var model = await _dataContext.PublicationImages
+                .Include(pi => pi.Publication)
+                .Where(pi => pi.Id == id.Value)
+                .FirstOrDefaultAsync();
+
+            if (model == null)
+            {
+                return NotFound();
+            }
+
+            _dataContext.PublicationImages.Remove(model);
+
+            try
+            {
+                await _dataContext.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError(string.Empty, ex.Message);
+                return View();
+            }
+
+            return RedirectToAction($"{nameof(AddEditImages)}/{model.Publication.Id}");
+        }
+
+        // GET: Publications/Details/5
+        public async Task<IActionResult> Details(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var publication = await _dataContext.Publications
+                .Include(p => p.User)
+                .Include(p => p.PublicationCategory)
+                .FirstOrDefaultAsync(m => m.Id == id);
+            if (publication == null)
+            {
+                return NotFound();
+            }
+
+            return View(publication);
+        }
+
+        public async Task<IActionResult> Edit(int? id)
+        {
+            if (id == null || !PublicationExists(id.Value))
             {
                 return NotFound();
             }
@@ -222,7 +293,7 @@ namespace prensaestudiantil.Web.Controllers
             {
                 try
                 {
-                    model.LastUpdate = DateTime.Now.ToUniversalTime();
+                    model.LastUpdate = DateTime.Now;
                     _dataContext.Update(await _converterHelper.ToPublicationAsync(model, false));
                     await _dataContext.SaveChangesAsync();
                 }
@@ -236,37 +307,6 @@ namespace prensaestudiantil.Web.Controllers
 
             TempData["Success"] = "Publication updated successfully!";
             return RedirectToAction($"{nameof(Details)}/{model.Id}");
-        }
-
-        // GET: Publications/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var publication = await _dataContext.Publications
-                .FirstOrDefaultAsync(p => p.Id == id);
-            if (publication == null)
-            {
-                return NotFound();
-            }
-
-            _dataContext.Publications.Remove(publication);
-
-            try
-            {
-                await _dataContext.SaveChangesAsync();
-            }
-            catch (Exception ex)
-            {
-                ModelState.AddModelError(string.Empty, ex.Message);
-                return View();
-            }
-            
-            TempData["Success"] = "Publications deleted successfully!";
-            return RedirectToAction(nameof(Index));
         }
 
         // POST: Publications/Delete/5

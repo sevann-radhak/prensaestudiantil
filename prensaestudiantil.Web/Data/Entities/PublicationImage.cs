@@ -17,7 +17,9 @@ namespace prensaestudiantil.Web.Data.Entities
         public string Description { get; set; }
 
         // TODO: Change the path when publish
-        public string ImageFullPath => $"https://TBD.azurewebsites.net{ImageUrl.Substring(1)}";
+        public string ImageFullPath => string.IsNullOrEmpty(ImageUrl)
+            ? $"{string.Empty}"
+            : $"https://TBD.azurewebsites.net{ImageUrl.Substring(1)}";
 
         // Foreing key
         public Publication Publication { get; set; }

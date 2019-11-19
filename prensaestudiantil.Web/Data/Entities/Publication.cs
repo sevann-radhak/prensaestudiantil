@@ -10,12 +10,12 @@ namespace prensaestudiantil.Web.Data.Entities
     {
         public int Id { get; set; }
 
-        [Display(Name = "Title")]
+        [Display(Name = "Title*")]
         [Required(ErrorMessage = "The field {0} is mandatory.")]
         [MaxLength(150, ErrorMessage = "The {0} field can not have more than {1} characters.")]
         public string Title { get; set; }
 
-        [Display(Name = "Header")]
+        [Display(Name = "Header*")]
         [Required(ErrorMessage = "The field {0} is mandatory.")]
         [DataType(DataType.MultilineText)]
         public string Header { get; set; }
@@ -69,9 +69,10 @@ namespace prensaestudiantil.Web.Data.Entities
         //TODO modify and fix the last update date
         //[Display(Name = "Modified")]
         //[DisplayFormat(DataFormatString = "{0:yyyy/MM/dd HH:mm:ss}", ApplyFormatInEditMode = true)]
-        //public DateTime LastUpdateLocal => string.IsNullOrEmpty(LastUpdate.ToString())
-        //    ? null
-        //    : LastUpdate.ToLocalTime();
+        //public DateTime LastUpdateLocal => LastUpdate == null ? null : DateTime.Now;
+            //string.IsNullOrEmpty(LastUpdate.ToString())
+            //? null
+            //: LastUpdate.Value.ToLocalTime();
 
         // Foreing keys
         public PublicationCategory PublicationCategory { get; set; }

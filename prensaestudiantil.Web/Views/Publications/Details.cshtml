@@ -1,19 +1,25 @@
 ﻿@model prensaestudiantil.Web.Data.Entities.Publication
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = @Html.DisplayFor(model => model.Title);
 }
 
-<h2>Details</h2>
+<br />
 
-@if (TempData["success"] != null)
+@if (TempData["Error"] != null)
 {
-    <span>@Html.Encode(TempData["success"])</span>
+    <div class="alert alert-danger fade in">
+        <strong>Error!</strong> @TempData["Error"]
+    </div>
+}
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success fade in">
+        <strong>Success!</strong> @TempData["Success"]
+    </div>
 }
 
-<div>
-    <h4>Publication</h4>
-    <hr />
+<div class="col-md-8">
     <dl class="dl-horizontal">
         <dt>
             @Html.DisplayNameFor(model => model.Title)
@@ -46,6 +52,12 @@
             @Html.DisplayFor(model => model.Date)
         </dd>
         <dt>
+            @Html.DisplayNameFor(model => model.DateLocal)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.DateLocal)
+        </dd>
+        <dt>
             @Html.DisplayNameFor(model => model.LastUpdate)
         </dt>
         <dd>
@@ -71,7 +83,30 @@
         </dd>
     </dl>
 </div>
+<div class="col-md-4">
+    @if (!string.IsNullOrEmpty(Model.ImageUrl))
+    {
+        <img src="@Url.Content(Model.ImageUrl)"
+             alt="@Model.Title"
+             title="@Model.Title"
+             style="width:300px;height:300px;max-width: 100%; height: auto;" />
+    }
+</div>
+
 <div>
     <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
     <a asp-action="Index">Back to List</a>
 </div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $(".alert").fadeTo(5000, 500).slideUp(500, function () {
+                $(".alert-dismissible").alert('close');
+            });
+        });
+    </script>
+}
+

@@ -16,13 +16,13 @@
             <div>
                 <div class="form-group" style="width: 30%; float: left">
                     <label asp-for="PublicationCategoryId" class="control-label"></label>
-                    <select asp-for="PublicationCategoryId" asp-items="Model.PublicationCategories" class="form-control" required>
+                    <select asp-for="PublicationCategoryId" asp-items="Model.PublicationCategories" class="form-control category" required>
                         <option disabled selected value="0"> --Select a Category--</option>
                     </select>
                     <span asp-validation-for="PublicationCategoryId" class="text-danger"></span>
                 </div>
 
-                <div class="form-group" style="width: 70%; float: right; padding-left: 20px;">
+                <div id="author" class="form-group" style="width: 70%; float: right; padding-left: 20px;">
                     <label asp-for="Author" class="control-label"></label>
                     <input asp-for="Author" class="form-control" />
                     <span asp-validation-for="Author" class="text-danger"></span>
@@ -83,4 +83,14 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            $('.category').onChange((e) => {
+                alert('hi');
+            });
+        });
+    </script>
+
 }
