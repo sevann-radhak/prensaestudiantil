@@ -111,10 +111,9 @@
 
     <script type="text/javascript">
         function AddImage() {
-            //alert('hi');
             $.ajax({
                 type:'POST',
-                url: '/Publications/AddEditImages',
+                url: '/Publications/AddEditImagess',
                 data:$('#formAddImage').serialize(),
                 success: function (data) {
                     alert('pude');

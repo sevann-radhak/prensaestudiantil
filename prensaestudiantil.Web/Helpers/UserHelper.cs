@@ -2,6 +2,7 @@
 using prensaestudiantil.Web.Data;
 using prensaestudiantil.Web.Data.Entities;
 using prensaestudiantil.Web.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -63,6 +64,11 @@ namespace prensaestudiantil.Web.Helpers
             return await _userManager.FindByEmailAsync(email);
         }
 
+        public async Task<User> GetUserByIdAsync(string id)
+        {
+            return await _userManager.FindByIdAsync(id);
+        }
+
         public async Task<bool> IsInRoleAsync(string email, string roleName)
         {
             var user = await _userManager.FindByEmailAsync(email);
@@ -91,6 +97,21 @@ namespace prensaestudiantil.Web.Helpers
         public async Task<bool> IsUserInRoleAsync(User user, string roleName)
         {
             return await _userManager.IsInRoleAsync(user, roleName);
+        }
+
+        public async Task<bool> DeleteUserAsync(User user)
+        {
+            try
+            {
+                var response = await _userManager.DeleteAsync(user);
+                return response.Succeeded;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+
+            
         }
 
     }

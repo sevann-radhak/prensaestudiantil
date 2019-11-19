@@ -12,13 +12,17 @@ namespace prensaestudiantil.Web.Helpers
 
         Task AddUserToRoleAsync(User user, string roleName);
 
-        Task CheckRoleAsync(string roleName);
+        Task CheckRoleAsync(string roleName); 
+        
+        Task<bool> DeleteUserAsync(User user);
 
         Task<IList<string>> GetRolesAsync(string email);
 
-        Task<bool> IsInRoleAsync(string email, string roleName);
-
         Task<User> GetUserByEmailAsync(string email);
+        
+        Task<User> GetUserByIdAsync(string id);
+
+        Task<bool> IsInRoleAsync(string email, string roleName);
 
         Task<bool> IsUserInRoleAsync(User user, string roleName);
 

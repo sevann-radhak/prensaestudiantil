@@ -11,6 +11,9 @@ using System.Threading.Tasks;
 
 namespace prensaestudiantil.Web.Controllers
 {
+    // TODO: complete the actios (update, delete) users
+    // TODO: actions for edit users
+    // TODO: create user with password or send email with token?
     [Authorize(Roles = "Manager")]
     public class AccountController : Controller
     {
@@ -73,28 +76,19 @@ namespace prensaestudiantil.Web.Controllers
             return View(model);
         }
 
-        private async Task<User> AddUser(AddUserViewModel model)
+        public async Task<IActionResult> Delete(string id)
         {
-            var user = new User
+            if (string.IsNullOrEmpty(id))
             {
-                Email = model.Username,
-                FirstName = model.FirstName,
-                IsEnabled = true,
-                LastName = model.LastName,
-                PhoneNumber = model.PhoneNumber,
-                UserName = model.Username
-            };
-
-            var result = await _userHelper.AddUserAsync(user, model.Password);
-            if (result != IdentityResult.Success)
-            {
-                return null;
+                return NotFound();
             }
 
-            var newUser = await _userHelper.GetUserByEmailAsync(model.Username);
-            //TODO: modify harcode
-            await _userHelper.AddUserToRoleAsync(newUser, "Writer");
-            return newUser;
+            var user = await _userHelper.GetUserByIdAsync(id);
+
+            // TODO: fix the responses: Normalize to <object> => Success, etc
+            await _userHelper.DeleteUserAsync(user);
+
+            return RedirectToAction(nameof(Index));
         }
 
 
@@ -162,7 +156,29 @@ namespace prensaestudiantil.Web.Controllers
             return RedirectToAction("Index", "Home");
         }
 
+        private async Task<User> AddUser(AddUserViewModel model)
+        {
+            var user = new User
+            {
+                Email = model.Username,
+                FirstName = model.FirstName,
+                IsEnabled = true,
+                LastName = model.LastName,
+                PhoneNumber = model.PhoneNumber,
+                UserName = model.Username
+            };
 
+            var result = await _userHelper.AddUserAsync(user, model.Password);
+            if (result != IdentityResult.Success)
+            {
+                return null;
+            }
+
+            var newUser = await _userHelper.GetUserByEmailAsync(model.Username);
+            //TODO: modify harcode
+            await _userHelper.AddUserToRoleAsync(newUser, "Writer");
+            return newUser;
+        }
 
 
 
