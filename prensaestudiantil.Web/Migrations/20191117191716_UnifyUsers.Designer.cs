@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using prensaestudiantil.Web.Data;
 
 namespace prensaestudiantil.Web.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20191117191716_UnifyUsers")]
+    partial class UnifyUsers
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -129,6 +131,21 @@ namespace prensaestudiantil.Web.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
+            modelBuilder.Entity("prensaestudiantil.Web.Data.Entities.Manager", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("UserId");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Managers");
+                });
+
             modelBuilder.Entity("prensaestudiantil.Web.Data.Entities.Publication", b =>
                 {
                     b.Property<int>("Id")
@@ -163,11 +180,15 @@ namespace prensaestudiantil.Web.Migrations
 
                     b.Property<string>("UserId");
 
+                    b.Property<int?>("WriterId");
+
                     b.HasKey("Id");
 
                     b.HasIndex("PublicationCategoryId");
 
                     b.HasIndex("UserId");
+
+                    b.HasIndex("WriterId");
 
                     b.ToTable("Publications");
                 });
@@ -223,8 +244,6 @@ namespace prensaestudiantil.Web.Migrations
                         .IsRequired()
                         .HasMaxLength(60);
 
-                    b.Property<string>("ImageUrl");
-
                     b.Property<bool>("IsEnabled");
 
                     b.Property<string>("LastName")
@@ -267,6 +286,21 @@ namespace prensaestudiantil.Web.Migrations
                     b.ToTable("AspNetUsers");
                 });
 
+            modelBuilder.Entity("prensaestudiantil.Web.Data.Entities.Writer", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("UserId");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Writers");
+                });
+
             modelBuilder.Entity("prensaestudiantil.Web.Data.Entities.YoutubeVideo", b =>
                 {
                     b.Property<int>("Id")
@@ -282,9 +316,13 @@ namespace prensaestudiantil.Web.Migrations
 
                     b.Property<string>("UserId");
 
+                    b.Property<int?>("WriterId");
+
                     b.HasKey("Id");
 
                     b.HasIndex("UserId");
+
+                    b.HasIndex("WriterId");
 
                     b.ToTable("YoutubeVideos");
                 });
@@ -334,15 +372,26 @@ namespace prensaestudiantil.Web.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
+            modelBuilder.Entity("prensaestudiantil.Web.Data.Entities.Manager", b =>
+                {
+                    b.HasOne("prensaestudiantil.Web.Data.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId");
+                });
+
             modelBuilder.Entity("prensaestudiantil.Web.Data.Entities.Publication", b =>
                 {
                     b.HasOne("prensaestudiantil.Web.Data.Entities.PublicationCategory", "PublicationCategory")
                         .WithMany("Publications")
                         .HasForeignKey("PublicationCategoryId");
 
-                    b.HasOne("prensaestudiantil.Web.Data.Entities.User", "User")
+                    b.HasOne("prensaestudiantil.Web.Data.Entities.User")
                         .WithMany("Publications")
                         .HasForeignKey("UserId");
+
+                    b.HasOne("prensaestudiantil.Web.Data.Entities.Writer", "Writer")
+                        .WithMany()
+                        .HasForeignKey("WriterId");
                 });
 
             modelBuilder.Entity("prensaestudiantil.Web.Data.Entities.PublicationImage", b =>
@@ -352,11 +401,22 @@ namespace prensaestudiantil.Web.Migrations
                         .HasForeignKey("PublicationId");
                 });
 
-            modelBuilder.Entity("prensaestudiantil.Web.Data.Entities.YoutubeVideo", b =>
+            modelBuilder.Entity("prensaestudiantil.Web.Data.Entities.Writer", b =>
                 {
                     b.HasOne("prensaestudiantil.Web.Data.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId");
+                });
+
+            modelBuilder.Entity("prensaestudiantil.Web.Data.Entities.YoutubeVideo", b =>
+                {
+                    b.HasOne("prensaestudiantil.Web.Data.Entities.User")
                         .WithMany("YoutubeVideos")
                         .HasForeignKey("UserId");
+
+                    b.HasOne("prensaestudiantil.Web.Data.Entities.Writer", "Writer")
+                        .WithMany()
+                        .HasForeignKey("WriterId");
                 });
 #pragma warning restore 612, 618
         }

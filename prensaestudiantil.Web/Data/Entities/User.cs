@@ -1,17 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using Microsoft.AspNetCore.Identity;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace prensaestudiantil.Web.Data.Entities
 {
-    public class Writer
+    public class User : IdentityUser
     {
-        public int Id { get; set; }
-
-        [Display(Name = "Document")]
-        [MaxLength(20, ErrorMessage = "The {0} field can not have more than {1} characters.")]
-        [Required(ErrorMessage = "The field {0} is mandatory.")]
-        public string Document { get; set; }
-
         [Display(Name = "First Name")]
         [MaxLength(60, ErrorMessage = "The {0} field can not have more than {1} characters.")]
         [Required(ErrorMessage = "The field {0} is mandatory.")]
@@ -22,24 +17,32 @@ namespace prensaestudiantil.Web.Data.Entities
         [Required(ErrorMessage = "The field {0} is mandatory.")]
         public string LastName { get; set; }
 
-        [Display(Name = "Cell Phone")]
-        [MaxLength(20, ErrorMessage = "The {0} field can not have more than {1} characters.")]
-        public string CellPhone { get; set; }
-
-        [MaxLength(100, ErrorMessage = "The {0} field can not have more than {1} characters.")]
-        public string Address { get; set; }
-
         [Display(Name = "Is Enabled?")]
         public bool IsEnabled { get; set; }
 
+        [Display(Name = "Main Image")]
+        public string ImageUrl { get; set; }
+
+        // Only read
         [Display(Name = "Name")]
         public string FullName => $"{FirstName} {LastName}";
 
-        [Display(Name = "Name")]
-        public string FullNameWithDocument => $"{FirstName} {LastName} - {Document}";
+        // TODO: Change the path when publish
+        public string ImageFullPath => string.IsNullOrEmpty(ImageUrl)
+             ? $"https://prensaestudiantil.azurewebsites.net/images/Users/noImage.png"
+             : $"https://prensaestudiantil.azurewebsites.net{ImageUrl.Substring(1)}";
+
+        [NotMapped]
+        [Display(Name = "Roles")]
+        public ICollection<string> Roles { get; set; }
+
+        [NotMapped]
+        [Display(Name = "Is Admin?")]
+        public bool IsManager { get; set; }
 
         // Foreing keys
         public ICollection<Publication> Publications { get; set; }
+
         public ICollection<YoutubeVideo> YoutubeVideos { get; set; }
     }
 }

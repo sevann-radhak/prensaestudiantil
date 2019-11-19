@@ -10,22 +10,22 @@ using prensaestudiantil.Web.Data.Entities;
 
 namespace prensaestudiantil.Web.Controllers
 {
-    public class WritersController : Controller
+    public class DeletemePublicationsController : Controller
     {
         private readonly DataContext _context;
 
-        public WritersController(DataContext context)
+        public DeletemePublicationsController(DataContext context)
         {
             _context = context;
         }
 
-        // GET: Writers
+        // GET: DeletemePublications
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Writers.ToListAsync());
+            return View(await _context.Publications.ToListAsync());
         }
 
-        // GET: Writers/Details/5
+        // GET: DeletemePublications/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -33,39 +33,39 @@ namespace prensaestudiantil.Web.Controllers
                 return NotFound();
             }
 
-            var writer = await _context.Writers
+            var publication = await _context.Publications
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (writer == null)
+            if (publication == null)
             {
                 return NotFound();
             }
 
-            return View(writer);
+            return View(publication);
         }
 
-        // GET: Writers/Create
+        // GET: DeletemePublications/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Writers/Create
+        // POST: DeletemePublications/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Document,FirstName,LastName,CellPhone,Address")] Writer writer)
+        public async Task<IActionResult> Create([Bind("Id,Title,Header,Body,Footer,Date,LastUpdate,ImageUrl,ImageDescription,Author")] Publication publication)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(writer);
+                _context.Add(publication);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(writer);
+            return View(publication);
         }
 
-        // GET: Writers/Edit/5
+        // GET: DeletemePublications/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -73,22 +73,22 @@ namespace prensaestudiantil.Web.Controllers
                 return NotFound();
             }
 
-            var writer = await _context.Writers.FindAsync(id);
-            if (writer == null)
+            var publication = await _context.Publications.FindAsync(id);
+            if (publication == null)
             {
                 return NotFound();
             }
-            return View(writer);
+            return View(publication);
         }
 
-        // POST: Writers/Edit/5
+        // POST: DeletemePublications/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Document,FirstName,LastName,CellPhone,Address")] Writer writer)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Header,Body,Footer,Date,LastUpdate,ImageUrl,ImageDescription,Author")] Publication publication)
         {
-            if (id != writer.Id)
+            if (id != publication.Id)
             {
                 return NotFound();
             }
@@ -97,12 +97,12 @@ namespace prensaestudiantil.Web.Controllers
             {
                 try
                 {
-                    _context.Update(writer);
+                    _context.Update(publication);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!WriterExists(writer.Id))
+                    if (!PublicationExists(publication.Id))
                     {
                         return NotFound();
                     }
@@ -113,10 +113,10 @@ namespace prensaestudiantil.Web.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(writer);
+            return View(publication);
         }
 
-        // GET: Writers/Delete/5
+        // GET: DeletemePublications/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -124,30 +124,30 @@ namespace prensaestudiantil.Web.Controllers
                 return NotFound();
             }
 
-            var writer = await _context.Writers
+            var publication = await _context.Publications
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (writer == null)
+            if (publication == null)
             {
                 return NotFound();
             }
 
-            return View(writer);
+            return View(publication);
         }
 
-        // POST: Writers/Delete/5
+        // POST: DeletemePublications/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var writer = await _context.Writers.FindAsync(id);
-            _context.Writers.Remove(writer);
+            var publication = await _context.Publications.FindAsync(id);
+            _context.Publications.Remove(publication);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool WriterExists(int id)
+        private bool PublicationExists(int id)
         {
-            return _context.Writers.Any(e => e.Id == id);
+            return _context.Publications.Any(e => e.Id == id);
         }
     }
 }

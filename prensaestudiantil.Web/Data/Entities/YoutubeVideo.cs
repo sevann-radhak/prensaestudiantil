@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace prensaestudiantil.Web.Data.Entities
 {
@@ -20,7 +16,6 @@ namespace prensaestudiantil.Web.Data.Entities
         public string Name { get; set; }
 
         // Foreing key
-        public Writer Writer { get; set; }
+        public User User { get; set; }
     }
 }
-    

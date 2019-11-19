@@ -1,0 +1,148 @@
+﻿@model prensaestudiantil.Web.Models.PublicationImageViewModel
+
+@{
+    ViewBag.Title = "Images of " + Model.PublicationTitle;
+}
+
+<link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css" />
+<br />
+
+<p style="float: right">
+    <a asp-action="Edit" title="Back to Publication" class="btn btn-default btn-sm" asp-route-id="@Model.PublicationId"><i class="glyphicon glyphicon-menu-left"></i> </a>
+    <a data-id="@Model.PublicationId"
+       data-toggle="modal" data-target="#addDialog"
+       class="btn btn-primary btn-sm">
+        Add
+        <i class="glyphicon glyphicon-plus"></i>
+    </a>
+</p>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title" style="font-weight: bold">Images of @Model.PublicationTitle</h3>
+            </div>
+            <div class="panel-body">
+                <table class="table table-hover table-responsive table-striped" id="ImagesTable">
+                    <thead>
+                        <tr>
+                            <th>
+                                @Html.DisplayNameFor(model => model.PublicationImages.FirstOrDefault().ImageUrl)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.PublicationImages.FirstOrDefault().Description)
+                            </th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.PublicationImages != null)
+                        {
+                            foreach (var item in Model.PublicationImages)
+                            {
+                                <tr>
+                                    <td>
+                                        @if (!string.IsNullOrEmpty(item.ImageUrl))
+                                        {
+                                            <img src="@Url.Content(item.ImageUrl)"
+                                                 alt="@item.Publication.Title"
+                                                 title="@item.Publication.Title"
+                                                 style="width:150px;height:150px;max-width: 100%; height: auto;" />
+                                        }
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Description)
+                                    </td>
+                                    <td style="white-space: nowrap;">
+                                        <a href="@item.ImageFullPath" target="_blank" class="btn btn-default btn-sm"><i class="glyphicon glyphicon-zoom-in"> </i> </a>
+                                        <button data-id="@item.Id" class="btn btn-danger btn-sm deleteItem" data-toggle="modal" data-target="#deleteDialog"><i class="glyphicon glyphicon-trash"></i></button>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Add Item-->
+<div class="modal fade" id="addDialog" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content col-md-12">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Add Image</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <form asp-action="AddEditImages" enctype="multipart/form-data" id="formAddImage">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" asp-for="PublicationId" />
+
+                <div class="form-group">
+                    <label asp-for="ImageFile" class="control-label"></label>
+                    <input class="form-control" asp-for="ImageFile" type="file" accept=".png, .jpg, .jpeg" required />
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Description" class="control-label"></label>
+                    <input asp-for="Description" class="form-control" />
+                    <span asp-validation-for="Description" class="text-danger"></span>
+                </div>
+
+                <div class="form-group" style="text-align: right">
+                    <button type="button" class="btn btn-danger" onclick="AddImage()" data-dismiss="modal"><i class="glyphicon glyphicon-remove"></i></button>
+                    <button type="submit" value="Add" class="btn btn-success" id="btnYesAdd"><i class="glyphicon glyphicon-ok"></i></button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<partial name="_DeleteDialog" />
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+
+    <script type="text/javascript">
+        function AddImage() {
+            $.ajax({
+                type:'POST',
+                url: '/Publications/AddEditImagess',
+                data:$('#formAddImage').serialize(),
+                success: function (data) {
+                    alert('pude');
+                //do what you would like to do
+                //$("#root").html(data.Value);//fill the result view to the div whose id is "root"
+
+                },
+                error:function (data) {
+                    alert('no pude');
+                //do what you would like to do
+                //$("#root").html(data.Value);//fill the result view to the div whose id is "root"
+
+                } 
+            })
+        }
+        $(document).ready(function () {
+            $('#ImagesTable').DataTable();
+
+            // Delete item
+            var item_to_delete;
+
+            $('.deleteItem').click((e) => {
+                item_to_delete = e.currentTarget.dataset.id;
+            });
+
+            $("#btnYesDelete").click(function () {
+                window.location.href = `/Publications/DeletePublicationImage/${item_to_delete}`;
+
+            });
+        });
+    </script>
+}

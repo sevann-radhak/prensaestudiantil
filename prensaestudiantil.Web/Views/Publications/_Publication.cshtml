@@ -1,0 +1,59 @@
+﻿@model prensaestudiantil.Web.Models.PublicationViewModel
+
+<div>
+    <div class="form-group" style="width: 30%; float: left">
+        <label asp-for="PublicationCategoryId" class="control-label"></label>
+        <select asp-for="PublicationCategoryId" asp-items="Model.PublicationCategories" class="form-control category" required>
+            <option disabled selected value="0"> --Select a Category--</option>
+        </select>
+        <span asp-validation-for="PublicationCategoryId" class="text-danger"></span>
+    </div>
+
+    <div id="author" class="form-group" style="width: 70%; float: right; padding-left: 20px;">
+        <label asp-for="Author" class="control-label"></label>
+        <input asp-for="Author" class="form-control" />
+        <span asp-validation-for="Author" class="text-danger"></span>
+    </div>
+
+    <br clear="all" />
+</div>
+
+<div class="form-group">
+    <label asp-for="Title" class="control-label"></label>
+    <input asp-for="Title" class="form-control" />
+    <span asp-validation-for="Title" class="text-danger"></span>
+</div>
+
+<div>
+    <div class="form-group" style="width: 30%; float: left">
+        <label asp-for="ImageFile" class="control-label"></label>
+        <input asp-for="ImageFile" class="form-control" type="file" accept=".png, .jpg, .jpeg" />
+        <span asp-validation-for="ImageFile" class="text-danger"></span>
+    </div>
+
+    <div class="form-group" style="width: 70%; float: right; padding-left: 20px;">
+        <label asp-for="ImageDescription" class="control-label"></label>
+        <input asp-for="ImageDescription" class="form-control" />
+        <span asp-validation-for="ImageDescription" class="text-danger"></span>
+    </div>
+
+    <br clear="all" />
+</div>
+
+<div class="form-group">
+    <label asp-for="Header" class="control-label"></label>
+    <textarea asp-for="Header" class="form-control" rows="4"></textarea>
+    <span asp-validation-for="Header" class="text-danger"></span>
+</div>
+
+<div class="form-group">
+    <label asp-for="Body" class="control-label"></label>
+    <textarea asp-for="Body" class="form-control" rows="8"></textarea>
+    <span asp-validation-for="Body" class="text-danger"></span>
+</div>
+
+<div class="form-group">
+    <label asp-for="Footer" class="control-label"></label>
+    <input asp-for="Footer" class="form-control" />
+    <span asp-validation-for="Footer" class="text-danger"></span>
+</div>

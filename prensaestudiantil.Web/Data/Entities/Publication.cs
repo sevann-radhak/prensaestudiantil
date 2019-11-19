@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace prensaestudiantil.Web.Data.Entities
 {
@@ -10,16 +8,18 @@ namespace prensaestudiantil.Web.Data.Entities
     {
         public int Id { get; set; }
 
-        [Display(Name = "Title")]
+        [Display(Name = "Title*")]
         [Required(ErrorMessage = "The field {0} is mandatory.")]
         [MaxLength(150, ErrorMessage = "The {0} field can not have more than {1} characters.")]
         public string Title { get; set; }
 
-        [Display(Name = "Header")]
+        [Display(Name = "Header*")]
         [Required(ErrorMessage = "The field {0} is mandatory.")]
+        [DataType(DataType.MultilineText)]
         public string Header { get; set; }
 
         [Display(Name = "Body")]
+        [DataType(DataType.MultilineText)]
         public string Body { get; set; }
 
         [Display(Name = "Footer")]
@@ -35,15 +35,13 @@ namespace prensaestudiantil.Web.Data.Entities
         public DateTime? LastUpdate { get; set; }
 
         [Display(Name = "Main Image")]
-        public string ImagePath { get; set; }
-
-        //public HttpPostedFileBase ImageFile{ get; set; }
+        public string ImageUrl { get; set; }
 
         [Display(Name = "Image Description")]
         [MaxLength(150, ErrorMessage = "The {0} field can not have more than {1} characters.")]
         public string ImageDescription { get; set; }
 
-        // Only for Opinion Publications
+        // Only for external references for author
         [Display(Name = "Author")]
         [MaxLength(60, ErrorMessage = "The {0} field can not have more than {1} characters.")]
         public string Author { get; set; }
@@ -52,22 +50,25 @@ namespace prensaestudiantil.Web.Data.Entities
         [DisplayFormat(DataFormatString = "{0:yyyy/MM/dd HH:mm:ss}", ApplyFormatInEditMode = true)]
         public DateTime DateLocal => Date.ToLocalTime();
 
+        // TODO: Change the path when publish in domain
+        public string ImageFullPath => string.IsNullOrEmpty(ImageUrl)
+            ? $"{string.Empty}"
+             : $"https://prensaestudiantil.azurewebsites.net{ImageUrl.Substring(1)}";
+
+        [Display(Name = "User")]
+        public User User { get; set; }
+
         //TODO modify and fix the last update date
-        //[Display(Name = "Publication Date")]
+        //[Display(Name = "Modified")]
         //[DisplayFormat(DataFormatString = "{0:yyyy/MM/dd HH:mm:ss}", ApplyFormatInEditMode = true)]
-        //public DateTime? LastUpdateLocal => LastUpdate ?? LastUpdate.ToLocalTime();
-
-        //[Display(Name = "Usuario")]
-        //public string UserPublication { get; set; }
-
-        //[Display(Name = "Usuario")]
-        //public string UserPublicationEdit { get; set; }
+        //public DateTime LastUpdateLocal => LastUpdate == null ? null : DateTime.Now;
+        //string.IsNullOrEmpty(LastUpdate.ToString())
+        //? null
+        //: LastUpdate.Value.ToLocalTime();
 
         // Foreing keys
-        public virtual PublicationCategory PublicationCategory { get; set; }
+        public PublicationCategory PublicationCategory { get; set; }
 
-        public virtual Writer Writer { get; set; }
-
-        public virtual ICollection<PublicationImage> PublicationImages { get; set; }
+        public ICollection<PublicationImage> PublicationImages { get; set; }
     }
 }

@@ -1,0 +1,123 @@
+﻿@model prensaestudiantil.Web.Data.Entities.User
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h2>User</h2>
+<div class="col-md-8">
+    <h4>Details</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.FullName)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.FullName)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Email)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Email)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.PhoneNumber)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.PhoneNumber)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.IsEnabled)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.IsEnabled)
+        </dd>
+        <dt>
+            Roles
+        </dt>
+        <dd>
+            @if (Model.Roles.Count > 0)
+            {
+                foreach (var role in Model.Roles)
+                {
+                    <span style="margin-right: 4px"> @role </span>
+                }
+            }
+            else
+            {
+                <span>No roles found.</span>
+            }
+        </dd>
+    </dl>
+</div>
+<div class="col-md-4">
+    <img src="@Url.Content(Model.ImageFullPath)"
+         alt="@Model.FullName"
+         title="@Model.FullName"
+         style="width:300px;height:300px;max-width: 100%; height: auto;" />
+</div>
+
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">Edit</a>
+    @*<a asp-action="AddProperty" asp-route-id="@Model.Id" class="btn btn-primary">Add Property</a>*@
+    <a asp-action="Index" class="btn btn-success">Back to Users</a>
+</div>
+
+<h4>Publications</h4>
+
+@if (Model.Publications.Count == 0)
+{
+    <h5>Not publications found.</h5>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Publications.FirstOrDefault().DateLocal)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Publications.FirstOrDefault().PublicationCategory.Name)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Publications.FirstOrDefault().Title)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Publications.FirstOrDefault().Header)
+                <th>
+                    Images
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Publications)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.DateLocal)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.PublicationCategory.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Title)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Header)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.PublicationImages.Count)
+                    </td>
+                    <td>
+                        <a asp-action="EditPublication" asp-route-id="@item.Id" class="btn btn-warning">Edit</a>
+                        <a asp-action="DetailsPublication" asp-route-id="@item.Id" class="btn btn-info">Details</a>
+                        <a asp-action="DeletePublication" asp-route-id="@item.Id" class="btn btn-danger">Delete</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
