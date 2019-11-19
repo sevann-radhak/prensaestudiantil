@@ -2,11 +2,17 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
 using prensaestudiantil.Web.Data;
 using prensaestudiantil.Web.Data.Entities;
 using prensaestudiantil.Web.Helpers;
 using prensaestudiantil.Web.Models;
+using System;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Security.Claims;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace prensaestudiantil.Web.Controllers
@@ -14,19 +20,23 @@ namespace prensaestudiantil.Web.Controllers
     // TODO: complete the actios (update, delete) users
     // TODO: actions for edit users
     // TODO: create user with password or send email with token?
-    [Authorize(Roles = "Manager")]
     public class AccountController : Controller
     {
         private readonly DataContext _dataContext;
+        private readonly IConfiguration _configuration;
         private readonly IUserHelper _userHelper;
 
         public AccountController(
             DataContext dataContext,
+            IConfiguration configuration,
             IUserHelper userHelper)
         {
             _dataContext = dataContext;
+            _configuration = configuration;
             _userHelper = userHelper;
         }
+
+        [Authorize(Roles = "Manager")]
         public async Task<IActionResult> Index()
         {
             var users = _dataContext.Users.Include(u => u.Publications);
@@ -36,13 +46,13 @@ namespace prensaestudiantil.Web.Controllers
             foreach (var user in users)
             {
                 // TODO: change hardcode roleName
-                //var roles = await _userHelper.IsInRoleAsync(user.Email, "Manager");
                 user.IsManager = await _userHelper.IsInRoleAsync(user.Email, "Manager");
             };
 
             return View(users);
         }
 
+        [Authorize(Roles = "Manager")]
         public IActionResult Create()
         {
             return View();
@@ -76,6 +86,49 @@ namespace prensaestudiantil.Web.Controllers
             return View(model);
         }
 
+        [HttpPost]
+        public async Task<IActionResult> CreateToken([FromBody] LoginViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = await _userHelper.GetUserByEmailAsync(model.Username);
+                if (user != null)
+                {
+                    var result = await _userHelper.ValidatePasswordAsync(
+                        user,
+                        model.Password);
+
+                    if (result.Succeeded)
+                    {
+                        var claims = new[]
+                        {
+                            new Claim(JwtRegisteredClaimNames.Sub, user.Email),
+                            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+                        };
+
+                        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Tokens:Key"]));
+                        var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+                        var token = new JwtSecurityToken(
+                            _configuration["Tokens:Issuer"],
+                            _configuration["Tokens:Audience"],
+                            claims,
+                            expires: DateTime.UtcNow.AddMonths(4),
+                            signingCredentials: credentials);
+                        var results = new
+                        {
+                            token = new JwtSecurityTokenHandler().WriteToken(token),
+                            expiration = token.ValidTo
+                        };
+
+                        return Created(string.Empty, results);
+                    }
+                }
+            }
+
+            return BadRequest();
+        }
+
+        [Authorize(Roles = "Manager")]
         public async Task<IActionResult> Delete(string id)
         {
             if (string.IsNullOrEmpty(id))
@@ -91,7 +144,7 @@ namespace prensaestudiantil.Web.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-
+        [Authorize(Roles = "Manager")]
         public async Task<IActionResult> Details(string id)
         {
             if (string.IsNullOrEmpty(id))
@@ -117,7 +170,6 @@ namespace prensaestudiantil.Web.Controllers
             return View(user);
         }
 
-        [AllowAnonymous]
         public IActionResult Login()
         {
             if (User.Identity.IsAuthenticated)
@@ -129,7 +181,6 @@ namespace prensaestudiantil.Web.Controllers
         }
 
         [HttpPost]
-        [AllowAnonymous]
         public async Task<IActionResult> Login(LoginViewModel model)
         {
             if (ModelState.IsValid)
@@ -156,6 +207,7 @@ namespace prensaestudiantil.Web.Controllers
             return RedirectToAction("Index", "Home");
         }
 
+        [Authorize(Roles = "Manager")]
         private async Task<User> AddUser(AddUserViewModel model)
         {
             var user = new User
@@ -180,88 +232,5 @@ namespace prensaestudiantil.Web.Controllers
             return newUser;
         }
 
-
-
-
-        //// GET: Account
-        //public ActionResult Index()
-        //{
-        //    return View();
-        //}
-
-        //// GET: Account/Details/5
-        //public ActionResult Details(int id)
-        //{
-        //    return View();
-        //}
-
-        //// GET: Account/Create
-        //public ActionResult Create()
-        //{
-        //    return View();
-        //}
-
-        //// POST: Account/Create
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public ActionResult Create(IFormCollection collection)
-        //{
-        //    try
-        //    {
-        //        // TODO: Add insert logic here
-
-        //        return RedirectToAction(nameof(Index));
-        //    }
-        //    catch
-        //    {
-        //        return View();
-        //    }
-        //}
-
-        //// GET: Account/Edit/5
-        //public ActionResult Edit(int id)
-        //{
-        //    return View();
-        //}
-
-        //// POST: Account/Edit/5
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public ActionResult Edit(int id, IFormCollection collection)
-        //{
-        //    try
-        //    {
-        //        // TODO: Add update logic here
-
-        //        return RedirectToAction(nameof(Index));
-        //    }
-        //    catch
-        //    {
-        //        return View();
-        //    }
-        //}
-
-        //// GET: Account/Delete/5
-        //public ActionResult Delete(int id)
-        //{
-        //    return View();
-        //}
-
-        //// POST: Account/Delete/5
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public ActionResult Delete(int id, IFormCollection collection)
-        //{
-        //    try
-        //    {
-        //        // TODO: Add delete logic here
-
-        //        return RedirectToAction(nameof(Index));
-        //    }
-        //    catch
-        //    {
-        //        return View();
-        //    }
-        //}
     }
 }
