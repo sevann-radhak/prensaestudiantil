@@ -28,12 +28,6 @@ namespace prensaestudiantil.Common.Models
 
        public DateTime DateLocal => Date.ToLocalTime();
 
-        // TODO: Change the path when publish
-        //public string ImageFullPath => string.IsNullOrEmpty(ImageUrl)
-        //    ? $"{string.Empty}"
-        //     //? $"https://TBD.azurewebsites.net{ImageUrl.Substring(1)}"
-        //     : $"https://TBD.azurewebsites.net{ImageUrl.Substring(1)}";
-
         public string User { get; set; }
 
         public string PublicationCategory { get; set; }

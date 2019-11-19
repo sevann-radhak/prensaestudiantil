@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace prensaestudiantil.Web.Data.Entities
 {
@@ -19,7 +15,7 @@ namespace prensaestudiantil.Web.Data.Entities
         // TODO: Change the path when publish
         public string ImageFullPath => string.IsNullOrEmpty(ImageUrl)
             ? $"{string.Empty}"
-            : $"https://TBD.azurewebsites.net{ImageUrl.Substring(1)}";
+            : $"https://prensaestudiantil.azurewebsites.net{ImageUrl.Substring(1)}";
 
         // Foreing key
         public Publication Publication { get; set; }

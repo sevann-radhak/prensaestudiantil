@@ -26,10 +26,11 @@ namespace prensaestudiantil.Web.Data.Entities
         // Only read
         [Display(Name = "Name")]
         public string FullName => $"{FirstName} {LastName}";
+
         // TODO: Change the path when publish
         public string ImageFullPath => string.IsNullOrEmpty(ImageUrl)
-             ? $"https://TBD.azurewebsites.net/images/Users/noImage.png"
-             : $"https://TBD.azurewebsites.net{ImageUrl.Substring(1)}";
+             ? $"https://prensaestudiantil.azurewebsites.net/images/Users/noImage.png"
+             : $"https://prensaestudiantil.azurewebsites.net{ImageUrl.Substring(1)}";
 
         [NotMapped]
         [Display(Name = "Roles")]
@@ -43,20 +44,5 @@ namespace prensaestudiantil.Web.Data.Entities
         public ICollection<Publication> Publications { get; set; }
 
         public ICollection<YoutubeVideo> YoutubeVideos { get; set; }
-
-        //[Display(Name = "Document")]
-        //[MaxLength(20, ErrorMessage = "The {0} field can not have more than {1} characters.")]
-        //[Required(ErrorMessage = "The field {0} is mandatory.")]
-        //public string Document { get; set; }
-
-        //[Display(Name = "Cell Phone")]
-        //[MaxLength(20, ErrorMessage = "The {0} field can not have more than {1} characters.")]
-        //public string CellPhone { get; set; }
-
-        //[MaxLength(100, ErrorMessage = "The {0} field can not have more than {1} characters.")]
-        //public string Address { get; set; }
-
-        //[Display(Name = "Name")]
-        //public string FullNameWithDocument => $"{FirstName} {LastName} - {Document}";
     }
 }

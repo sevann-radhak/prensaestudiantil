@@ -1,8 +1,7 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using prensaestudiantil.Web.Data.Entities;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace prensaestudiantil.Web.Models
 {
@@ -11,7 +10,6 @@ namespace prensaestudiantil.Web.Models
         [Display(Name = "Publication")]
         public string PublicationTitle { get; set; }
 
-        //[Required(ErrorMessage = "The field {0} is mandatory.")]
         [Display(Name = "Image")]
         public IFormFile ImageFile { get; set; }
 

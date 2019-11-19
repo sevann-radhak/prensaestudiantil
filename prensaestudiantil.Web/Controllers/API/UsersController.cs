@@ -73,14 +73,14 @@ namespace prensaestudiantil.Web.Controllers.API
                     Header = p.Header,
                     Id = p.Id,
                     ImageDescription = p.ImageDescription,
-                    ImageUrl = p.ImageUrl,
+                    ImageUrl = p.ImageFullPath,
                     LastUpdate = p.LastUpdate,
                     PublicationCategory = p.PublicationCategory.Name,
                     PublicationImages = p.PublicationImages?.Select(pi => new PublicationImageResponse
                     {
                         Description = pi.Description,
                         Id = pi.Id,
-                        ImageUrl = pi.ImageUrl
+                        ImageUrl = pi.ImageFullPath
                     }).ToList(),
                     Title = p.Title,
                     User = p.User.FullName
