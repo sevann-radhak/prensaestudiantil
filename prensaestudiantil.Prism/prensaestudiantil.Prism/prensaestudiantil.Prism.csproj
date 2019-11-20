@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Xamarin.Forms" Version="4.3.0.991211" />
+    <PackageReference Include="Prism.DryIoc.Forms" Version="7.2.0.1367" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\prensaestudiantil.Common\prensaestudiantil.Common.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Views\LoginPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+  </ItemGroup>
+
+</Project>

@@ -99,5 +99,26 @@ namespace prensaestudiantil.Web.Controllers.API
                 Result = response
             });
         }
+
+
+
+
+
+
+        //[HttpGet]
+        ////[Authorize(Roles = "Manager")]
+        //[Route("GetUsers")]
+        //public async Task<IActionResult> GetUsers()
+        //{
+        //    var user = await _dataContext.Users.FirstOrDefaultAsync();
+
+        //    UsersResponse response = new UsersResponse { FullName = user.FullName };
+
+        //    return Ok(new Response<UsersResponse>
+        //    {
+        //        IsSuccess = true,
+        //        Result = response
+        //    });
+        //}
     }
 }

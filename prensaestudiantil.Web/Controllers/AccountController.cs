@@ -197,7 +197,7 @@ namespace prensaestudiantil.Web.Controllers
                 }
             }
 
-            ModelState.AddModelError(string.Empty, "Failed to login.");
+            ModelState.AddModelError(string.Empty, "Email or Password incorrect :(");
             return View(model);
         }
 
