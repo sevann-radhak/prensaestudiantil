@@ -11,9 +11,10 @@
     <StackLayout
         Padding="10">
         <ListView 
+            BackgroundColor="Transparent"
             HasUnevenRows="True"
-            SeparatorVisibility="None"
-            ItemsSource="{Binding Publications}">
+            ItemsSource="{Binding Publications}"
+            SeparatorVisibility="None">
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <ViewCell>
@@ -23,43 +24,50 @@
                             <Frame.GestureRecognizers>
                                 <TapGestureRecognizer Command="{Binding SelectPublicationCommand}" />
                             </Frame.GestureRecognizers>
-                            <Grid>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition Height="*" />
-                                </Grid.RowDefinitions>
-                                
-                                <Grid
-                                    Grid.Row="0">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="Auto" />
-                                        <ColumnDefinition Width="*" />
-                                    </Grid.ColumnDefinitions>
-                                    <ffimageloading:CachedImage
-	                                    Grid.Column="0"
-	                                    Source="{Binding ImageUrl}"
-	                                    LoadingPlaceholder= "LoaderImage"
-	                                    ErrorPlaceholder= "ErrorImage"
-	                                    CacheDuration= "50"
-	                                    RetryCount= "3"
-	                                    RetryDelay= "600"
-	                                    DownsampleToViewSize = "true"
-	                                    WidthRequest="150"/>
-                                    <StackLayout
-                                        Grid.Column="1">
-                                        <Label 
-                                            FontAttributes="Bold"
-                                            Text="{Binding Title}"/>
-                                        <Label 
-                                            Text="{Binding PublicationCategory}"/>
-                                        <Label 
-                                            Text="{Binding DateLocal}"/>
-                                    </StackLayout>
-                                </Grid>
+                            <StackLayout>
+
                                 <Label 
-                                    Grid.Row="1"
-                                    Text="{Binding Header}"/>
-                            </Grid>
+                                    FontAttributes="Bold"
+                                    Text="{Binding Title}"/>
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="*" />
+                                    </Grid.RowDefinitions>
+
+                                    <Grid
+                                        Grid.Row="0">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto"/>
+                                        </Grid.RowDefinitions>
+                                        <ffimageloading:CachedImage
+                                            Aspect="AspectFit"
+	                                        CacheDuration= "50"
+	                                        DownsampleToViewSize = "true"
+	                                        ErrorPlaceholder= "ErrorImage"
+	                                        Grid.Column="0"
+	                                        LoadingPlaceholder= "LoaderImage"
+	                                        RetryCount= "3"
+	                                        RetryDelay= "600"
+	                                        Source="{Binding ImageUrl}"
+                                            WidthRequest="200"/>
+                                        <StackLayout
+                                            Grid.Column="1">
+                                            <Label 
+                                                Text="{Binding PublicationCategory}"/>
+                                            <Label 
+                                                Text="{Binding DateLocal}"/>
+                                        </StackLayout>
+                                    </Grid>
+                                    <Label 
+                                        Grid.Row="1"
+                                        Text="{Binding Header}"/>
+                                </Grid>
+                            </StackLayout>
                         </Frame>
                     </ViewCell>
                 </DataTemplate>

@@ -11,39 +11,42 @@
         <StackLayout
         Padding="10">
             <Label 
-            FontAttributes="Bold"
-            Text="{Binding Publication.Title}"/>
+                FontAttributes="Bold"
+                Text="{Binding Publication.Title}"/>
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
                 <Label             
-                Grid.Column="0"
-                FontAttributes="Bold"
-                Text="{Binding Publication.DateLocal}"/>
+                    Grid.Column="0"
+                    FontAttributes="Bold"
+                    Text="{Binding Publication.DateLocal}"/>
                 <Label 
-                Grid.Column="1"
-                Text="{Binding Publication.PublicationCategory}"/>
+                    Grid.Column="1"
+                    Text="{Binding Publication.PublicationCategory}"/>
             </Grid>
             <ffimageloading:CachedImage
-	            Grid.Column="0"
-	            Source="{Binding Publication.ImageUrl}"
-	            LoadingPlaceholder= "LoaderImage"
-	            ErrorPlaceholder= "ErrorImage"
+                Aspect="AspectFit" 
 	            CacheDuration= "50"
-	            RetryCount= "3"
-	            RetryDelay= "600"
 	            DownsampleToViewSize = "true"
-                Aspect="AspectFill" 
-                WidthRequest="375"
-                HeightRequest="375"/>
+	            ErrorPlaceholder= "ErrorImage"
+	            Grid.Column="0"
+                HeightRequest="300"
+	            LoadingPlaceholder= "LoaderImage"
+	            RetryDelay= "600"
+	            RetryCount= "3"
+	            Source="{Binding Publication.ImageUrl}"/>
+
             <Label 
-            Text="{Binding Publication.Header}"/>
+                    Text="{Binding Publication.Header}"/>
             <Label 
-            Text="{Binding Publication.Body}"/>
+                Text="{Binding Publication.Body}"/>
             <Label 
-            Text="{Binding Publication.Footer}"/>
+                Text="{Binding Publication.Footer}"/>
         </StackLayout>
 
     </ScrollView>
