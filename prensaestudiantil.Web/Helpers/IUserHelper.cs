@@ -12,6 +12,8 @@ namespace prensaestudiantil.Web.Helpers
 
         Task AddUserToRoleAsync(User user, string roleName);
 
+        Task<IdentityResult> ChangePasswordAsync(User user, string oldPassword, string newPassword);
+
         Task CheckRoleAsync(string roleName); 
         
         Task<bool> DeleteUserAsync(User user);

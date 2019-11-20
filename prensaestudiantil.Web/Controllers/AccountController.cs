@@ -52,6 +52,47 @@ namespace prensaestudiantil.Web.Controllers
             return View(users);
         }
 
+        //public async Task<IActionResult> ChangeUser()
+        //{
+        //    var user = await _userHelper.GetUserByEmailAsync(User.Identity.Name);
+        //    if (user == null)
+        //    {
+        //        return NotFound();
+        //    }
+
+        //    var view = new EditUserViewModel
+        //    {
+        //        Address = user.Address,
+        //        Document = user.Document,
+        //        FirstName = user.FirstName,
+        //        LastName = user.LastName,
+        //        PhoneNumber = user.PhoneNumber
+        //    };
+
+        //    return View(view);
+        //}
+
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public async Task<IActionResult> ChangeUser(EditUserViewModel view)
+        //{
+        //    if (ModelState.IsValid)
+        //    {
+        //        var user = await _userHelper.GetUserByEmailAsync(User.Identity.Name);
+
+        //        user.Document = view.Document;
+        //        user.FirstName = view.FirstName;
+        //        user.LastName = view.LastName;
+        //        user.Address = view.Address;
+        //        user.PhoneNumber = view.PhoneNumber;
+
+        //        await _userHelper.UpdateUserAsync(user);
+        //        return RedirectToAction("Index", "Home");
+        //    }
+
+        //    return View(view);
+        //}
+
         [Authorize(Roles = "Manager")]
         public IActionResult Create()
         {
@@ -71,21 +112,13 @@ namespace prensaestudiantil.Web.Controllers
                     return View(model);
                 }
 
-                //var owner = new Owner
-                //{
-                //    Properties = new List<Property>(),
-                //    Contracts = new List<Contract>(),
-                //    User = user,
-                //};
-
-                //_dataContext.Owners.Add(owner);
-                //await _dataContext.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
 
             return View(model);
         }
 
+        // TODO move method to API
         [HttpPost]
         public async Task<IActionResult> CreateToken([FromBody] LoginViewModel model)
         {
@@ -170,6 +203,57 @@ namespace prensaestudiantil.Web.Controllers
             return View(user);
         }
 
+        //public async Task<IActionResult> Edit(string id)
+        //{
+        //    if (string.IsNullOrEmpty(id))
+        //    {
+        //        return NotFound();
+        //    }
+
+        //    var user = await _dataContext.Users
+        //        .FirstOrDefaultAsync(u => u.Id == id);
+            
+        //    if (owner == null)
+        //    {
+        //        return NotFound();
+        //    }
+
+        //    var view = new EditUserViewModel
+        //    {
+        //        Address = owner.User.Address,
+        //        Document = owner.User.Document,
+        //        FirstName = owner.User.FirstName,
+        //        Id = owner.Id,
+        //        LastName = owner.User.LastName,
+        //        PhoneNumber = owner.User.PhoneNumber
+        //    };
+
+        //    return View(view);
+        //}
+
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public async Task<IActionResult> Edit(EditUserViewModel view)
+        //{
+        //    if (ModelState.IsValid)
+        //    {
+        //        var owner = await _dataContext.Owners
+        //            .Include(o => o.User)
+        //            .FirstOrDefaultAsync(o => o.Id == view.Id);
+
+        //        owner.User.Document = view.Document;
+        //        owner.User.FirstName = view.FirstName;
+        //        owner.User.LastName = view.LastName;
+        //        owner.User.Address = view.Address;
+        //        owner.User.PhoneNumber = view.PhoneNumber;
+
+        //        await _userHelper.UpdateUserAsync(owner.User);
+        //        return RedirectToAction(nameof(Index));
+        //    }
+
+        //    return View(view);
+        //}
+                
         public IActionResult Login()
         {
             if (User.Identity.IsAuthenticated)
@@ -207,6 +291,11 @@ namespace prensaestudiantil.Web.Controllers
             return RedirectToAction("Index", "Home");
         }
 
+        public IActionResult NotAuthorized()
+        {
+            return View();
+        }
+
         [Authorize(Roles = "Manager")]
         private async Task<User> AddUser(AddUserViewModel model)
         {
@@ -232,5 +321,9 @@ namespace prensaestudiantil.Web.Controllers
             return newUser;
         }
 
+        private bool UserExists(string id)
+        {
+            return _dataContext.Users.Any(u => u.Id == id);
+        }
     }
 }

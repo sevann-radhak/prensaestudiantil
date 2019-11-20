@@ -33,6 +33,14 @@ namespace prensaestudiantil.Web
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
+            // Not authorized action
+            services.ConfigureApplicationCookie(options =>
+            {
+                options.LoginPath = "/Account/NotAuthorized";
+                options.AccessDeniedPath = "/Account/NotAuthorized";
+            });
+
+
             // Sevice configuration for UserHelper class
             services.AddIdentity<User, IdentityRole>(cfg =>
             {
@@ -87,6 +95,7 @@ namespace prensaestudiantil.Web
                 app.UseHsts();
             }
 
+            app.UseStatusCodePagesWithReExecute("/error/{0}");
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseAuthentication();
