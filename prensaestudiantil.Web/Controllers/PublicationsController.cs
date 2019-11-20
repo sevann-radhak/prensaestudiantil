@@ -40,6 +40,8 @@ namespace prensaestudiantil.Web.Controllers
             return View(await _dataContext.Publications
                 .Include(p => p.User)
                 .Include(p => p.PublicationCategory)
+                .OrderByDescending(p => p.Date)
+                .Take(500)
                 .ToListAsync());
         }
 
@@ -293,6 +295,11 @@ namespace prensaestudiantil.Web.Controllers
             {
                 try
                 {
+                    if (model.ImageFile != null)
+                    {
+                        model.ImageUrl = await _imageHelper.UploadImageAsync(model.ImageFile);
+                    }
+
                     model.LastUpdate = DateTime.Now;
                     _dataContext.Update(await _converterHelper.ToPublicationAsync(model, false));
                     await _dataContext.SaveChangesAsync();

@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using Plugin.Connectivity;
 using prensaestudiantil.Common.Models;
 using System;
 using System.Net.Http;
@@ -10,6 +11,16 @@ namespace prensaestudiantil.Common.Services
 {
     public class ApiService : IApiService
     {
+        public async Task<bool> CheckConnectionAsync(string url)
+        {
+            if (!CrossConnectivity.Current.IsConnected)
+            {
+                return false;
+            }
+
+            return await CrossConnectivity.Current.IsRemoteReachable(url);
+        }
+
         public async Task<Response<TokenResponse>> GetTokenAsync(
                string urlBase,
                string servicePrefix,
@@ -55,7 +66,7 @@ namespace prensaestudiantil.Common.Services
             }
         }
 
-        public async Task<Response<UserResponse>> GetUserByEmail(
+        public async Task<Response<UserResponse>> GetUserByEmailAsync(
             string urlBase,
             string servicePrefix,
             string controller,

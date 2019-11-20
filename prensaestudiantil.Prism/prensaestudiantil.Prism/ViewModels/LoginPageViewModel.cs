@@ -12,6 +12,7 @@ namespace prensaestudiantil.Prism.ViewModels
     public class LoginPageViewModel : ViewModelBase
     {
         private readonly IApiService _apiService;
+        private readonly INavigationService _navigationService;
         private bool _isEnabled;
         private bool _isRunning;
         private string _password;
@@ -22,6 +23,7 @@ namespace prensaestudiantil.Prism.ViewModels
             IApiService apiService) : base(navigationService)
         {
             _apiService = apiService;
+            _navigationService = navigationService;
             Title = "Login";
             IsEnabled = true;
 
@@ -63,20 +65,29 @@ namespace prensaestudiantil.Prism.ViewModels
             IsRunning = true;
             IsEnabled = false;
 
+            var url = App.Current.Resources["UrlAPI"].ToString();
+            var connection = await _apiService.CheckConnectionAsync(url);
+            if (!connection)
+            {
+                IsEnabled = true;
+                IsRunning = false;
+                await App.Current.MainPage.DisplayAlert("Error", "Check the Internet connection.", "Accept");
+                return;
+            }
+
             var request = new TokenRequest
             {
                 Password = Password,
                 UserName = Email
             };
 
-            var url = App.Current.Resources["UrlAPI"].ToString();
-            var response = await _apiService.GetTokenAsync(url, "/Account", "/CreateToken", request);
+            var responseToken = await _apiService.GetTokenAsync(url, "/Account", "/CreateToken", request);
 
             IsRunning = false;
             IsEnabled = true;
             Password = string.Empty;
 
-            if (!response.IsSuccess)
+            if (!responseToken.IsSuccess)
             {
                 await App.Current.MainPage.DisplayAlert(
                     "Error",
@@ -87,11 +98,32 @@ namespace prensaestudiantil.Prism.ViewModels
                 return;
             }
 
-            await App.Current.MainPage.DisplayAlert(
-                "Ok",
-                "Fuck yeah",
-                "Accept"
-                );
+            var token = responseToken.Result;
+            var responseUser = await _apiService.GetUserByEmailAsync(
+                url,
+                "/api",
+                "/Users/GetUserByEmail",
+                "bearer",
+                token.Token,
+                Email);
+
+            if (!responseUser.IsSuccess)
+            {
+                await App.Current.MainPage.DisplayAlert(
+                    "Error",
+                    "This user has a big problem. Call support",
+                    "Accept"
+                    );
+
+                return;
+            }
+
+            var parameters = new NavigationParameters
+            {
+                { "User", responseUser.Result}
+            };
+
+            await _navigationService.NavigateAsync("MyPublicationsPage", parameters);
 
         }
 

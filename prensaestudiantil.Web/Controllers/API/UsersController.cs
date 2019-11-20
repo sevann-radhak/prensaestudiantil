@@ -29,15 +29,11 @@ namespace prensaestudiantil.Web.Controllers.API
 
         [HttpPost]
         [Route("GetUserByEmail")]
-        public async Task<IActionResult> GetUserByEmail(EmailRequest request)
+        public async Task<IActionResult> GetUserByEmailAsync(EmailRequest request)
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest(new Response<object>
-                {
-                    IsSuccess = false,
-                    Message = "Login failed."
-                });
+                return BadRequest("Login failed.");
             }
 
             User user = await _dataContext.Users
@@ -50,11 +46,7 @@ namespace prensaestudiantil.Web.Controllers.API
 
             if (user == null)
             {
-                return NotFound(new Response<object>
-                {
-                    IsSuccess = false,
-                    Message = "User not found."
-                });
+                return NotFound("User not found.");
             }
 
             UserResponse response = new UserResponse
@@ -84,7 +76,8 @@ namespace prensaestudiantil.Web.Controllers.API
                     }).ToList(),
                     Title = p.Title,
                     User = p.User.FullName
-                }).ToList(),
+                }).OrderByDescending(p => p.Date)
+                .ToList(),
                 Roles = await _userHelper.GetRolesAsync(user.Email),
                 YoutubeVideos = user.YoutubeVideos?.Select(y => new YoutubeVideoResponse
                 {
@@ -93,11 +86,7 @@ namespace prensaestudiantil.Web.Controllers.API
                 }).ToList()
             };
 
-            return Ok(new Response<UserResponse>
-            {
-                IsSuccess = true,
-                Result = response
-            });
+            return Ok(response);
         }
 
 
