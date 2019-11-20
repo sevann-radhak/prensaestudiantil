@@ -129,7 +129,7 @@ namespace prensaestudiantil.Prism.ViewModels
             IsEnabled = true;
             Password = string.Empty;
 
-            await _navigationService.NavigateAsync("MyPublicationsPage", parameters);
+            await _navigationService.NavigateAsync("PublicationsPage", parameters);
 
         }
 

@@ -1,0 +1,51 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:prism="http://prismlibrary.com"
+             prism:ViewModelLocator.AutowireViewModel="True"
+             xmlns:ffimageloading="clr-namespace:FFImageLoading.Forms;assembly=FFImageLoading.Forms"
+             x:Class="prensaestudiantil.Prism.Views.PublicationPage"
+             Title="{Binding Title}">
+
+    <ScrollView>
+        <StackLayout
+        Padding="10">
+            <Label 
+            FontAttributes="Bold"
+            Text="{Binding Publication.Title}"/>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Label             
+                Grid.Column="0"
+                FontAttributes="Bold"
+                Text="{Binding Publication.DateLocal}"/>
+                <Label 
+                Grid.Column="1"
+                Text="{Binding Publication.PublicationCategory}"/>
+            </Grid>
+            <ffimageloading:CachedImage
+	            Grid.Column="0"
+	            Source="{Binding Publication.ImageUrl}"
+	            LoadingPlaceholder= "LoaderImage"
+	            ErrorPlaceholder= "ErrorImage"
+	            CacheDuration= "50"
+	            RetryCount= "3"
+	            RetryDelay= "600"
+	            DownsampleToViewSize = "true"
+                Aspect="AspectFill" 
+                WidthRequest="375"
+                HeightRequest="375"/>
+            <Label 
+            Text="{Binding Publication.Header}"/>
+            <Label 
+            Text="{Binding Publication.Body}"/>
+            <Label 
+            Text="{Binding Publication.Footer}"/>
+        </StackLayout>
+
+    </ScrollView>
+
+</ContentPage>

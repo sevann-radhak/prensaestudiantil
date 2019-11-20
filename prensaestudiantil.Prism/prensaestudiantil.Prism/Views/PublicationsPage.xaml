@@ -1,0 +1,69 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:prism="http://prismlibrary.com"
+             prism:ViewModelLocator.AutowireViewModel="True"
+             xmlns:ffimageloading="clr-namespace:FFImageLoading.Forms;assembly=FFImageLoading.Forms"
+             x:Class="prensaestudiantil.Prism.Views.PublicationsPage"
+             BackgroundColor="Silver"
+             Title="{Binding Title}">
+
+    <StackLayout
+        Padding="10">
+        <ListView 
+            HasUnevenRows="True"
+            SeparatorVisibility="None"
+            ItemsSource="{Binding Publications}">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <ViewCell>
+                        <Frame 
+                            CornerRadius="5"
+                            Margin="0,0,0,5">
+                            <Frame.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding SelectPublicationCommand}" />
+                            </Frame.GestureRecognizers>
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="*" />
+                                </Grid.RowDefinitions>
+                                
+                                <Grid
+                                    Grid.Row="0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <ffimageloading:CachedImage
+	                                    Grid.Column="0"
+	                                    Source="{Binding ImageUrl}"
+	                                    LoadingPlaceholder= "LoaderImage"
+	                                    ErrorPlaceholder= "ErrorImage"
+	                                    CacheDuration= "50"
+	                                    RetryCount= "3"
+	                                    RetryDelay= "600"
+	                                    DownsampleToViewSize = "true"
+	                                    WidthRequest="150"/>
+                                    <StackLayout
+                                        Grid.Column="1">
+                                        <Label 
+                                            FontAttributes="Bold"
+                                            Text="{Binding Title}"/>
+                                        <Label 
+                                            Text="{Binding PublicationCategory}"/>
+                                        <Label 
+                                            Text="{Binding DateLocal}"/>
+                                    </StackLayout>
+                                </Grid>
+                                <Label 
+                                    Grid.Row="1"
+                                    Text="{Binding Header}"/>
+                            </Grid>
+                        </Frame>
+                    </ViewCell>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+    </StackLayout>
+</ContentPage>

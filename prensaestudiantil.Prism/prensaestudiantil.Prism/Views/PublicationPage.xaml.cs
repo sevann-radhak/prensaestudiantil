@@ -2,9 +2,9 @@
 
 namespace prensaestudiantil.Prism.Views
 {
-    public partial class MyPublicationsPage : ContentPage
+    public partial class PublicationPage : ContentPage
     {
-        public MyPublicationsPage()
+        public PublicationPage()
         {
             InitializeComponent();
         }
