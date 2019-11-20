@@ -83,10 +83,6 @@ namespace prensaestudiantil.Prism.ViewModels
 
             var responseToken = await _apiService.GetTokenAsync(url, "/Account", "/CreateToken", request);
 
-            IsRunning = false;
-            IsEnabled = true;
-            Password = string.Empty;
-
             if (!responseToken.IsSuccess)
             {
                 await App.Current.MainPage.DisplayAlert(
@@ -95,6 +91,9 @@ namespace prensaestudiantil.Prism.ViewModels
                     "Accept"
                     );
 
+                IsRunning = false;
+                IsEnabled = true;
+                Password = string.Empty;
                 return;
             }
 
@@ -115,6 +114,9 @@ namespace prensaestudiantil.Prism.ViewModels
                     "Accept"
                     );
 
+                IsRunning = false;
+                IsEnabled = true;
+                Password = string.Empty;
                 return;
             }
 
@@ -122,6 +124,10 @@ namespace prensaestudiantil.Prism.ViewModels
             {
                 { "User", responseUser.Result}
             };
+
+            IsRunning = false;
+            IsEnabled = true;
+            Password = string.Empty;
 
             await _navigationService.NavigateAsync("MyPublicationsPage", parameters);
 

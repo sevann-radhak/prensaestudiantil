@@ -24,7 +24,7 @@
 
         <Button 
             Text="Login" 
-            IsEnabled="{Binding IsENabled}"
+            IsEnabled="{Binding IsEnabled}"
             VerticalOptions="EndAndExpand"
             Command="{Binding LoginCommand}" />
     </StackLayout>

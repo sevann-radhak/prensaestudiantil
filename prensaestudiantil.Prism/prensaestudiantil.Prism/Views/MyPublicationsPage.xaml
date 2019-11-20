@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:prism="http://prismlibrary.com"
              prism:ViewModelLocator.AutowireViewModel="True"
+             xmlns:ffimageloading="clr-namespace:FFImageLoading.Forms;assembly=FFImageLoading.Forms"
              x:Class="prensaestudiantil.Prism.Views.MyPublicationsPage"
              Title="{Binding Title}">
 
@@ -14,15 +15,25 @@
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <ViewCell>
-                        <Grid>
+                        <Grid
+                            Padding="10">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto" />
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
-                            <Image
-                                Grid.Column="0"
-                                Source="{Binding ImageUrl}"
-                                WidthRequest="150"/>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <ffimageloading:CachedImage
+	                            Grid.Column="0"
+	                            Source="{Binding ImageUrl}"
+	                            LoadingPlaceholder= "LoaderImage"
+	                            ErrorPlaceholder= "ErrorImage"
+	                            CacheDuration= "50"
+	                            RetryCount= "3"
+	                            RetryDelay= "600"
+	                            DownsampleToViewSize = "true"
+	                            WidthRequest="150"/>
                             <Grid
                                 Grid.Column="1"
                                 Padding="10">
@@ -30,8 +41,8 @@
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
                                 <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="*" />
+                                    <RowDefinition Height="*" />
                                     <RowDefinition Height="Auto" />
                                 </Grid.RowDefinitions>
                                 <Label 
