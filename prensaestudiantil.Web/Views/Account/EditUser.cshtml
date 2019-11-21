@@ -1,7 +1,7 @@
 ﻿@model prensaestudiantil.Web.Models.EditUserViewModel
 
 @{
-    ViewData["Title"] = "EditUser";
+    ViewData["Title"] = "Edit " + @Model.FullName;
 }
 
 <h2>Edit @Model.FullName</h2>
@@ -13,6 +13,53 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Id" />
             <input type="hidden" asp-for="ImageUrl" />
+
+            @if (@Model.UserName == "sevann.radhak@gmail.com" || @Model.UserName == "prensaestudiantil@hotmail.com")
+            {
+                <div class="form-group col-md-12">
+                    <div class="col-md-6">
+                        <div class="form-group" style="text-align: right">
+                            <div class="form-check">
+                                <input asp-for="IsEnabled" type="checkbox" class="form-check-input" disabled />
+                                <label asp-for="IsEnabled" id="IsEnabled" class="form-check-label"></label>
+                            </div>
+                            <span asp-validation-for="IsEnabled" class="text-warning"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <div class="form-check">
+                                <input asp-for="IsManager" type="checkbox" class="form-check-input" disabled />
+                                <label asp-for="IsManager" id="IsManager" class="form-check-label"></label>
+                            </div>
+                            <span asp-validation-for="IsManager" class="text-warning"></span>
+                        </div>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="form-group col-md-12">
+                    <div class="col-md-6">
+                        <div class="form-group" style="text-align: right">
+                            <div class="form-check">
+                                <input asp-for="IsEnabled" type="checkbox" class="form-check-input" />
+                                <label asp-for="IsEnabled" id="IsEnabled" class="form-check-label"></label>
+                            </div>
+                            <span asp-validation-for="IsEnabled" class="text-warning"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <div class="form-check">
+                                <input asp-for="IsManager" type="checkbox" class="form-check-input" />
+                                <label asp-for="IsManager" id="IsManager" class="form-check-label"></label>
+                            </div>
+                            <span asp-validation-for="IsManager" class="text-warning"></span>
+                        </div>
+                    </div>
+                </div>
+            }
 
             <partial name="_User" />
 
@@ -28,4 +75,10 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+        });
+    </script>
 }
+

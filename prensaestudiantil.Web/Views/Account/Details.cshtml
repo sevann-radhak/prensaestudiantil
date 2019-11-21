@@ -61,20 +61,11 @@
             <dt>
             </dt>
             <dd>
-                @if (User.IsInRole("Manager"))
-                {
-                    <a asp-action="Index" class="btn btn-default btn-sm">Back to Users</a>
-                    @if (User.Identity.Name == Model.UserName)
-                    {
-                        <a asp-action="ChangePassword" class="btn btn-danger btn-sm">Change Password</a>
-                    }
-                    <a asp-action="EditUserByAdmin" asp-route-id="@Model.Id" class="btn btn-warning btn-sm">Edit</a>
-                }
-                else
+                @if (User.Identity.Name == Model.UserName)
                 {
                     <a asp-action="ChangePassword" class="btn btn-danger btn-sm">Change Password</a>
-                    <a asp-action="EditUser" class="btn btn-warning btn-sm">Edit</a>
                 }
+                <a asp-action="EditUser" asp-route-id="@Model.Id" class="btn btn-warning btn-sm">Edit</a>
             </dd>
         </dl>
     </div>

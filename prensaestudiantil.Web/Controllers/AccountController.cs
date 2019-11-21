@@ -88,7 +88,6 @@ namespace prensaestudiantil.Web.Controllers
             return View(model);
         }
 
-
         [Authorize(Roles = "Manager")]
         public IActionResult Create()
         {
@@ -114,7 +113,6 @@ namespace prensaestudiantil.Web.Controllers
             return View(model);
         }
 
-        // TODO move method to API?
         [HttpPost]
         public async Task<IActionResult> CreateToken([FromBody] LoginViewModel model)
         {
@@ -208,66 +206,7 @@ namespace prensaestudiantil.Web.Controllers
         }
 
         [Authorize]
-        public async Task<IActionResult> EditUser()
-        {
-            var user = await _userHelper.GetUserByEmailAsync(User.Identity.Name);
-
-            if (user == null)
-            {
-                return NotFound();
-            }
-
-            var model = new EditUserViewModel
-            {
-                Id = user.Id,
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                PhoneNumber = user.PhoneNumber,
-                ImageUrl = user.ImageUrl
-            };
-
-            return View(model);
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> EditUser(EditUserViewModel model)
-        {
-            if (ModelState.IsValid)
-            {
-                var user = await _userHelper.GetUserByEmailAsync(User.Identity.Name);
-                var path = model.ImageUrl;
-
-                if (user == null)
-                {
-                    TempData["Error"] = "User not found.";
-                    return RedirectToAction(nameof(Index));
-                }
-
-                user.FirstName = model.FirstName;
-                user.ImageUrl = model.ImageFile != null ? await _imageHelper.UploadImageAsync(model.ImageFile) : path;
-                user.LastName = model.LastName;
-                user.PhoneNumber = model.PhoneNumber;
-
-                try
-                {
-                    await _userHelper.UpdateUserAsync(user);
-                }
-                catch (Exception ex)
-                {
-                    ModelState.AddModelError(string.Empty, ex.Message);
-                    return View(model);
-                }
-
-                TempData["Success"] = "User updated successfully!";
-                return RedirectToAction(nameof(Details), new { id = user.Id });
-            }
-
-            return View(model);
-        }
-
-        [Authorize(Roles = "Manager")]
-        public async Task<IActionResult> EditUserByAdmin(string id)
+        public async Task<IActionResult> EditUser(string id)
         {
             if (string.IsNullOrEmpty(id))
             {
@@ -278,6 +217,14 @@ namespace prensaestudiantil.Web.Controllers
             if (user == null)
             {
                 return NotFound();
+            }
+
+            var loggedUser = await _userHelper.GetUserByEmailAsync(User.Identity.Name);
+            if(loggedUser != user && !await _userHelper.IsUserInRoleAsync(loggedUser, "Manager"))
+            {
+                TempData["Error"] = "You can not perform this action.";
+                return RedirectToAction(nameof(Index));
+
             }
 
             var model = new EditUserViewModel
@@ -298,25 +245,30 @@ namespace prensaestudiantil.Web.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> EditUserByAdmin(EditUserViewModel model)
+        public async Task<IActionResult> EditUser(EditUserViewModel model)
         {
             if (ModelState.IsValid)
             {
                 var user = await _userHelper.GetUserByIdAsync(model.Id);
-                var path = model.ImageUrl;
-
-                if (user == null)
+                if(user == null)
                 {
                     TempData["Error"] = "User not found.";
                     return RedirectToAction(nameof(Index));
                 }
 
-                user.ImageUrl = model.ImageFile != null ? await _imageHelper.UploadImageAsync(model.ImageFile) : path;
+                var loggedUser = await _userHelper.GetUserByEmailAsync(User.Identity.Name);
+                if (loggedUser == null)
+                {
+                    TempData["Error"] = "User not found.";
+                    return RedirectToAction(nameof(Index));
+                }
+
+                var path = model.ImageUrl;
                 user.FirstName = model.FirstName;
+                user.ImageUrl = model.ImageFile != null ? await _imageHelper.UploadImageAsync(model.ImageFile) : path;
                 user.LastName = model.LastName;
                 user.PhoneNumber = model.PhoneNumber;
-
-                if(user.UserName != "sevann.radhak@gmail.com" && user.UserName != "prensaestudiantil@hotmail.com")
+                if (user.UserName != "sevann.radhak@gmail.com" && user.UserName != "prensaestudiantil@hotmail.com")
                 {
                     user.IsEnabled = model.IsEnabled;
                 }
@@ -331,7 +283,6 @@ namespace prensaestudiantil.Web.Controllers
                             await AddOrRemoveFromRoleAsync(user, "Manager");
                         }
                     }
-                    
                 }
                 catch (Exception ex)
                 {
