@@ -32,6 +32,10 @@ namespace prensaestudiantil.Web.Helpers
 
         Task LogoutAsync();
 
+        Task RemoveUserFromRole(User user, string roleName);
+
+        Task<IdentityResult> UpdateUserAsync(User user);
+
         Task<SignInResult> ValidatePasswordAsync(User user, string password);
 
     }

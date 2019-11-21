@@ -9,6 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using prensaestudiantil.Web.Data;
 using prensaestudiantil.Web.Data.Entities;
+using prensaestudiantil.Web.Data.Repositories;
 using prensaestudiantil.Web.Helpers;
 using System.Text;
 
@@ -78,6 +79,7 @@ namespace prensaestudiantil.Web
             services.AddScoped<ICombosHelper, CombosHelper>();
             services.AddScoped<IConverterHelper, ConverterHelper>();
             services.AddScoped<IImageHelper, ImageHelper>();
+            services.AddScoped<IPublicationCategoryRepository, PublicationCategoryRepository>();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }

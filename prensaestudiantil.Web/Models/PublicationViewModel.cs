@@ -10,7 +10,6 @@ namespace prensaestudiantil.Web.Models
     {
         public string UserId { get; set; }
 
-        //[Required(ErrorMessage = "The field {0} is mandatory.")]
         [Display(Name = "Image")]
         public IFormFile ImageFile { get; set; }
 

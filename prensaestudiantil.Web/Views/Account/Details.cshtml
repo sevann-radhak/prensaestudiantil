@@ -4,120 +4,168 @@
     ViewData["Title"] = "Details";
 }
 
-<h2>User</h2>
-<div class="col-md-8">
-    <h4>Details</h4>
-    <hr />
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.FullName)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.FullName)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.Email)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Email)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.PhoneNumber)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.PhoneNumber)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.IsEnabled)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.IsEnabled)
-        </dd>
-        <dt>
-            Roles
-        </dt>
-        <dd>
-            @if (Model.Roles.Count > 0)
-            {
-                foreach (var role in Model.Roles)
-                {
-                    <span style="margin-right: 4px"> @role </span>
-                }
-            }
-            else
-            {
-                <span>No roles found.</span>
-            }
-        </dd>
-    </dl>
-</div>
-<div class="col-md-4">
-    <img src="@Url.Content(Model.ImageFullPath)"
-         alt="@Model.FullName"
-         title="@Model.FullName"
-         style="width:300px;height:300px;max-width: 100%; height: auto;" />
-</div>
+<link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css" />
+<br />
+
+<partial name="_AlertsDialog" />
 
 <div>
-    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">Edit</a>
-    @*<a asp-action="AddProperty" asp-route-id="@Model.Id" class="btn btn-primary">Add Property</a>*@
-    <a asp-action="Index" class="btn btn-success">Back to Users</a>
+    <div class="col-md-8">
+        <hr />
+        <dl class="dl-horizontal">
+            <dt>
+                @Html.DisplayNameFor(model => model.FullName)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.FullName)
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.Email)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.Email)
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.PhoneNumber)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.PhoneNumber)
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.IsEnabled)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.IsEnabled)
+            </dd>
+            <dt>
+                Roles
+            </dt>
+            <dd>
+                @if (Model.Roles.Count > 0)
+                {
+                    foreach (var role in Model.Roles)
+                    {
+                        <span style="margin-right: 4px"> @role </span>
+                    }
+                }
+                else
+                {
+                    <span>No roles found.</span>
+                }
+            </dd>
+            <dt>
+            </dt>
+            <dd>
+                <br />
+            </dd>
+            <dt>
+            </dt>
+            <dd>
+                @if (User.IsInRole("Manager"))
+                {
+                    <a asp-action="Index" class="btn btn-default btn-sm">Back to Users</a>
+                    @if (User.Identity.Name == Model.UserName)
+                    {
+                        <a asp-action="ChangePassword" class="btn btn-danger btn-sm">Change Password</a>
+                    }
+                    <a asp-action="EditUserByAdmin" asp-route-id="@Model.Id" class="btn btn-warning btn-sm">Edit</a>
+                }
+                else
+                {
+                    <a asp-action="ChangePassword" class="btn btn-danger btn-sm">Change Password</a>
+                    <a asp-action="EditUser" class="btn btn-warning btn-sm">Edit</a>
+                }
+            </dd>
+        </dl>
+    </div>
+
+    <div class="col-md-4">
+        <img src="@Url.Content(Model.ImageFullPath)"
+             alt="@Model.FullName"
+             title="@Model.FullName"
+             style="width:300px;height:300px;max-width: 100%; height: auto;" />
+    </div>
 </div>
 
-<h4>Publications</h4>
+<br clear="all" />
+<div class="row">
+    <div class="col-md-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title" style="font-weight: bold">Publications</h3>
+            </div>
+            <div class="panel-body">
+                <table class="table table-hover table-responsive table-striped" id="PublicationsTable">
+                    <thead>
+                        <tr>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Publications.FirstOrDefault().DateLocal)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Publications.FirstOrDefault().PublicationCategory.Name)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Publications.FirstOrDefault().Title)
+                            </th>
+                            <th>
+                                Images
+                            </th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.Publications)
+                        {
+                            <tr>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.DateLocal)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.PublicationCategory.Name)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Title)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.PublicationImages.Count)
+                                </td>
+                                <td style="white-space: nowrap;">
+                                    <a asp-action="Edit" class="btn btn-default btn-sm" asp-route-id="@item.Id"><i class="glyphicon glyphicon-pencil"></i> </a>
+                                    <a asp-action="Details" class="btn btn-default btn-sm" asp-route-id="@item.Id"><i class="glyphicon glyphicon-list"> </i> </a>
+                                    <button data-id="@item.Id" class="btn btn-danger btn-sm deleteItem" data-toggle="modal" data-target="#deleteDialog"><i class="glyphicon glyphicon-trash"></i></button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
 
-@if (Model.Publications.Count == 0)
-{
-    <h5>Not publications found.</h5>
-}
-else
-{
-    <table class="table">
-        <thead>
-            <tr>
-                <th>
-                    @Html.DisplayNameFor(model => model.Publications.FirstOrDefault().DateLocal)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Publications.FirstOrDefault().PublicationCategory.Name)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Publications.FirstOrDefault().Title)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Publications.FirstOrDefault().Header)
-                <th>
-                    Images
-                </th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model.Publications)
-            {
-                <tr>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.DateLocal)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.PublicationCategory.Name)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Title)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Header)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.PublicationImages.Count)
-                    </td>
-                    <td>
-                        <a asp-action="EditPublication" asp-route-id="@item.Id" class="btn btn-warning">Edit</a>
-                        <a asp-action="DetailsPublication" asp-route-id="@item.Id" class="btn btn-info">Details</a>
-                        <a asp-action="DeletePublication" asp-route-id="@item.Id" class="btn btn-danger">Delete</a>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#PublicationsTable').DataTable({
+                "order": [[0, "desc"]]
+            });
+
+            $(".alert").fadeTo(5000, 500).slideUp(500, function () {
+                $(".alert-dismissible").alert('close');
+            });
+
+            // Delete item
+            var item_to_delete;
+
+            $('.deleteItem').click((e) => {
+                item_to_delete = e.currentTarget.dataset.id;
+            });
+
+            $("#btnYesDelete").click(function () {
+                window.location.href = `/Publications/Delete/${item_to_delete}`;
+            });
+        });
+    </script>
 }

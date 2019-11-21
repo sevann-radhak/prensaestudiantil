@@ -7,22 +7,27 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using prensaestudiantil.Web.Data;
 using prensaestudiantil.Web.Data.Entities;
+using prensaestudiantil.Web.Data.Repositories;
 
 namespace prensaestudiantil.Web.Controllers
 {
     public class PublicationCategoriesController : Controller
     {
-        private readonly DataContext _context;
+        private readonly DataContext _dataContext;
+        private readonly IPublicationCategoryRepository _publicationCategoryRepository;
 
-        public PublicationCategoriesController(DataContext context)
+        public PublicationCategoriesController(
+            DataContext dataContext,
+            IPublicationCategoryRepository publicationCategoryRepository)
         {
-            _context = context;
+            _dataContext = dataContext;
+            _publicationCategoryRepository = publicationCategoryRepository;
         }
 
         // GET: PublicationCategories
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            return View(await _context.PublicationCategories.ToListAsync());
+            return View(this._publicationCategoryRepository.GetAll().OrderBy(p => p.Name));
         }
 
         // GET: PublicationCategories/Details/5
@@ -33,12 +38,12 @@ namespace prensaestudiantil.Web.Controllers
                 return NotFound();
             }
 
-            var publicationCategory = await _context.PublicationCategories
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (publicationCategory == null)
+            if (! await _publicationCategoryRepository.ExistAsync(id.Value))
             {
                 return NotFound();
             }
+
+            var publicationCategory = await _publicationCategoryRepository.GetByIdAsync(id.Value);
 
             return View(publicationCategory);
         }
@@ -54,15 +59,14 @@ namespace prensaestudiantil.Web.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name")] PublicationCategory publicationCategory)
+        public async Task<IActionResult> Create(PublicationCategory model)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(publicationCategory);
-                await _context.SaveChangesAsync();
+                await _publicationCategoryRepository.CreateAsync(model);
                 return RedirectToAction(nameof(Index));
             }
-            return View(publicationCategory);
+            return View(model);
         }
 
         // GET: PublicationCategories/Edit/5
@@ -73,7 +77,7 @@ namespace prensaestudiantil.Web.Controllers
                 return NotFound();
             }
 
-            var publicationCategory = await _context.PublicationCategories.FindAsync(id);
+            var publicationCategory = await _publicationCategoryRepository.GetByIdAsync(id.Value);
             if (publicationCategory == null)
             {
                 return NotFound();
@@ -86,9 +90,9 @@ namespace prensaestudiantil.Web.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name")] PublicationCategory publicationCategory)
+        public async Task<IActionResult> Edit(int id, PublicationCategory model)
         {
-            if (id != publicationCategory.Id)
+            if (id != model.Id || !await _publicationCategoryRepository.ExistAsync(model.Id))
             {
                 return NotFound();
             }
@@ -97,23 +101,15 @@ namespace prensaestudiantil.Web.Controllers
             {
                 try
                 {
-                    _context.Update(publicationCategory);
-                    await _context.SaveChangesAsync();
+                    await _publicationCategoryRepository.UpdateAsync(model);
                 }
-                catch (DbUpdateConcurrencyException)
+                catch (DbUpdateConcurrencyException ex)
                 {
-                    if (!PublicationCategoryExists(publicationCategory.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    ModelState.AddModelError(string.Empty, $"Fatal error, try again or call support. Error: {ex.Message}");
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(publicationCategory);
+            return View(model);
         }
 
         // GET: PublicationCategories/Delete/5
@@ -124,30 +120,22 @@ namespace prensaestudiantil.Web.Controllers
                 return NotFound();
             }
 
-            var publicationCategory = await _context.PublicationCategories
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (publicationCategory == null)
+            if (!await _publicationCategoryRepository.ExistAsync(id.Value))
             {
                 return NotFound();
             }
 
-            return View(publicationCategory);
-        }
+            var model = await _publicationCategoryRepository.GetByIdAsync(id.Value);
+            try
+            {
+                await _publicationCategoryRepository.DeleteAsync(model);
+            }
+            catch (DbUpdateConcurrencyException ex)
+            {
+                TempData["Error"] = $"Fatal error, try again or call support. Error: {ex.Message}";
+            }
 
-        // POST: PublicationCategories/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var publicationCategory = await _context.PublicationCategories.FindAsync(id);
-            _context.PublicationCategories.Remove(publicationCategory);
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
-        }
-
-        private bool PublicationCategoryExists(int id)
-        {
-            return _context.PublicationCategories.Any(e => e.Id == id);
         }
     }
 }

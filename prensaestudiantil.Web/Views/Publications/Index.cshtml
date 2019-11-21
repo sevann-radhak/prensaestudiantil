@@ -7,18 +7,7 @@
 <link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css" />
 <br />
 
-@if (TempData["Error"] != null)
-{
-    <div class="alert alert-danger fade in">
-        <strong>Error!</strong> @TempData["Error"]
-    </div>
-}
-@if (TempData["Success"] != null)
-{
-    <div class="alert alert-success fade in">
-        <strong>Success!</strong> @TempData["Success"]
-    </div>
-}
+<partial name="_AlertsDialog" />
 
 <p style="float: right">
     <a asp-action="Create" class="btn btn-primary btn-sm"><i class="glyphicon glyphicon-plus"></i> Create New </a>
@@ -91,26 +80,7 @@
     </div>
 </div>
 
-<!--Delete Item-->
-<div class="modal fade" id="deleteDialog" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Delete Item</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <p>Do you want to delete the record?</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-danger" id="btnYesDelete">Delete</button>
-            </div>
-        </div>
-    </div>
-</div>
+<partial name="_DeleteDialog" />
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

@@ -24,15 +24,18 @@ namespace prensaestudiantil.Web.Controllers
     {
         private readonly DataContext _dataContext;
         private readonly IConfiguration _configuration;
+        private readonly IImageHelper _imageHelper;
         private readonly IUserHelper _userHelper;
 
         public AccountController(
             DataContext dataContext,
             IConfiguration configuration,
+            IImageHelper imageHelper,
             IUserHelper userHelper)
         {
             _dataContext = dataContext;
             _configuration = configuration;
+            _imageHelper = imageHelper;
             _userHelper = userHelper;
         }
 
@@ -52,46 +55,39 @@ namespace prensaestudiantil.Web.Controllers
             return View(users);
         }
 
-        //public async Task<IActionResult> ChangeUser()
-        //{
-        //    var user = await _userHelper.GetUserByEmailAsync(User.Identity.Name);
-        //    if (user == null)
-        //    {
-        //        return NotFound();
-        //    }
+        public IActionResult ChangePassword()
+        {
+            return View();
+        }
 
-        //    var view = new EditUserViewModel
-        //    {
-        //        Address = user.Address,
-        //        Document = user.Document,
-        //        FirstName = user.FirstName,
-        //        LastName = user.LastName,
-        //        PhoneNumber = user.PhoneNumber
-        //    };
+        [HttpPost]
+        public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = await _userHelper.GetUserByEmailAsync(User.Identity.Name);
+                if (user != null)
+                {
+                    var result = await _userHelper.ChangePasswordAsync(user, model.OldPassword, model.NewPassword);
+                    if (result.Succeeded)
+                    {
+                        TempData["Success"] = "Password updated succssesfully";
+                        return RedirectToAction(nameof(Details), new {id = user.Id});
+                    }
+                    else
+                    {
+                        ModelState.AddModelError(string.Empty, result.Errors.FirstOrDefault().Description);
+                    }
+                }
+                else
+                {
+                    ModelState.AddModelError(string.Empty, "User no found.");
+                }
+            }
 
-        //    return View(view);
-        //}
+            return View(model);
+        }
 
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> ChangeUser(EditUserViewModel view)
-        //{
-        //    if (ModelState.IsValid)
-        //    {
-        //        var user = await _userHelper.GetUserByEmailAsync(User.Identity.Name);
-
-        //        user.Document = view.Document;
-        //        user.FirstName = view.FirstName;
-        //        user.LastName = view.LastName;
-        //        user.Address = view.Address;
-        //        user.PhoneNumber = view.PhoneNumber;
-
-        //        await _userHelper.UpdateUserAsync(user);
-        //        return RedirectToAction("Index", "Home");
-        //    }
-
-        //    return View(view);
-        //}
 
         [Authorize(Roles = "Manager")]
         public IActionResult Create()
@@ -118,7 +114,7 @@ namespace prensaestudiantil.Web.Controllers
             return View(model);
         }
 
-        // TODO move method to API
+        // TODO move method to API?
         [HttpPost]
         public async Task<IActionResult> CreateToken([FromBody] LoginViewModel model)
         {
@@ -169,20 +165,28 @@ namespace prensaestudiantil.Web.Controllers
                 return NotFound();
             }
 
-            var user = await _userHelper.GetUserByIdAsync(id);
+            if (!await _userHelper.DeleteUserAsync(await _userHelper.GetUserByIdAsync(id)))
+            {
+                TempData["Error"] = "Can not delete this User";
+                return RedirectToAction(nameof(Index));
+            }
 
-            // TODO: fix the responses: Normalize to <object> => Success, etc
-            await _userHelper.DeleteUserAsync(user);
-
+            TempData["Success"] = "User deleted succssesfully";
             return RedirectToAction(nameof(Index));
         }
 
-        [Authorize(Roles = "Manager")]
+        [Authorize]
         public async Task<IActionResult> Details(string id)
         {
             if (string.IsNullOrEmpty(id))
             {
                 return NotFound();
+            }
+
+            var currentUser = await _userHelper.GetUserByEmailAsync(User.Identity.Name);
+            if (!(currentUser.Id == id || await _userHelper.IsInRoleAsync(currentUser.Email, "Manager")))
+            {
+                return BadRequest();
             }
 
             var user = await _dataContext.Users
@@ -203,57 +207,145 @@ namespace prensaestudiantil.Web.Controllers
             return View(user);
         }
 
-        //public async Task<IActionResult> Edit(string id)
-        //{
-        //    if (string.IsNullOrEmpty(id))
-        //    {
-        //        return NotFound();
-        //    }
+        [Authorize]
+        public async Task<IActionResult> EditUser()
+        {
+            var user = await _userHelper.GetUserByEmailAsync(User.Identity.Name);
 
-        //    var user = await _dataContext.Users
-        //        .FirstOrDefaultAsync(u => u.Id == id);
-            
-        //    if (owner == null)
-        //    {
-        //        return NotFound();
-        //    }
+            if (user == null)
+            {
+                return NotFound();
+            }
 
-        //    var view = new EditUserViewModel
-        //    {
-        //        Address = owner.User.Address,
-        //        Document = owner.User.Document,
-        //        FirstName = owner.User.FirstName,
-        //        Id = owner.Id,
-        //        LastName = owner.User.LastName,
-        //        PhoneNumber = owner.User.PhoneNumber
-        //    };
+            var model = new EditUserViewModel
+            {
+                Id = user.Id,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                PhoneNumber = user.PhoneNumber,
+                ImageUrl = user.ImageUrl
+            };
 
-        //    return View(view);
-        //}
+            return View(model);
+        }
 
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> Edit(EditUserViewModel view)
-        //{
-        //    if (ModelState.IsValid)
-        //    {
-        //        var owner = await _dataContext.Owners
-        //            .Include(o => o.User)
-        //            .FirstOrDefaultAsync(o => o.Id == view.Id);
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditUser(EditUserViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = await _userHelper.GetUserByEmailAsync(User.Identity.Name);
+                var path = model.ImageUrl;
 
-        //        owner.User.Document = view.Document;
-        //        owner.User.FirstName = view.FirstName;
-        //        owner.User.LastName = view.LastName;
-        //        owner.User.Address = view.Address;
-        //        owner.User.PhoneNumber = view.PhoneNumber;
+                if (user == null)
+                {
+                    TempData["Error"] = "User not found.";
+                    return RedirectToAction(nameof(Index));
+                }
 
-        //        await _userHelper.UpdateUserAsync(owner.User);
-        //        return RedirectToAction(nameof(Index));
-        //    }
+                user.FirstName = model.FirstName;
+                user.ImageUrl = model.ImageFile != null ? await _imageHelper.UploadImageAsync(model.ImageFile) : path;
+                user.LastName = model.LastName;
+                user.PhoneNumber = model.PhoneNumber;
 
-        //    return View(view);
-        //}
-                
+                try
+                {
+                    await _userHelper.UpdateUserAsync(user);
+                }
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError(string.Empty, ex.Message);
+                    return View(model);
+                }
+
+                TempData["Success"] = "User updated successfully!";
+                return RedirectToAction(nameof(Details), new { id = user.Id });
+            }
+
+            return View(model);
+        }
+
+        [Authorize(Roles = "Manager")]
+        public async Task<IActionResult> EditUserByAdmin(string id)
+        {
+            if (string.IsNullOrEmpty(id))
+            {
+                return NotFound();
+            }
+
+            var user = await _userHelper.GetUserByIdAsync(id);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            var model = new EditUserViewModel
+            {
+                Id = user.Id,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                PhoneNumber = user.PhoneNumber,
+                ImageUrl = user.ImageUrl,
+                IsEnabled = user.IsEnabled,
+                IsManager = await _userHelper.IsUserInRoleAsync(user, "Manager"),
+                Roles = await _userHelper.GetRolesAsync(user.Email),
+                UserName = user.UserName
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditUserByAdmin(EditUserViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = await _userHelper.GetUserByIdAsync(model.Id);
+                var path = model.ImageUrl;
+
+                if (user == null)
+                {
+                    TempData["Error"] = "User not found.";
+                    return RedirectToAction(nameof(Index));
+                }
+
+                user.ImageUrl = model.ImageFile != null ? await _imageHelper.UploadImageAsync(model.ImageFile) : path;
+                user.FirstName = model.FirstName;
+                user.LastName = model.LastName;
+                user.PhoneNumber = model.PhoneNumber;
+
+                if(user.UserName != "sevann.radhak@gmail.com" && user.UserName != "prensaestudiantil@hotmail.com")
+                {
+                    user.IsEnabled = model.IsEnabled;
+                }
+
+                try
+                {
+                    await _userHelper.UpdateUserAsync(user);
+                    if (user.UserName != "sevann.radhak@gmail.com" && user.UserName != "prensaestudiantil@hotmail.com")
+                    {
+                        if (model.IsManager != await _userHelper.IsUserInRoleAsync(model, "Manager"))
+                        {
+                            await AddOrRemoveFromRoleAsync(user, "Manager");
+                        }
+                    }
+                    
+                }
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError(string.Empty, ex.Message);
+                    return View(model);
+                }
+
+                TempData["Success"] = "User updated successfully!";
+                return RedirectToAction(nameof(Details), new { id = user.Id });
+            }
+
+            return View(model);
+        }
+        
         public IActionResult Login()
         {
             if (User.Identity.IsAuthenticated)
@@ -290,10 +382,33 @@ namespace prensaestudiantil.Web.Controllers
             await _userHelper.LogoutAsync();
             return RedirectToAction("Index", "Home");
         }
+        
+        [Authorize]
+        public async Task<IActionResult> MyProfile() 
+        {
+            var user = await _userHelper.GetUserByEmailAsync(User.Identity.Name);
+            if(user == null)
+            {
+                return NotFound();
+            }
+            return RedirectToAction(nameof(Details), new { id = user.Id });
+        }
 
         public IActionResult NotAuthorized()
         {
             return View();
+        }
+
+        private async Task AddOrRemoveFromRoleAsync(User user, string roleName)
+        {
+            if (await _userHelper.IsUserInRoleAsync(user, roleName))
+            {
+                await _userHelper.RemoveUserFromRole(user, roleName);
+            }
+            else
+            {
+                await _userHelper.AddUserToRoleAsync(user, roleName);
+            }
         }
 
         [Authorize(Roles = "Manager")]
@@ -309,7 +424,9 @@ namespace prensaestudiantil.Web.Controllers
                 UserName = model.Username
             };
 
-            var result = await _userHelper.AddUserAsync(user, model.Password);
+            user.ImageUrl = model.ImageFile != null ? await _imageHelper.UploadImageAsync(model.ImageFile) : null;
+
+            var result = await _userHelper.AddUserAsync(user, model.UserName);
             if (result != IdentityResult.Success)
             {
                 return null;
@@ -321,9 +438,13 @@ namespace prensaestudiantil.Web.Controllers
             return newUser;
         }
 
-        private bool UserExists(string id)
+        protected override void Dispose(bool disposing)
         {
-            return _dataContext.Users.Any(u => u.Id == id);
+            if (disposing)
+            {
+                _dataContext.Dispose();
+            }
+            base.Dispose(disposing);
         }
     }
 }

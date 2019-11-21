@@ -161,8 +161,9 @@ namespace prensaestudiantil.Web.Controllers
                     .Include(p => p.User)
                     .LastOrDefaultAsync();
 
+
                 return addImages
-                    ? RedirectToAction($"{nameof(AddEditImages)}/{publication.Id}")
+                    ? RedirectToAction(nameof(AddEditImages), new { id = publication.Id})
                     : RedirectToAction(nameof(Index));
             }
 
@@ -242,7 +243,7 @@ namespace prensaestudiantil.Web.Controllers
                 return View();
             }
 
-            return RedirectToAction($"{nameof(AddEditImages)}/{model.Publication.Id}");
+            return RedirectToAction(nameof(AddEditImages), new { id = model.Publication.Id });
         }
 
         // GET: Publications/Details/5
@@ -313,7 +314,7 @@ namespace prensaestudiantil.Web.Controllers
             }
 
             TempData["Success"] = "Publication updated successfully!";
-            return RedirectToAction($"{nameof(Details)}/{model.Id}");
+            return RedirectToAction(nameof(Details), new { id = model.Id });
         }
 
         // POST: Publications/Delete/5

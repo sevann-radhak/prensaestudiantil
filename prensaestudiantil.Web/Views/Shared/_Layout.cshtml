@@ -33,28 +33,32 @@
                     <li><a asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
                     <li><a asp-area="" asp-controller="Home" asp-action="About">About</a></li>
                     <li><a asp-area="" asp-controller="Home" asp-action="Contact">Contact</a></li>
-                    @*<li><a asp-area="" asp-controller="Users" asp-action="Index">User</a></li>*@
-                    @if (User.Identity.IsAuthenticated && User.IsInRole("Manager"))
+                    @if (User.Identity.IsAuthenticated)
                     {
-                        @*<li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">File<b class="caret"></b></a>
-                            <ul class="dropdown-menu">
-                                <li><a asp-area="" asp-controller="Publications" asp-action="Index">Publications</a></li>
-                                <li><a asp-area="" asp-controller="PublicationCategories" asp-action="Index">Publication Categories</a></li>
-                                <li><a asp-area="" asp-controller="YoutubeVideos" asp-action="Index">Youtube Videos</a></li>
-                                <li><a asp-area="" asp-controller="Users" asp-action="Index">Users</a></li>
-                            </ul>
-                        </li>*@
                         <li><a asp-area="" asp-controller="Publications" asp-action="Index">Publications</a></li>
-                        <li><a asp-area="" asp-controller="PublicationCategories" asp-action="Index">Categories</a></li>
-                        <li><a asp-area="" asp-controller="YoutubeVideos" asp-action="Index">Youtube Videos</a></li>
-                        <li><a asp-area="" asp-controller="Account" asp-action="Index">Users</a></li>
+                        @if (User.IsInRole("Manager"))
+                        {
+                            @*<li class="dropdown">
+                                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">File<b class="caret"></b></a>
+                                    <ul class="dropdown-menu">
+                                        <li><a asp-area="" asp-controller="Publications" asp-action="Index">Publications</a></li>
+                                        <li><a asp-area="" asp-controller="PublicationCategories" asp-action="Index">Publication Categories</a></li>
+                                        <li><a asp-area="" asp-controller="YoutubeVideos" asp-action="Index">Youtube Videos</a></li>
+                                        <li><a asp-area="" asp-controller="Users" asp-action="Index">Users</a></li>
+                                    </ul>
+                                </li>*@
+                            <li><a asp-area="" asp-controller="PublicationCategories" asp-action="Index">Categories</a></li>
+                            <li><a asp-area="" asp-controller="YoutubeVideos" asp-action="Index">Youtube Videos</a></li>
+                            <li><a asp-area="" asp-controller="Account" asp-action="Index">Users</a></li>
+                        }
                     }
+
+
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
                     @if (User.Identity.IsAuthenticated)
                     {
-                        <li><a asp-area="" asp-controller="Account" asp-action="ChangeUser">@User.Identity.Name</a></li>
+                        <li><a asp-area="" asp-controller="Account" asp-action="MyProfile">@User.Identity.Name</a></li>
                         <li><a asp-area="" asp-controller="Account" asp-action="Logout">Logout</a></li>
                     }
                     else
@@ -68,7 +72,7 @@
 
     <partial name="_CookieConsentPartial" />
 
-    <div class="container body-content">
+    <div class="container body-content" style="border: 1px solid gray; margin-top: 20px; padding-top: 10px; margin-bottom: 2px; border-radius: 10px;">
         @RenderBody()
         <hr />
         <footer>

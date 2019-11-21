@@ -6,11 +6,12 @@ using System.Threading.Tasks;
 
 namespace prensaestudiantil.Web.Data.Entities
 {
-    public class PublicationCategory
+    public class PublicationCategory : IEntity
     {
         public int Id { get; set; }
 
         [Display(Name = "Category")]
+        [Required(ErrorMessage = "The field {0} is mandatory.")]
         public string Name { get; set; }
 
         // Foreing key

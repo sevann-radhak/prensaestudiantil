@@ -1,10 +1,11 @@
-﻿using System;
+﻿using prensaestudiantil.Web.Data.Repositories;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace prensaestudiantil.Web.Data.Entities
 {
-    public class Publication
+    public class Publication 
     {
         public int Id { get; set; }
 

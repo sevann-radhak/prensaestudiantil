@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace prensaestudiantil.Web.Models
 {
-    public class AddUserViewModel
+    public class AddUserViewModel : EditUserViewModel
     {
         [Display(Name = "Email*")]
         [Required(ErrorMessage = "The field {0} is mandatory.")]
@@ -14,32 +10,17 @@ namespace prensaestudiantil.Web.Models
         [EmailAddress]
         public string Username { get; set; }
 
-        [Display(Name = "First Name*")]
-        [MaxLength(60, ErrorMessage = "The {0} field can not have more than {1} characters.")]
-        [Required(ErrorMessage = "The field {0} is mandatory.")]
-        public string FirstName { get; set; }
+        //[Display(Name = "Password*")]
+        //[Required(ErrorMessage = "The field {0} is mandatory.")]
+        //[DataType(DataType.Password)]
+        //[StringLength(20, MinimumLength = 6, ErrorMessage = "The {0} field must contain between {2} and {1} characters.")]
+        //public string Password { get; set; }
 
-        [Display(Name = "Last Name*")]
-        [MaxLength(60, ErrorMessage = "The {0} field can not have more than {1} characters.")]
-        [Required(ErrorMessage = "The field {0} is mandatory.")]
-        public string LastName { get; set; }
-
-        [Display(Name = "Phone Number")]
-        [MaxLength(50, ErrorMessage = "The {0} field can not have more than {1} characters.")]
-        public string PhoneNumber { get; set; }
-
-        [Display(Name = "Password*")]
-        [Required(ErrorMessage = "The field {0} is mandatory.")]
-        [DataType(DataType.Password)]
-        [StringLength(20, MinimumLength = 6, ErrorMessage = "The {0} field must contain between {2} and {1} characters.")]
-        public string Password { get; set; }
-
-        [Display(Name = "Password Confirm*")]
-        [Required(ErrorMessage = "The field {0} is mandatory.")]
-        [DataType(DataType.Password)]
-        [StringLength(20, MinimumLength = 6, ErrorMessage = "The {0} field must contain between {2} and {1} characters.")]
-        [Compare("Password")]
-        public string PasswordConfirm { get; set; }
+        //[Display(Name = "Password Confirm*")]
+        //[Required(ErrorMessage = "The field {0} is mandatory.")]
+        //[DataType(DataType.Password)]
+        //[StringLength(20, MinimumLength = 6, ErrorMessage = "The {0} field must contain between {2} and {1} characters.")]
+        //[Compare("Password")]
+        //public string PasswordConfirm { get; set; }
     }
-
 }
