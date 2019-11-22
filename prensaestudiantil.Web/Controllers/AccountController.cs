@@ -25,17 +25,20 @@ namespace prensaestudiantil.Web.Controllers
         private readonly DataContext _dataContext;
         private readonly IConfiguration _configuration;
         private readonly IImageHelper _imageHelper;
+        private readonly IMailHelper _mailHelper;
         private readonly IUserHelper _userHelper;
 
         public AccountController(
             DataContext dataContext,
             IConfiguration configuration,
             IImageHelper imageHelper,
+            IMailHelper mailHelper,
             IUserHelper userHelper)
         {
             _dataContext = dataContext;
             _configuration = configuration;
             _imageHelper = imageHelper;
+            _mailHelper = mailHelper;
             _userHelper = userHelper;
         }
 
@@ -72,7 +75,7 @@ namespace prensaestudiantil.Web.Controllers
                     if (result.Succeeded)
                     {
                         TempData["Success"] = "Password updated succssesfully";
-                        return RedirectToAction(nameof(Details), new {id = user.Id});
+                        return RedirectToAction(nameof(Details), new { id = user.Id });
                     }
                     else
                     {
@@ -87,6 +90,32 @@ namespace prensaestudiantil.Web.Controllers
 
             return View(model);
         }
+
+        public async Task<IActionResult> ConfirmEmail(string userId, string token)
+        {
+            if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(token))
+            {
+                return NotFound();
+            }
+
+            var user = await _userHelper.GetUserByIdAsync(userId);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            var result = await _userHelper.ConfirmEmailAsync(user, token);
+            if (!result.Succeeded)
+            {
+                return NotFound();
+            }
+
+            user.IsEnabled = true;
+            await _userHelper.UpdateUserAsync(user);
+
+            return View();
+        }
+
 
         [Authorize(Roles = "Manager")]
         public IActionResult Create()
@@ -106,6 +135,19 @@ namespace prensaestudiantil.Web.Controllers
                     ModelState.AddModelError(string.Empty, "This email is already used.");
                     return View(model);
                 }
+
+                var myToken = await _userHelper.GenerateEmailConfirmationTokenAsync(user);
+                var tokenLink = Url.Action("ConfirmEmail", "Account", new
+                {
+                    userid = user.Id,
+                    token = myToken
+                }, protocol: HttpContext.Request.Scheme);
+
+                _mailHelper.SendMail(model.Username, "Prensa Estudiantil - Email confirmation", $"<h1>Prensa Estudiantil - Email Confirmation</h1>" +
+                    $"To allow the user, " +
+                    $"plase click in this link:</br></br><a href = \"{tokenLink}\">Confirm Email</a>");
+
+                TempData["Success"] = "User created successfully! The instructions to allow new user has been sent to email.";
 
                 return RedirectToAction(nameof(Index));
             }
@@ -187,6 +229,7 @@ namespace prensaestudiantil.Web.Controllers
                 return BadRequest();
             }
 
+
             var user = await _dataContext.Users
                 .Include(p => p.Publications)
                 .ThenInclude(p => p.PublicationCategory)
@@ -195,6 +238,7 @@ namespace prensaestudiantil.Web.Controllers
                 .Include(u => u.YoutubeVideos)
                 .FirstOrDefaultAsync(u => u.Id == id);
 
+            var prueba = _userHelper.GetUserByEmailAsync(user.UserName).Result;
             if (user == null)
             {
                 return NotFound();
@@ -220,7 +264,7 @@ namespace prensaestudiantil.Web.Controllers
             }
 
             var loggedUser = await _userHelper.GetUserByEmailAsync(User.Identity.Name);
-            if(loggedUser != user && !await _userHelper.IsUserInRoleAsync(loggedUser, "Manager"))
+            if (loggedUser != user && !await _userHelper.IsUserInRoleAsync(loggedUser, "Manager"))
             {
                 TempData["Error"] = "You can not perform this action.";
                 return RedirectToAction(nameof(Index));
@@ -250,7 +294,7 @@ namespace prensaestudiantil.Web.Controllers
             if (ModelState.IsValid)
             {
                 var user = await _userHelper.GetUserByIdAsync(model.Id);
-                if(user == null)
+                if (user == null)
                 {
                     TempData["Error"] = "User not found.";
                     return RedirectToAction(nameof(Index));
@@ -272,7 +316,7 @@ namespace prensaestudiantil.Web.Controllers
                 {
                     user.IsEnabled = model.IsEnabled;
                 }
-
+                // TODO: verify if logout external user disabled
                 try
                 {
                     await _userHelper.UpdateUserAsync(user);
@@ -296,7 +340,7 @@ namespace prensaestudiantil.Web.Controllers
 
             return View(model);
         }
-        
+
         public IActionResult Login()
         {
             if (User.Identity.IsAuthenticated)
@@ -312,6 +356,16 @@ namespace prensaestudiantil.Web.Controllers
         {
             if (ModelState.IsValid)
             {
+                var user = await _userHelper.GetUserByEmailAsync(model.Username);
+                if(user == null)
+                {
+                    return NotFound();
+                }
+                if (!user.IsEnabled)
+                {
+                    TempData["Error"] = "User disabled.";
+                    return View();
+                }
                 Microsoft.AspNetCore.Identity.SignInResult result = await _userHelper.LoginAsync(model);
                 if (result.Succeeded)
                 {
@@ -333,12 +387,12 @@ namespace prensaestudiantil.Web.Controllers
             await _userHelper.LogoutAsync();
             return RedirectToAction("Index", "Home");
         }
-        
+
         [Authorize]
-        public async Task<IActionResult> MyProfile() 
+        public async Task<IActionResult> MyProfile()
         {
             var user = await _userHelper.GetUserByEmailAsync(User.Identity.Name);
-            if(user == null)
+            if (user == null)
             {
                 return NotFound();
             }
@@ -349,6 +403,66 @@ namespace prensaestudiantil.Web.Controllers
         {
             return View();
         }
+
+        public IActionResult RecoverPassword()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> RecoverPassword(RecoverPasswordViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = await _userHelper.GetUserByEmailAsync(model.Email);
+                if (user == null)
+                {
+                    ModelState.AddModelError(string.Empty, "The email doesn't correspont to a registered user.");
+                    return View(model);
+                }
+
+                var myToken = await _userHelper.GeneratePasswordResetTokenAsync(user);
+                var link = Url.Action(
+                    "ResetPassword",
+                    "Account",
+                    new { token = myToken }, protocol: HttpContext.Request.Scheme);
+                _mailHelper.SendMail(model.Email, "Prensa Estudiantil - Password Reset", $"<h1>Prensa Esstudiantill Password Reset</h1>" +
+                    $"To reset the password click in this link:</br></br>" +
+                    $"<a href = \"{link}\">Reset Password</a>");
+
+                TempData["Success"] = "The instructions to recover your password has been sent to email.";
+                return View();
+            }
+
+            return View(model);
+        }
+
+        public IActionResult ResetPassword(string token)
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ResetPassword(ResetPasswordViewModel model)
+        {
+            var user = await _userHelper.GetUserByEmailAsync(model.UserName);
+            if (user != null)
+            {
+                if (_userHelper.ResetPasswordAsync(user, model.Token, model.Password).Result.Succeeded)
+                {
+                    await _userHelper.LoginAsync(new LoginViewModel { Password = model.Password, RememberMe = false, Username = model.UserName });
+                    TempData["Success"] = "Password reset successfully!";
+                    return RedirectToAction(nameof(Index));
+                }
+
+                TempData["Error"] = "Error while resetting the password. Try again or call support";
+                return View(model);
+            }
+
+            TempData["Error"] = "User not found.";
+            return View(model);
+        }
+
 
         private async Task AddOrRemoveFromRoleAsync(User user, string roleName)
         {
@@ -369,7 +483,7 @@ namespace prensaestudiantil.Web.Controllers
             {
                 Email = model.Username,
                 FirstName = model.FirstName,
-                IsEnabled = true,
+                IsEnabled = false,
                 LastName = model.LastName,
                 PhoneNumber = model.PhoneNumber,
                 UserName = model.Username
@@ -386,6 +500,7 @@ namespace prensaestudiantil.Web.Controllers
             var newUser = await _userHelper.GetUserByEmailAsync(model.Username);
             //TODO: modify harcode
             await _userHelper.AddUserToRoleAsync(newUser, "Writer");
+
             return newUser;
         }
 

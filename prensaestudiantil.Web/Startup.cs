@@ -45,13 +45,17 @@ namespace prensaestudiantil.Web
             // Sevice configuration for UserHelper class
             services.AddIdentity<User, IdentityRole>(cfg =>
             {
+                cfg.Tokens.AuthenticatorTokenProvider = TokenOptions.DefaultAuthenticatorProvider;
+                cfg.SignIn.RequireConfirmedEmail = true;
                 cfg.User.RequireUniqueEmail = true;
                 cfg.Password.RequireDigit = false;
                 cfg.Password.RequiredUniqueChars = 0;
                 cfg.Password.RequireLowercase = false;
                 cfg.Password.RequireNonAlphanumeric = false;
                 cfg.Password.RequireUppercase = false;
-            }).AddEntityFrameworkStores<DataContext>();
+            })
+                .AddDefaultTokenProviders()
+                .AddEntityFrameworkStores<DataContext>();
 
             // DbContext
             services.AddDbContext<DataContext>(cfg =>
@@ -75,11 +79,12 @@ namespace prensaestudiantil.Web
 
             // Injections
             services.AddTransient<SeedDb>(); // Execute seed
-            services.AddScoped<IUserHelper, UserHelper>(); // All about users and roles managment
             services.AddScoped<ICombosHelper, CombosHelper>();
             services.AddScoped<IConverterHelper, ConverterHelper>();
-            services.AddScoped<IImageHelper, ImageHelper>();
+            services.AddScoped<IImageHelper, ImageHelper>(); 
+            services.AddScoped<IMailHelper, MailHelper>();
             services.AddScoped<IPublicationCategoryRepository, PublicationCategoryRepository>();
+            services.AddScoped<IUserHelper, UserHelper>();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }

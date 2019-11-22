@@ -14,9 +14,15 @@ namespace prensaestudiantil.Web.Helpers
 
         Task<IdentityResult> ChangePasswordAsync(User user, string oldPassword, string newPassword);
 
-        Task CheckRoleAsync(string roleName); 
-        
+        Task CheckRoleAsync(string roleName);
+
+        Task<IdentityResult> ConfirmEmailAsync(User user, string token);
+
         Task<bool> DeleteUserAsync(User user);
+
+        Task<string> GenerateEmailConfirmationTokenAsync(User user);
+
+        Task<string> GeneratePasswordResetTokenAsync(User user);
 
         Task<IList<string>> GetRolesAsync(string email);
 
@@ -33,6 +39,8 @@ namespace prensaestudiantil.Web.Helpers
         Task LogoutAsync();
 
         Task RemoveUserFromRole(User user, string roleName);
+
+        Task<IdentityResult> ResetPasswordAsync(User user, string token, string password);
 
         Task<IdentityResult> UpdateUserAsync(User user);
 

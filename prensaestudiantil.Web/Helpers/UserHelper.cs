@@ -38,6 +38,11 @@ namespace prensaestudiantil.Web.Helpers
         {
             return await _userManager.ChangePasswordAsync(user, oldPassword, newPassword);
         }
+        
+        public async Task<IdentityResult> ConfirmEmailAsync(User user, string token)
+        {
+            return await _userManager.ConfirmEmailAsync(user, token);
+        }
 
         public async Task<bool> DeleteUserAsync(User user)
         {
@@ -61,6 +66,16 @@ namespace prensaestudiantil.Web.Helpers
             {
                 await _roleManager.CreateAsync(new IdentityRole { Name = roleName });
             }
+        }
+
+        public async Task<string> GenerateEmailConfirmationTokenAsync(User user)
+        {
+            return await _userManager.GenerateEmailConfirmationTokenAsync(user);
+        }
+
+        public async Task<string> GeneratePasswordResetTokenAsync(User user)
+        {
+            return await _userManager.GeneratePasswordResetTokenAsync(user);
         }
 
         public async Task<IList<string>> GetRolesAsync(string email)
@@ -117,6 +132,11 @@ namespace prensaestudiantil.Web.Helpers
         public async Task RemoveUserFromRole(User user, string roleName)
         {
             await _userManager.RemoveFromRoleAsync(user, roleName);
+        }
+
+        public async Task<IdentityResult> ResetPasswordAsync(User user, string token, string password)
+        {
+            return await _userManager.ResetPasswordAsync(user, token, password);
         }
 
         public async Task<IdentityResult> UpdateUserAsync(User user)

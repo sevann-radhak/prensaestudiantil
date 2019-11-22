@@ -4,15 +4,27 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using prensaestudiantil.Web.Data;
 using prensaestudiantil.Web.Models;
 
 namespace prensaestudiantil.Web.Controllers
 {
     public class HomeController : Controller
     {
-        public IActionResult Index()
+        private readonly DataContext _dataContext;
+
+        public HomeController(DataContext dataContext)
         {
-            return View();
+            _dataContext = dataContext;
+        }
+        public async Task<IActionResult> Index()
+        {
+            return View( await _dataContext.PublicationImages
+                .Include(pi => pi.Publication)
+                .OrderByDescending(pi => pi.Id)
+                .Take(10)
+                .ToListAsync());
         }
 
         public IActionResult About()
