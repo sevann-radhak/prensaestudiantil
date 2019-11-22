@@ -3,11 +3,7 @@ using prensaestudiantil.Common.Helpers;
 using prensaestudiantil.Common.Models;
 using prensaestudiantil.Common.Services;
 using Prism.Commands;
-using Prism.Mvvm;
 using Prism.Navigation;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace prensaestudiantil.Prism.ViewModels
 {
@@ -46,8 +42,8 @@ namespace prensaestudiantil.Prism.ViewModels
 
         public bool IsRemember
         {
-            get => _isRunning;
-            set => SetProperty(ref _isRunning, value);
+            get => _isRemember;
+            set => SetProperty(ref _isRemember, value);
         }
 
         public bool IsRunning
@@ -75,8 +71,8 @@ namespace prensaestudiantil.Prism.ViewModels
             IsRunning = true;
             IsEnabled = false;
 
-            var url = App.Current.Resources["UrlAPI"].ToString();
-            var connection = await _apiService.CheckConnectionAsync(url);
+            string url = App.Current.Resources["UrlAPI"].ToString();
+            bool connection = await _apiService.CheckConnectionAsync(url);
             if (!connection)
             {
                 IsEnabled = true;
@@ -85,13 +81,13 @@ namespace prensaestudiantil.Prism.ViewModels
                 return;
             }
 
-            var request = new TokenRequest
+            TokenRequest request = new TokenRequest
             {
                 Password = Password,
                 UserName = Email
             };
 
-            var responseToken = await _apiService.GetTokenAsync(url, "/Account", "/CreateToken", request);
+            Response<TokenResponse> responseToken = await _apiService.GetTokenAsync(url, "/Account", "/CreateToken", request);
 
             if (!responseToken.IsSuccess)
             {
@@ -107,8 +103,8 @@ namespace prensaestudiantil.Prism.ViewModels
                 return;
             }
 
-            var token = responseToken.Result;
-            var responseUser = await _apiService.GetUserByEmailAsync(
+            TokenResponse token = responseToken.Result;
+            Response<UserResponse> responseUser = await _apiService.GetUserByEmailAsync(
                 url,
                 "/api",
                 "/Users/GetUserByEmail",
