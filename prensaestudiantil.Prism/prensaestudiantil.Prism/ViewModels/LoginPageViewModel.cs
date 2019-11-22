@@ -1,4 +1,6 @@
-﻿using prensaestudiantil.Common.Models;
+﻿using Newtonsoft.Json;
+using prensaestudiantil.Common.Helpers;
+using prensaestudiantil.Common.Models;
 using prensaestudiantil.Common.Services;
 using Prism.Commands;
 using Prism.Mvvm;
@@ -14,6 +16,7 @@ namespace prensaestudiantil.Prism.ViewModels
         private readonly IApiService _apiService;
         private readonly INavigationService _navigationService;
         private bool _isEnabled;
+        private bool _isRemember;
         private bool _isRunning;
         private string _password;
         private DelegateCommand _loginCommand;
@@ -24,8 +27,9 @@ namespace prensaestudiantil.Prism.ViewModels
         {
             _apiService = apiService;
             _navigationService = navigationService;
-            Title = "Login";
+            IsRemember = true;
             IsEnabled = true;
+            Title = "Login";
 
             // TODO: delete this lines
             Email = "sevann.radhak@gmail.com";
@@ -38,6 +42,12 @@ namespace prensaestudiantil.Prism.ViewModels
         {
             get => _isEnabled;
             set => SetProperty(ref _isEnabled, value);
+        }
+
+        public bool IsRemember
+        {
+            get => _isRunning;
+            set => SetProperty(ref _isRunning, value);
         }
 
         public bool IsRunning
@@ -120,18 +130,14 @@ namespace prensaestudiantil.Prism.ViewModels
                 return;
             }
 
-            var parameters = new NavigationParameters
-            {
-                { "User", responseUser.Result}
-            };
+            Settings.User = JsonConvert.SerializeObject(responseUser.Result);
+            Settings.Token = JsonConvert.SerializeObject(token);
+
+            await _navigationService.NavigateAsync("/PrensaMasterDetailPage/NavigationPage/PublicationsPage");
 
             IsRunning = false;
             IsEnabled = true;
             Password = string.Empty;
-
-            await _navigationService.NavigateAsync("PublicationsPage", parameters);
-
         }
-
     }
 }

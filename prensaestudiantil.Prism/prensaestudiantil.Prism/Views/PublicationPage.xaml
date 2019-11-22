@@ -5,6 +5,7 @@
              prism:ViewModelLocator.AutowireViewModel="True"
              xmlns:ffimageloading="clr-namespace:FFImageLoading.Forms;assembly=FFImageLoading.Forms"
              x:Class="prensaestudiantil.Prism.Views.PublicationPage"
+             BackgroundColor="{StaticResource ColorBackgroud}"
              Title="{Binding Title}">
 
     <ScrollView>
@@ -12,7 +13,8 @@
         Padding="10">
             <Label 
                 FontAttributes="Bold"
-                Text="{Binding Publication.Title}"/>
+                Text="{Binding Publication.Title}"
+                TextColor="{StaticResource ColorPrimary}"/>
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
@@ -21,13 +23,15 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
-                <Label             
+                <Label       
+                    FontAttributes="Bold"      
                     Grid.Column="0"
-                    FontAttributes="Bold"
-                    Text="{Binding Publication.DateLocal}"/>
+                    Text="{Binding Publication.DateLocal}"
+                    TextColor="{StaticResource ColorSecondary}"/>
                 <Label 
                     Grid.Column="1"
-                    Text="{Binding Publication.PublicationCategory}"/>
+                    Text="{Binding Publication.PublicationCategory}"
+                    TextColor="{StaticResource ColorSecondary}"/>
             </Grid>
             <ffimageloading:CachedImage
                 Aspect="AspectFit" 
@@ -42,11 +46,14 @@
 	            Source="{Binding Publication.ImageUrl}"/>
 
             <Label 
-                    Text="{Binding Publication.Header}"/>
+                Text="{Binding Publication.Header}"
+                TextColor="{StaticResource ColorFont}"/>
             <Label 
-                Text="{Binding Publication.Body}"/>
+                Text="{Binding Publication.Body}"
+                TextColor="{StaticResource ColorFont}"/>
             <Label 
-                Text="{Binding Publication.Footer}"/>
+                Text="{Binding Publication.Footer}"
+                TextColor="{StaticResource ColorSecondary}"/>
         </StackLayout>
 
     </ScrollView>

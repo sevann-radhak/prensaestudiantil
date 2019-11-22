@@ -35,6 +35,8 @@ namespace prensaestudiantil.Prism
             containerRegistry.RegisterForNavigation<LoginPage, LoginPageViewModel>();
             containerRegistry.RegisterForNavigation<PublicationsPage, PublicationsPageViewModel>();
             containerRegistry.RegisterForNavigation<PublicationPage, PublicationPageViewModel>();
+            containerRegistry.RegisterForNavigation<PrensaMasterDetailPage, PrensaMasterDetailPageViewModel>();
+            containerRegistry.RegisterForNavigation<ModifyUsesrPage, ModifyUsesrPageViewModel>();
         }
     }
 }

@@ -1,4 +1,6 @@
-﻿using prensaestudiantil.Common.Models;
+﻿using Newtonsoft.Json;
+using prensaestudiantil.Common.Helpers;
+using prensaestudiantil.Common.Models;
 using Prism.Commands;
 using Prism.Mvvm;
 using Prism.Navigation;
@@ -18,6 +20,7 @@ namespace prensaestudiantil.Prism.ViewModels
         public PublicationsPageViewModel(INavigationService navigationService) : base(navigationService)
         {
             _navigationService = navigationService;
+            LoadUser();
             Title = "My Publications";
         }
 
@@ -27,33 +30,27 @@ namespace prensaestudiantil.Prism.ViewModels
             set => SetProperty(ref _publications, value);
         }
 
-        public override void OnNavigatedTo(INavigationParameters parameters)
+        private void LoadUser()
         {
-            base.OnNavigatedTo(parameters);
-
-            if (parameters.ContainsKey("User"))
-            {
-                _user = parameters.GetValue<UserResponse>("User");
-                Title = $"Publications of {_user.FullName }";
-                Publications = new ObservableCollection<PublicationItemViewModel>(
-                    _user.Publications.Select(p => new PublicationItemViewModel(_navigationService) 
-                    {
-                        Author = p.Author,
-                        Body = p.Body,
-                        Date = p.Date,
-                        Footer = p.Footer,
-                        Header = p.Header,
-                        Id = p.Id,
-                        ImageDescription = p.ImageDescription,
-                        ImageUrl = p.ImageUrl,
-                        LastUpdate = p.LastUpdate,
-                        PublicationCategory = p.PublicationCategory,
-                        PublicationImages = p.PublicationImages,
-                        Title = p.Title,
-                        User = p.User
-                    }
-                    ).ToList());
-            }
+            _user = JsonConvert.DeserializeObject<UserResponse>(Settings.User);
+            Publications = new ObservableCollection<PublicationItemViewModel>(
+                _user.Publications.Select(p => new PublicationItemViewModel(_navigationService)
+                {
+                    Author = p.Author,
+                    Body = p.Body,
+                    Date = p.Date,
+                    Footer = p.Footer,
+                    Header = p.Header,
+                    Id = p.Id,
+                    ImageDescription = p.ImageDescription,
+                    ImageUrl = p.ImageUrl,
+                    LastUpdate = p.LastUpdate,
+                    PublicationCategory = p.PublicationCategory,
+                    PublicationImages = p.PublicationImages,
+                    Title = p.Title,
+                    User = p.User
+                }
+                ).ToList());
         }
     }
 }

@@ -426,7 +426,7 @@ namespace prensaestudiantil.Web.Controllers
                     "ResetPassword",
                     "Account",
                     new { token = myToken }, protocol: HttpContext.Request.Scheme);
-                _mailHelper.SendMail(model.Email, "Prensa Estudiantil - Password Reset", $"<h1>Prensa Esstudiantill Password Reset</h1>" +
+                _mailHelper.SendMail(model.Email, "Prensa Estudiantil - Password Reset", $"<h1>Prensa Estudiantill Password Reset</h1>" +
                     $"To reset the password click in this link:</br></br>" +
                     $"<a href = \"{link}\">Reset Password</a>");
 
@@ -462,7 +462,6 @@ namespace prensaestudiantil.Web.Controllers
             TempData["Error"] = "User not found.";
             return View(model);
         }
-
 
         private async Task AddOrRemoveFromRoleAsync(User user, string roleName)
         {

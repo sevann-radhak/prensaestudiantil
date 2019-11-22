@@ -5,7 +5,7 @@
              prism:ViewModelLocator.AutowireViewModel="True"
              xmlns:ffimageloading="clr-namespace:FFImageLoading.Forms;assembly=FFImageLoading.Forms"
              x:Class="prensaestudiantil.Prism.Views.PublicationsPage"
-             BackgroundColor="Silver"
+             BackgroundColor="{StaticResource ColorBackgroud}"
              Title="{Binding Title}">
 
     <StackLayout
@@ -28,7 +28,8 @@
 
                                 <Label 
                                     FontAttributes="Bold"
-                                    Text="{Binding Title}"/>
+                                    Text="{Binding Title}"
+                                    TextColor="{StaticResource ColorPrimary}"/>
                                 <Grid>
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="Auto" />
@@ -58,14 +59,17 @@
                                         <StackLayout
                                             Grid.Column="1">
                                             <Label 
-                                                Text="{Binding PublicationCategory}"/>
+                                                Text="{Binding PublicationCategory}"
+                                                TextColor="{StaticResource ColorSecondary}"/>
                                             <Label 
-                                                Text="{Binding DateLocal}"/>
+                                                Text="{Binding DateLocal}"
+                                                TextColor="{StaticResource ColorSecondary}"/>
                                         </StackLayout>
                                     </Grid>
                                     <Label 
                                         Grid.Row="1"
-                                        Text="{Binding Header}"/>
+                                        Text="{Binding Header}"
+                                        TextColor="{StaticResource ColorFont}"/>
                                 </Grid>
                             </StackLayout>
                         </Frame>
