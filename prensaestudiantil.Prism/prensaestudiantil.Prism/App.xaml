@@ -36,6 +36,9 @@
                 <Setter Property="TextColor" Value="{StaticResource ColorFont}" />
             </Style>
 
+            <Style x:Key="NamesLength" TargetType="Entry">
+                <Setter Property="MaxLength" Value="60" />
+            </Style>
 
         </ResourceDictionary>
 

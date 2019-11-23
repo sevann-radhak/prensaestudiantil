@@ -49,10 +49,11 @@ namespace prensaestudiantil.Prism
             containerRegistry.RegisterForNavigation<PublicationsPage, PublicationsPageViewModel>();
             containerRegistry.RegisterForNavigation<PublicationPage, PublicationPageViewModel>();
             containerRegistry.RegisterForNavigation<PrensaMasterDetailPage, PrensaMasterDetailPageViewModel>();
-            containerRegistry.RegisterForNavigation<ModifyUserPage, ModifyUserPageViewModel>();
             containerRegistry.RegisterForNavigation<RegisterUserPage, RegisterUserPageViewModel>();
             containerRegistry.RegisterForNavigation<UserPage, UserPageViewModel>();
             containerRegistry.RegisterForNavigation<RememberPasswordPage, RememberPasswordPageViewModel>();
+            containerRegistry.RegisterForNavigation<ChangePasswordPage, ChangePasswordPageViewModel>();
+            containerRegistry.RegisterForNavigation<ModifyUserPage, ModifyUserPageViewModel>();
         }
     }
 }

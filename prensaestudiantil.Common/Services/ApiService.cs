@@ -33,10 +33,9 @@ namespace prensaestudiantil.Common.Services
                 var response = await client.PostAsync(url, content);
                 var answer = await response.Content.ReadAsStringAsync();
                 var obj = JsonConvert.DeserializeObject<Response<object>>(answer);
-                return new Response<object>
-                {
-                    Message = obj.Message
-                };
+
+                return response.IsSuccessStatusCode ? new Response<object> { IsSuccess = true, Message = obj.Message }
+                : new Response<object> { IsSuccess = false, Message = obj.Message };
             }
             catch (Exception ex)
             {

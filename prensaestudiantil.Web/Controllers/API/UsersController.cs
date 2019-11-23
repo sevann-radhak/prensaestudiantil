@@ -35,6 +35,39 @@ namespace prensaestudiantil.Web.Controllers.API
         }
 
         [HttpPost]
+        [Route("ChangePassword")]
+        public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordRequest request)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var user = await _userHelper.GetUserByEmailAsync(request.Email);
+            if (user == null)
+            {
+                return BadRequest(new Response<object>
+                {
+                    Message = "This email is not assigned to any user."
+                });
+            }
+
+            var result = await _userHelper.ChangePasswordAsync(user, request.OldPassword, request.NewPassword);
+            if (!result.Succeeded)
+            {
+                return BadRequest(new Response<object>
+                {
+                    Message = result.Errors.FirstOrDefault().Description
+                });
+            }
+
+            return Ok(new Response<object>
+            {
+                Message = "The password was changed successfully!"
+            });
+        }
+
+        [HttpPost]
         [Route("GetUserByEmail")]
         public async Task<IActionResult> GetUserByEmailAsync(EmailRequest request)
         {

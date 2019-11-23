@@ -5,7 +5,7 @@
              prism:ViewModelLocator.AutowireViewModel="True"
              x:Class="prensaestudiantil.Prism.Views.ModifyUserPage"
              BackgroundColor="{StaticResource ColorBackgroud}"
-             Title="{Binding Title}">
+             Title ="{Binding Title}">
 
     <ScrollView>
         <AbsoluteLayout>
@@ -19,7 +19,7 @@
                     HorizontalOptions="FillAndExpand"
                     Style="{StaticResource SecondaryButton}"
                     Text="Register User" />
-                
+
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
@@ -32,8 +32,10 @@
                 	    Text="First Name"
                 	    VerticalOptions="Center"/>
                     <Entry
+                        Keyboard="Plain"
                 	    Grid.Row="0"
                 	    Grid.Column="1"
+                	    Style="{StaticResource NamesLength}"
                 	    Placeholder="First Name..."
                 	    Text="{Binding User.FirstName}"/>
 
@@ -45,6 +47,7 @@
                     <Entry
                 	    Grid.Row="1"
                 	    Grid.Column="1"
+                        MaxLength="60"
                 	    Placeholder="Last name..."
                 	    Text="{Binding User.LastName}"/>
 
@@ -84,6 +87,5 @@
                 IsRunning="{Binding IsRunning}"/>
         </AbsoluteLayout>
     </ScrollView>
-
 
 </ContentPage>

@@ -3,32 +3,40 @@ using prensaestudiantil.Common.Helpers;
 using prensaestudiantil.Common.Models;
 using prensaestudiantil.Common.Services;
 using Prism.Commands;
+using Prism.Mvvm;
 using Prism.Navigation;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace prensaestudiantil.Prism.ViewModels
 {
-    public class ModifyUserPageViewModel : ViewModelBase
+    public class ChangePasswordPageViewModel : ViewModelBase
     {
-        private bool _isRunning;
-        private bool _isEnabled;
-        private UserResponse _user;
         private readonly INavigationService _navigationService;
         private readonly IApiService _apiService;
+        private bool _isRunning;
+        private bool _isEnabled;
         private DelegateCommand _changePasswordCommand;
-        private DelegateCommand _registerUserCommand;
-        private DelegateCommand _saveCommand;
 
-        public ModifyUserPageViewModel(
+        public ChangePasswordPageViewModel(
             INavigationService navigationService,
             IApiService apiService) : base(navigationService)
         {
-            Title = "Modify User";
             _navigationService = navigationService;
             _apiService = apiService;
             IsEnabled = true;
-            User = JsonConvert.DeserializeObject<UserResponse>(Settings.User);
+            Title = "Change Password";
         }
+
+        public DelegateCommand ChangePasswordCommand => _changePasswordCommand ?? (_changePasswordCommand = new DelegateCommand(ChangePasswordAsync));
+
+        public string CurrentPassword { get; set; }
+
+        public string NewPassword { get; set; }
+
+        public string PasswordConfirm { get; set; }
 
         public bool IsRunning
         {
@@ -42,31 +50,9 @@ namespace prensaestudiantil.Prism.ViewModels
             set => SetProperty(ref _isEnabled, value);
         }
 
-        public DelegateCommand ChangePasswordCommand => _changePasswordCommand ?? (_changePasswordCommand = new DelegateCommand(ChangePasswordAsync));
-
-        public DelegateCommand RegisterUserCommand => _registerUserCommand ?? (_registerUserCommand = new DelegateCommand(RegisterUser));
-
-        public DelegateCommand SaveCommand => _saveCommand ?? (_saveCommand = new DelegateCommand(SaveAsync));
-
-        public UserResponse User
-        {
-            get => _user;
-            set => SetProperty(ref _user, value);
-        }
-
         private async void ChangePasswordAsync()
         {
-            await _navigationService.NavigateAsync("ChangePasswordPage");
-        }
-
-        private async void RegisterUser()
-        {
-            await _navigationService.NavigateAsync("RegisterUserPage");
-        }
-
-        private async void SaveAsync()
-        {
-            bool isValid = await ValidateDataAsync();
+            var isValid = await ValidateDataAsync();
             if (!isValid)
             {
                 return;
@@ -75,22 +61,22 @@ namespace prensaestudiantil.Prism.ViewModels
             IsRunning = true;
             IsEnabled = false;
 
-            UserRequest userRequest = new UserRequest
+            var user = JsonConvert.DeserializeObject<UserResponse>(Settings.User);
+            var token = JsonConvert.DeserializeObject<TokenResponse>(Settings.Token);
+
+            var request = new ChangePasswordRequest
             {
-                Email = User.Email,
-                FirstName = User.FirstName,
-                LastName = User.LastName,
-                Phone = User.PhoneNumber
+                Email = user.Email,
+                NewPassword = NewPassword,
+                OldPassword = CurrentPassword
             };
 
-            TokenResponse token = JsonConvert.DeserializeObject<TokenResponse>(Settings.Token);
-
-            string url = App.Current.Resources["UrlAPI"].ToString();
-            Response<object> response = await _apiService.PutAsync(
+            var url = App.Current.Resources["UrlAPI"].ToString();
+            var response = await _apiService.ChangePasswordAsync(
                 url,
                 "/api",
-                "/Users",
-                userRequest,
+                "/Users/ChangePassword",
+                request,
                 "bearer",
                 token.Token);
 
@@ -106,31 +92,48 @@ namespace prensaestudiantil.Prism.ViewModels
                 return;
             }
 
-            Settings.User = JsonConvert.SerializeObject(User);
-
             await App.Current.MainPage.DisplayAlert(
                 "Ok",
-                "User updated sucessfully.",
+                response.Message,
                 "Accept");
 
+            await _navigationService.GoBackAsync();
         }
 
         private async Task<bool> ValidateDataAsync()
         {
-            if (string.IsNullOrEmpty(User.FirstName))
+            if (string.IsNullOrEmpty(CurrentPassword))
             {
                 await App.Current.MainPage.DisplayAlert(
                     "Error",
-                    "You must to enter a first name.",
+                    "You must enter your current password.",
                     "Accept");
                 return false;
             }
 
-            if (string.IsNullOrEmpty(User.LastName))
+            if (string.IsNullOrEmpty(NewPassword) || NewPassword?.Length < 6)
             {
                 await App.Current.MainPage.DisplayAlert(
                     "Error",
-                    "You must to enter a last name.",
+                    "You must enter a new password at least 6 characters lenth.",
+                    "Accept");
+                return false;
+            }
+
+            if (string.IsNullOrEmpty(PasswordConfirm))
+            {
+                await App.Current.MainPage.DisplayAlert(
+                    "Error",
+                    "You must enter your a password confim.",
+                    "Accept");
+                return false;
+            }
+
+            if (!NewPassword.Equals(PasswordConfirm))
+            {
+                await App.Current.MainPage.DisplayAlert(
+                    "Error",
+                    "The password and confirmation does not match.",
                     "Accept");
                 return false;
             }
