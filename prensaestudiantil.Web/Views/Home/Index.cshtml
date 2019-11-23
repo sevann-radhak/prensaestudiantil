@@ -56,20 +56,18 @@
                 <img src="@item.ImageFullPath" alt="@item.Publication.Title" class="img-responsive" style="height:480px;width:720px;max-height: 100%; width: auto; margin: 0 auto;" />
                 <div class="carousel-caption" role="option">
                     <div class="border-radius" style="filter:alpha(opacity=55); opacity:0.5; background-color: black;">
-                        <p>
-                            <a asp-action="Details" asp-controller="Publications" asp-route-id="@item.Publication.Id" class="btn-link">
-                                <span class="tex" style="font-size: small; color: white">
-                                    @item.Description
-                                </span>
-                            </a>
-                        </p>
+                        <a asp-action="Details" asp-controller="Publications" asp-route-id="@item.Publication.Id" class="btn-link">
+                            <span class="tex" style="font-size: small; color: white">
+                                @item.Description
+                            </span>
+                        </a>
                     </div>
                 </div>
             </div>
 
             j++;
         }
-        
+
     </div>
     <a class="left carousel-control" href="#myCarousel" role="button" data-slide="prev">
         <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>

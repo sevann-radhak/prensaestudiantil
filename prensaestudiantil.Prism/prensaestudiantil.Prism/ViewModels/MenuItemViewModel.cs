@@ -1,4 +1,5 @@
-﻿using prensaestudiantil.Common.Models;
+﻿using prensaestudiantil.Common.Helpers;
+using prensaestudiantil.Common.Models;
 using Prism.Commands;
 using Prism.Navigation;
 
@@ -20,6 +21,7 @@ namespace prensaestudiantil.Prism.ViewModels
         {
             if (PageName.Equals("LoginPage"))
             {
+                Settings.IsRemembered = false;
                 await _navigationService.NavigateAsync("/NavigationPage/LoginPage");
                 return;
             }

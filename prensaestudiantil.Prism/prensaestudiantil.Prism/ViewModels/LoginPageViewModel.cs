@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using System;
+using Newtonsoft.Json;
 using prensaestudiantil.Common.Helpers;
 using prensaestudiantil.Common.Models;
 using prensaestudiantil.Common.Services;
@@ -15,6 +16,7 @@ namespace prensaestudiantil.Prism.ViewModels
         private bool _isRemember;
         private bool _isRunning;
         private string _password;
+        private DelegateCommand _forgotPasswordCommand;
         private DelegateCommand _loginCommand;
 
         public LoginPageViewModel(
@@ -28,8 +30,8 @@ namespace prensaestudiantil.Prism.ViewModels
             Title = "Login";
 
             // TODO: delete this lines
-            Email = "sevann.radhak@gmail.com";
-            Password = "123456";
+            //Email = "sevann.radhak@gmail.com";
+            //Password = "123456";
         }
 
         public string Email { get; set; }
@@ -52,6 +54,8 @@ namespace prensaestudiantil.Prism.ViewModels
             set => SetProperty(ref _isRunning, value);
         }
 
+        public DelegateCommand ForgotPasswordCommand => _forgotPasswordCommand ?? (_forgotPasswordCommand = new DelegateCommand(ForgotPassword));
+
         public DelegateCommand LoginCommand => _loginCommand ?? (_loginCommand = new DelegateCommand(Login));
 
         public string Password
@@ -59,6 +63,12 @@ namespace prensaestudiantil.Prism.ViewModels
             get => _password;
             set => SetProperty(ref _password, value);
         }
+        
+        private async void ForgotPassword()
+        {
+            await _navigationService.NavigateAsync("RememberPasswordPage");
+        }
+
 
         private async void Login()
         {
@@ -126,6 +136,7 @@ namespace prensaestudiantil.Prism.ViewModels
                 return;
             }
 
+            Settings.IsRemembered = IsRemember;
             Settings.User = JsonConvert.SerializeObject(responseUser.Result);
             Settings.Token = JsonConvert.SerializeObject(token);
 

@@ -359,7 +359,8 @@ namespace prensaestudiantil.Web.Controllers
                 var user = await _userHelper.GetUserByEmailAsync(model.Username);
                 if(user == null)
                 {
-                    return NotFound();
+                    ModelState.AddModelError(string.Empty, "User not found.");
+                    return View(model);
                 }
                 if (!user.IsEnabled)
                 {

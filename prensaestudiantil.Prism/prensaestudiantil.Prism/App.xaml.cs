@@ -5,6 +5,10 @@ using prensaestudiantil.Prism.Views;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 using prensaestudiantil.Common.Services;
+using Newtonsoft.Json;
+using prensaestudiantil.Common.Models;
+using prensaestudiantil.Common.Helpers;
+using System;
 
 [assembly: XamlCompilation(XamlCompilationOptions.Compile)]
 namespace prensaestudiantil.Prism
@@ -24,7 +28,16 @@ namespace prensaestudiantil.Prism
         {
             InitializeComponent();
 
-            await NavigationService.NavigateAsync("NavigationPage/LoginPage");
+            var token = JsonConvert.DeserializeObject<TokenResponse>(Settings.Token);
+            if (Settings.IsRemembered && token?.Expiration > DateTime.Now)
+            {
+                await NavigationService.NavigateAsync("/PrensaMasterDetailPage/NavigationPage/PublicationsPage");
+            }
+            else
+            {
+                await NavigationService.NavigateAsync("/NavigationPage/LoginPage");
+            }
+
         }
 
         protected override void RegisterTypes(IContainerRegistry containerRegistry)
@@ -36,8 +49,10 @@ namespace prensaestudiantil.Prism
             containerRegistry.RegisterForNavigation<PublicationsPage, PublicationsPageViewModel>();
             containerRegistry.RegisterForNavigation<PublicationPage, PublicationPageViewModel>();
             containerRegistry.RegisterForNavigation<PrensaMasterDetailPage, PrensaMasterDetailPageViewModel>();
-            containerRegistry.RegisterForNavigation<ModifyUsesrPage, ModifyUsesrPageViewModel>();
+            containerRegistry.RegisterForNavigation<ModifyUserPage, ModifyUserPageViewModel>();
             containerRegistry.RegisterForNavigation<RegisterUserPage, RegisterUserPageViewModel>();
+            containerRegistry.RegisterForNavigation<UserPage, UserPageViewModel>();
+            containerRegistry.RegisterForNavigation<RememberPasswordPage, RememberPasswordPageViewModel>();
         }
     }
 }

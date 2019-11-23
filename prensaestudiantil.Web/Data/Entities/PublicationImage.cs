@@ -15,8 +15,8 @@ namespace prensaestudiantil.Web.Data.Entities
         // TODO: Change the path when publish
         public string ImageFullPath => string.IsNullOrEmpty(ImageUrl)
             ? $"{string.Empty}"
-            : $"https://localhost:44348{ImageUrl.Substring(1)}";
-            //: $"https://prensaestudiantil.azurewebsites.net{ImageUrl.Substring(1)}";
+            //: $"https://localhost:44348{ImageUrl.Substring(1)}";
+            : $"https://prensaestudiantil.azurewebsites.net{ImageUrl.Substring(1)}";
 
         // Foreing key
         public Publication Publication { get; set; }

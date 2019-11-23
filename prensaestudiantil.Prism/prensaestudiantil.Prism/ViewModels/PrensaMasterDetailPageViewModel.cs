@@ -34,7 +34,7 @@ namespace prensaestudiantil.Prism.ViewModels
                 new Menu
                 {
                     Icon = "ic_person",
-                    PageName = "ModifyUsesrPage",
+                    PageName = "ModifyUserPage",
                     Title = "Modify User"
                 },
                 new Menu
