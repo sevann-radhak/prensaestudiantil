@@ -53,7 +53,7 @@ namespace prensaestudiantil.Web.Data.Entities
 
         // TODO: Change the path when publish in domain
         public string ImageFullPath => string.IsNullOrEmpty(ImageUrl)
-            ? $"{string.Empty}"
+            ? null
              : $"https://prensaestudiantil.azurewebsites.net{ImageUrl.Substring(1)}";
 
         [Display(Name = "User")]
@@ -62,10 +62,7 @@ namespace prensaestudiantil.Web.Data.Entities
         //TODO modify and fix the last update date
         //[Display(Name = "Modified")]
         //[DisplayFormat(DataFormatString = "{0:yyyy/MM/dd HH:mm:ss}", ApplyFormatInEditMode = true)]
-        //public DateTime LastUpdateLocal => LastUpdate == null ? null : DateTime.Now;
-        //string.IsNullOrEmpty(LastUpdate.ToString())
-        //? null
-        //: LastUpdate.Value.ToLocalTime();
+        //public DateTime LastUpdateLocal => LastUpdate ?? LastUpdate.Value.ToLocalTime();
 
         // Foreing keys
         public PublicationCategory PublicationCategory { get; set; }

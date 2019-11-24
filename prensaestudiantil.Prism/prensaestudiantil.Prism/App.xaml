@@ -17,7 +17,7 @@
             <Color x:Key="ColorDanger">#F25116</Color>
             <Color x:Key="ColorAccent">#048ABF</Color>
             <Color x:Key="ColorFont">#0D0D0D</Color>
-            <Color x:Key="ColorFontInverse">#A7C8F2</Color>
+            <Color x:Key="ColorFontInverse">#FFFFFF</Color>
 
             <!-- Styles -->
             <Style TargetType="Button">

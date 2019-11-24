@@ -103,8 +103,6 @@ namespace prensaestudiantil.Prism.ViewModels
             };
 
             await _navigationService.NavigateAsync("UserPage", parameters);
-
-            //await _navigationService.NavigateAsync("LoginPage");
         }
 
         private async Task<bool> ValidateData()

@@ -10,6 +10,12 @@
 
     <StackLayout
         Padding="10">
+        <Button 
+            Command="{Binding AddPublicationCommand}" 
+            IsEnabled="{Binding IsEnabled}"
+            HorizontalOptions="FillAndExpand"
+            Style="{StaticResource SecondaryButton}"
+            Text="Register User" />
         <ListView 
             BackgroundColor="Transparent"
             HasUnevenRows="True"
@@ -25,7 +31,6 @@
                                 <TapGestureRecognizer Command="{Binding SelectPublicationCommand}" />
                             </Frame.GestureRecognizers>
                             <StackLayout>
-
                                 <Label 
                                     FontAttributes="Bold"
                                     Text="{Binding Title}"

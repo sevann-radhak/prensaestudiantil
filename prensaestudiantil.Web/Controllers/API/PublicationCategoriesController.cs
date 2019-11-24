@@ -17,18 +17,18 @@ namespace prensaestudiantil.Web.Controllers.API
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class PublicationCategoriesController : ControllerBase
     {
-        private readonly DataContext _context;
+        private readonly DataContext _dataContext;
 
         public PublicationCategoriesController(DataContext context)
         {
-            _context = context;
+            _dataContext = context;
         }
 
         // GET: api/PublicationCategories
         [HttpGet]
         public IEnumerable<PublicationCategory> GetPublicationCategories()
         {
-            return _context.PublicationCategories.OrderBy(pc => pc.Name);
+            return _dataContext.PublicationCategories.OrderBy(pc => pc.Name);
         }
 
         //// GET: api/PublicationCategories/5

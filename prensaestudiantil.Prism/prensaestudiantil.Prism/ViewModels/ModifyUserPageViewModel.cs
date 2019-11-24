@@ -106,7 +106,7 @@ namespace prensaestudiantil.Prism.ViewModels
                 return;
             }
 
-            Settings.User = JsonConvert.SerializeObject(User);
+            Settings.User = JsonConvert.SerializeObject(response.Result);
 
             await App.Current.MainPage.DisplayAlert(
                 "Ok",

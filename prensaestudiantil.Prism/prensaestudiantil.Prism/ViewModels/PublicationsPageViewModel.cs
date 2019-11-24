@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using prensaestudiantil.Common.Helpers;
 using prensaestudiantil.Common.Models;
+using prensaestudiantil.Common.Services;
 using Prism.Commands;
 using Prism.Mvvm;
 using Prism.Navigation;
@@ -13,16 +14,29 @@ namespace prensaestudiantil.Prism.ViewModels
 {
     public class PublicationsPageViewModel : ViewModelBase
     {
+        private bool _isRunning;
         private readonly INavigationService _navigationService;
-        private UserResponse _user;
+        private readonly IApiService _apiService;
+        private DelegateCommand _addPublicationCommand;
         private ObservableCollection<PublicationItemViewModel> _publications;
 
-        public PublicationsPageViewModel(INavigationService navigationService) : base(navigationService)
+        public PublicationsPageViewModel(
+            INavigationService navigationService,
+            IApiService apiService) : base(navigationService)
         {
             _navigationService = navigationService;
-            LoadUser();
-            Title = "My Publications";
+            _apiService = apiService;
+            LoadPublications();
+            Title = "Publications";
         }
+
+        public bool IsRunning
+        {
+            get => _isRunning;
+            set => SetProperty(ref _isRunning, value);
+        }
+        public DelegateCommand AddPublicationCommand => _addPublicationCommand ?? (_addPublicationCommand = new DelegateCommand(AddPublicationAsync));
+
 
         public ObservableCollection<PublicationItemViewModel> Publications
         {
@@ -30,11 +44,33 @@ namespace prensaestudiantil.Prism.ViewModels
             set => SetProperty(ref _publications, value);
         }
 
-        private void LoadUser()
+        private async void AddPublicationAsync()
         {
-            _user = JsonConvert.DeserializeObject<UserResponse>(Settings.User);
+            await _navigationService.NavigateAsync("AddPublicationPage");
+        }
+        private async void LoadPublications()
+        {
+            IsRunning = true;
+            TokenResponse token = JsonConvert.DeserializeObject<TokenResponse>(Settings.Token);
+            string url = App.Current.Resources["UrlAPI"].ToString();
+            Response<PublicationsResponse> response = await _apiService.GetPublicationsAsync(
+                url,
+                "/api",
+                "/Publications",
+                "bearer",
+                token.Token);
+
+            if (!response.IsSuccess)
+            {
+                await App.Current.MainPage.DisplayAlert(
+                    "Error",
+                    response.Message,
+                    "Accept");
+                return;
+            }
+
             Publications = new ObservableCollection<PublicationItemViewModel>(
-                _user.Publications.Select(p => new PublicationItemViewModel(_navigationService)
+                response.Result.Publications?.Select(p => new PublicationItemViewModel(_navigationService)
                 {
                     Author = p.Author,
                     Body = p.Body,

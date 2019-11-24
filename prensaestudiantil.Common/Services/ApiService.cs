@@ -151,6 +151,53 @@ namespace prensaestudiantil.Common.Services
             }
         }
 
+        public async Task<Response<PublicationsResponse>> GetPublicationsAsync(
+            string urlBase,
+            string servicePrefix,
+            string controller,
+            //T model,
+            string tokenType,
+            string accessToken)
+        {
+            try
+            {
+                //var request = JsonConvert.SerializeObject(model);
+                //var content = new StringContent(request, Encoding.UTF8, "application/json");
+                var client = new HttpClient
+                {
+                    BaseAddress = new Uri(urlBase)
+                };
+
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(tokenType, accessToken);
+                string url = $"{servicePrefix}{controller}";
+                HttpResponseMessage response = await client.GetAsync(url); //PostAsync(url, content);
+                string result = await response.Content.ReadAsStringAsync();
+                
+                if (!response.IsSuccessStatusCode)
+                {
+                    return new Response<PublicationsResponse>
+                    {
+                        IsSuccess = false,
+                        Message = result,
+                    };
+                }
+
+                return new Response<PublicationsResponse>
+                {
+                    IsSuccess = true,
+                    Result = JsonConvert.DeserializeObject<PublicationsResponse>(result),
+                };
+            }
+            catch (Exception ex)
+            {
+                return new Response<PublicationsResponse>
+                {
+                    IsSuccess = false,
+                    Message = ex.Message,
+                };
+            }
+        }
+
         public async Task<Response<object>> PutAsync<T>(
             string urlBase,
             string servicePrefix,
@@ -230,7 +277,6 @@ namespace prensaestudiantil.Common.Services
                 };
             }
         }
-
 
         public async Task<Response<UserResponse>> RegisterUserAsync(
             string urlBase,

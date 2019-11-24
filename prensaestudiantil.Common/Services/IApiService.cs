@@ -16,6 +16,14 @@ namespace prensaestudiantil.Common.Services
 
         Task<bool> CheckConnectionAsync(string url);
 
+        Task<Response<PublicationsResponse>> GetPublicationsAsync(
+            string urlBase,
+            string servicePrefix,
+            string controller,
+            //T model,
+            string tokenType,
+            string accessToken);
+
         Task<Response<TokenResponse>> GetTokenAsync(string urlBase, string servicePrefix, string controller, TokenRequest request);
 
         Task<Response<UserResponse>> GetUserByEmailAsync(string urlBase, string servicePrefix, string controller, string tokenType, string accessToken, string email);
