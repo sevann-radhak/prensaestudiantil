@@ -20,18 +20,33 @@ namespace prensaestudiantil.Web.Controllers
         }
         public async Task<IActionResult> Index()
         {
-            return View( await _dataContext.PublicationImages
-                .Include(pi => pi.Publication)
-                .OrderByDescending(pi => pi.Id)
+            return View(new MainIndexViewModel
+            {
+                PublicationImages = _dataContext.PublicationImages.Take(10).ToList(),
+                Publications = await _dataContext.Publications
+                    .Include(p => p.PublicationCategory)
+                    .OrderByDescending(p => p.Date)
+                    .Take(200).ToListAsync(),
+                OpinionPublications = await _dataContext.Publications
+                    .Include(p => p.PublicationCategory)
+                    .Where(p => p.PublicationCategory.Name == "Opinión")
+                    .OrderByDescending(p => p.Date)
+                    .Take(3).ToListAsync(),
+                YoutubeVideos = await _dataContext.YoutubeVideos
+                .OrderByDescending(y => y.Id)
                 .Take(10)
-                .ToListAsync());
+                .ToListAsync()
+            });
         }
 
-        public IActionResult About()
+        public async Task<IActionResult> Search()
         {
-            ViewData["Message"] = "Your application description page.";
-
-            return View();
+            return View(await _dataContext.Publications
+                .Include(p => p.User)
+                .Include(p => p.PublicationCategory)
+                .OrderByDescending(p => p.Date)
+                .Take(500)
+                .ToListAsync());
         }
 
         public IActionResult Contact()
