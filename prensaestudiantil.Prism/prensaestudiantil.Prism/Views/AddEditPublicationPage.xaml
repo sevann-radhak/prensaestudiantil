@@ -6,7 +6,7 @@
              xmlns:ffimageloading="clr-namespace:FFImageLoading.Forms;assembly=FFImageLoading.Forms"
              x:Class="prensaestudiantil.Prism.Views.AddEditPublicationPage"
              BackgroundColor="{StaticResource ColorBackgroud}"
-             Title ="Publications Manager">
+             Title ="{Binding Title}">
 
     <ScrollView>
         <AbsoluteLayout>
@@ -20,7 +20,6 @@
 	                CacheDuration= "50"
 	                DownsampleToViewSize = "true"
 	                ErrorPlaceholder= "ErrorImage"
-                    HeightRequest="150"
 	                LoadingPlaceholder= "LoaderImage"
 	                RetryDelay= "600"
 	                RetryCount= "3"

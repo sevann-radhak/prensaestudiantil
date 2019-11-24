@@ -40,6 +40,8 @@ namespace prensaestudiantil.Common.Models
         [Display(Name = "Main Image")]
         public string ImageUrl { get; set; }
 
+        public byte[] ImageArray { get; set; }
+
         [Display(Name = "Image Description")]
         [MaxLength(150, ErrorMessage = "The {0} field can not have more than {1} characters.")]
         public string ImageDescription { get; set; }

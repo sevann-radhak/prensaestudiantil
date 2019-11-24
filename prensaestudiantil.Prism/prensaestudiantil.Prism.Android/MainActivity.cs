@@ -2,7 +2,10 @@
 using Android.Content.PM;
 using Android.OS;
 using Prism;
-using Prism.Ioc;
+using Prism.Ioc;    
+using Android.Runtime;
+using Plugin.CurrentActivity;
+using Plugin.Permissions;
 
 namespace prensaestudiantil.Prism.Droid
 {
@@ -19,10 +22,21 @@ namespace prensaestudiantil.Prism.Droid
             ToolbarResource = Resource.Layout.Toolbar;
 
             base.OnCreate(bundle);
+            CrossCurrentActivity.Current.Init(this, bundle);
 
             global::Xamarin.Forms.Forms.Init(this, bundle);
             FFImageLoading.Forms.Platform.CachedImageRenderer.Init(true);
             LoadApplication(new App(new AndroidInitializer()));
+        }
+        public override void OnRequestPermissionsResult(
+            int requestCode,
+            string[] permissions,
+            [GeneratedEnum] Permission[] grantResults)
+        {
+            PermissionsImplementation.Current.OnRequestPermissionsResult(
+                requestCode,
+                permissions,
+                grantResults);
         }
     }
 

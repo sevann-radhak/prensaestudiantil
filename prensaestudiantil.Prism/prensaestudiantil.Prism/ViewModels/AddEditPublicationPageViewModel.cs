@@ -1,7 +1,10 @@
 ﻿using Newtonsoft.Json;
+using Plugin.Media;
+using Plugin.Media.Abstractions;
 using prensaestudiantil.Common.Helpers;
 using prensaestudiantil.Common.Models;
 using prensaestudiantil.Common.Services;
+using prensaestudiantil.Prism.Helpers;
 using Prism.Commands;
 using Prism.Navigation;
 using System;
@@ -18,18 +21,19 @@ namespace prensaestudiantil.Prism.ViewModels
         private readonly INavigationService _navigationService;
         private readonly IApiService _apiService;
         private DateTime _date;
-        private ImageSource _imageSource;
-        private PublicationResponse _publication;
-        private UserResponse _user;
-        private bool _isRunning;
-        private bool _isEnabled;
-        private bool _isEdit;
         private DelegateCommand _editPublicationCommand;
+        private MediaFile _file;
+        private DelegateCommand _changeImageCommand;
+
+        private ImageSource _imageSource;
+        private bool _isEdit;
+        private bool _isEnabled;
+        private bool _isRunning;
+        private PublicationResponse _publication;
         private ObservableCollection<PublicationCategoryResponse> _publicationCategories;
         private PublicationCategoryResponse _publicationCategory;
-
-        //private UserResponse _user;
-        //private DelegateCommand _saveCommand;
+        private DelegateCommand _saveCommand;
+        private UserResponse _user;
 
         public AddEditPublicationPageViewModel(
             INavigationService navigationService,
@@ -41,9 +45,9 @@ namespace prensaestudiantil.Prism.ViewModels
             IsEnabled = true;
         }
 
+        public DelegateCommand ChangeImageCommand => _changeImageCommand ?? (_changeImageCommand = new DelegateCommand(ChangeImageAsync));
 
-
-        public DelegateCommand EitPublicationCommand => _editPublicationCommand ?? (_editPublicationCommand = new DelegateCommand(EitPublicationAsync));
+        public DelegateCommand EitPublicationCommand => _editPublicationCommand ?? (_editPublicationCommand = new DelegateCommand(ChangeImageAsync));
         
         public ObservableCollection<PublicationCategoryResponse> PublicationCategories
         {
@@ -57,25 +61,25 @@ namespace prensaestudiantil.Prism.ViewModels
             set => SetProperty(ref _publicationCategory, value);
         }
 
-        public int Id { get; set; }
+        //public int Id { get; set; }
 
-        public string Title { get; set; }
+        //public string Title { get; set; }
 
-        public string Header { get; set; }
+        //public string Header { get; set; }
 
-        public string Body { get; set; }
+        //public string Body { get; set; }
 
-        public string Footer { get; set; }
+        //public string Footer { get; set; }
 
-        public string ImageUrl { get; set; }
+        //public string ImageUrl { get; set; }
 
-        public string ImageDescription { get; set; }
+        //public string ImageDescription { get; set; }
 
-        public string Author { get; set; }
+        //public string Author { get; set; }
 
-        public string UserId { get; set; }
+        //public string UserId { get; set; }
 
-        public int PublicationCategoryId { get; set; }
+        //public int PublicationCategoryId { get; set; }
 
         public bool IsEdit
         {
@@ -113,13 +117,7 @@ namespace prensaestudiantil.Prism.ViewModels
             set => SetProperty(ref _publication, value);
         }
 
-        public UserResponse User
-        {
-            get => _user;
-            set => SetProperty(ref _user, value);
-        }
-
-        //public DelegateCommand SaveCommand => _saveCommand ?? (_saveCommand = new DelegateCommand(SaveAsync));
+        public DelegateCommand SaveCommand => _saveCommand ?? (_saveCommand = new DelegateCommand(SaveAsync));
 
         public override void OnNavigatedTo(INavigationParameters parameters)
         {
@@ -141,11 +139,56 @@ namespace prensaestudiantil.Prism.ViewModels
 
             LoadPublicationCategoriesAsync();
         }
-        
-        private void EitPublicationAsync()
+
+        public UserResponse User
         {
-            throw new NotImplementedException();
+            get => _user;
+            set => SetProperty(ref _user, value);
         }
+
+        private async void ChangeImageAsync()
+        {
+            await CrossMedia.Current.Initialize();
+
+            var source = await Application.Current.MainPage.DisplayActionSheet(
+                "Where do you want to get the picture?",
+                "Cancel",
+                null,
+                "From gallery",
+                "From camera");
+
+            if (source == "Cancel")
+            {
+                _file = null;
+                return;
+            }
+
+            if (source == "From camera")
+            {
+                _file = await CrossMedia.Current.TakePhotoAsync(
+                    new StoreCameraMediaOptions
+                    {
+                        Directory = "Sample",
+                        Name = "test.jpg",
+                        PhotoSize = PhotoSize.Small,
+                    }
+                );
+            }
+            else
+            {
+                _file = await CrossMedia.Current.PickPhotoAsync();
+            }
+
+            if (_file != null)
+            {
+                ImageSource = ImageSource.FromStream(() =>
+                {
+                    var stream = _file.GetStream();
+                    return stream;
+                });
+            }
+        }
+
         private async void LoadPublicationCategoriesAsync()
         {
             var url = App.Current.Resources["UrlAPI"].ToString();
@@ -176,56 +219,76 @@ namespace prensaestudiantil.Prism.ViewModels
                 return;
             }
 
-            //IsRunning = true;
-            //IsEnabled = false;
+            IsRunning = true;
+            IsEnabled = false;
 
-            //PublicationRequest request = new PublicationRequest
-            //{
-            //    Author = Author,
-            //    Body = Body,
-            //    Date = DateTime.Now.ToUniversalTime(),
-            //    Footer = Footer,
-            //    Header = Header,
-            //    Id = _isNew ? 0 : Id,
-            //    ImageDescription = ImageDescription,
-            //    //ImageUrl = null,
-            //    PublicationCategoryId = PublicationCategoryId,
-            //    Title = Title,
-            //    UserId = User.Id
-            //};
+            PublicationRequest request = new PublicationRequest
+            {
+                Author = Publication.Author,
+                Body = Publication.Body,
+                Date = DateTime.Now.ToUniversalTime(),
+                Footer = Publication.Footer,
+                Header = Publication.Header,
+                Id = IsEdit ? Publication.Id : 0,
+                ImageDescription = Publication.ImageDescription,
+                //ImageUrl = null,
+                ImageArray = _file != null ? FilesHelper.ReadFully(_file.GetStream()) : null,
+                PublicationCategoryId = PublicationCategory.Id,
+                Title = Publication.Title,
+                UserId = User.Id
+            };
 
-            //TokenResponse token = JsonConvert.DeserializeObject<TokenResponse>(Settings.Token);
+            TokenResponse token = JsonConvert.DeserializeObject<TokenResponse>(Settings.Token);
 
-            //string url = App.Current.Resources["UrlAPI"].ToString();
-            //Response<object> response = await _apiService.PutAsync(
-            //    url,
-            //    "/api",
-            //    "/Publications",
-            //    request,
-            //    "bearer",
-            //    token.Token);
+            string url = App.Current.Resources["UrlAPI"].ToString();
+            
+            Response<object> response;
+            if (IsEdit)
+            {
+                response = await _apiService.PutAsync(
+                url,
+                "/api",
+                "/Publications",
+                request,
+                "bearer",
+                token.Token);
+            }
+            else
+            {
+                response = await _apiService.PostAsync(
+                url,
+                "/api",
+                "/Publications",
+                request,
+                "bearer",
+                token.Token);
+            }                
 
-            //IsRunning = false;
-            //IsEnabled = true;
+            IsRunning = false;
+            IsEnabled = true;
 
-            //if (!response.IsSuccess)
-            //{
-            //    await App.Current.MainPage.DisplayAlert(
-            //        "Error",
-            //        response.Message,
-            //        "Accept");
-            //    return;
-            //}
+            if (!response.IsSuccess)
+            {
+                await App.Current.MainPage.DisplayAlert(
+                    "Error",
+                    response.Message,
+                    "Accept");
+                return;
+            }
 
-            //await App.Current.MainPage.DisplayAlert(
-            //    "Ok",
-            //    "Publication updated sucessfully.",
-            //    "Accept");
+            await App.Current.MainPage.DisplayAlert(
+                "Ok",
+                "Info saved sucessfully.",
+                "Accept");
+
+            await PublicationsPageViewModel.GetInstance().UpdatePublications();
+
+            await _navigationService.NavigateAsync("PublicationsPage");
         }
 
         private async Task<bool> ValidateDataAsync()
         {
-            if (string.IsNullOrEmpty(Title))
+            if (string.IsNullOrEmpty(Publication.Title))
             {
                 await App.Current.MainPage.DisplayAlert(
                     "Error",
@@ -234,11 +297,20 @@ namespace prensaestudiantil.Prism.ViewModels
                 return false;
             }
 
-            if (string.IsNullOrEmpty(Header))
+            if (string.IsNullOrEmpty(Publication.Header))
             {
                 await App.Current.MainPage.DisplayAlert(
                     "Error",
                     "You must to enter a Header.",
+                    "Accept");
+                return false;
+            }
+
+            if (PublicationCategory == null)
+            {
+                await App.Current.MainPage.DisplayAlert(
+                    "Error",
+                    "You must to select a Category.",
                     "Accept");
                 return false;
             }

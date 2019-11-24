@@ -6,6 +6,7 @@ using Prism.Commands;
 using Prism.Navigation;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace prensaestudiantil.Prism.ViewModels
 {
@@ -16,16 +17,27 @@ namespace prensaestudiantil.Prism.ViewModels
         private readonly IApiService _apiService;
         private DelegateCommand _addEditPublicationCommand;
         private ObservableCollection<PublicationItemViewModel> _publications;
+        private static PublicationsPageViewModel _instance;
 
         public PublicationsPageViewModel(
             INavigationService navigationService,
             IApiService apiService) : base(navigationService)
         {
+            _instance = this;
             _navigationService = navigationService;
             _apiService = apiService;
             LoadPublications();
             Title = "Publications";
         }
+        public static PublicationsPageViewModel GetInstance()
+        {
+            return _instance;
+        }
+        public async Task UpdatePublications()
+        {
+            LoadPublications();
+        }
+
 
         public bool IsRunning
         {
