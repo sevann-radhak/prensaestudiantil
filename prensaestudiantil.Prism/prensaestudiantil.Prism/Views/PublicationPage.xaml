@@ -8,54 +8,60 @@
              BackgroundColor="{StaticResource ColorBackgroud}"
              Title="{Binding Title}">
 
-    <ScrollView>
-        <StackLayout
+    <StackLayout
         Padding="10">
-            <Label 
+        <ScrollView>
+            <StackLayout>
+                <Label 
                 FontAttributes="Bold"
                 Text="{Binding Publication.Title}"
                 TextColor="{StaticResource ColorPrimary}"/>
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                </Grid.RowDefinitions>
-                <Label       
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <Label       
                     FontAttributes="Bold"      
                     Grid.Column="0"
                     Text="{Binding Publication.DateLocal}"
                     TextColor="{StaticResource ColorSecondary}"/>
-                <Label 
+                    <Label 
                     Grid.Column="1"
                     Text="{Binding Publication.PublicationCategory}"
                     TextColor="{StaticResource ColorSecondary}"/>
-            </Grid>
-            <ffimageloading:CachedImage
-                Aspect="AspectFit" 
-	            CacheDuration= "50"
-	            DownsampleToViewSize = "true"
-	            ErrorPlaceholder= "ErrorImage"
-	            Grid.Column="0"
-                HeightRequest="300"
-	            LoadingPlaceholder= "LoaderImage"
-	            RetryDelay= "600"
-	            RetryCount= "3"
-	            Source="{Binding Publication.ImageUrl}"/>
+                </Grid>
+                <ffimageloading:CachedImage
+                    Aspect="AspectFit" 
+	                CacheDuration= "50"
+	                DownsampleToViewSize = "true"
+	                ErrorPlaceholder= "ErrorImage"
+	                Grid.Column="0"
+                    HeightRequest="300"
+	                LoadingPlaceholder= "LoaderImage"
+	                RetryDelay= "600"
+	                RetryCount= "3"
+	                Source="{Binding Publication.ImageUrl}"/>
 
-            <Label 
+                <Label 
                 Text="{Binding Publication.Header}"
                 TextColor="{StaticResource ColorFont}"/>
-            <Label 
+                <Label 
                 Text="{Binding Publication.Body}"
                 TextColor="{StaticResource ColorFont}"/>
-            <Label 
+                <Label 
                 Text="{Binding Publication.Footer}"
                 TextColor="{StaticResource ColorSecondary}"/>
-        </StackLayout>
+            </StackLayout>
 
-    </ScrollView>
+        </ScrollView>
+        <Button
+            Command="{Binding EditPublicationCommand}"
+            Style="{StaticResource SecondaryButton}"
+            Text="Edit"/>
+    </StackLayout>
 
 </ContentPage>

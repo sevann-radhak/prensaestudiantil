@@ -3,10 +3,7 @@ using prensaestudiantil.Common.Helpers;
 using prensaestudiantil.Common.Models;
 using prensaestudiantil.Common.Services;
 using Prism.Commands;
-using Prism.Mvvm;
 using Prism.Navigation;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 
@@ -17,7 +14,7 @@ namespace prensaestudiantil.Prism.ViewModels
         private bool _isRunning;
         private readonly INavigationService _navigationService;
         private readonly IApiService _apiService;
-        private DelegateCommand _addPublicationCommand;
+        private DelegateCommand _addEditPublicationCommand;
         private ObservableCollection<PublicationItemViewModel> _publications;
 
         public PublicationsPageViewModel(
@@ -35,7 +32,7 @@ namespace prensaestudiantil.Prism.ViewModels
             get => _isRunning;
             set => SetProperty(ref _isRunning, value);
         }
-        public DelegateCommand AddPublicationCommand => _addPublicationCommand ?? (_addPublicationCommand = new DelegateCommand(AddPublicationAsync));
+        public DelegateCommand AddEditPublicationCommand => _addEditPublicationCommand ?? (_addEditPublicationCommand = new DelegateCommand(AddEditPublicationAsync));
 
 
         public ObservableCollection<PublicationItemViewModel> Publications
@@ -44,10 +41,11 @@ namespace prensaestudiantil.Prism.ViewModels
             set => SetProperty(ref _publications, value);
         }
 
-        private async void AddPublicationAsync()
+        private async void AddEditPublicationAsync()
         {
-            await _navigationService.NavigateAsync("AddPublicationPage");
+            await _navigationService.NavigateAsync("AddEditPublicationPage");
         }
+
         private async void LoadPublications()
         {
             IsRunning = true;

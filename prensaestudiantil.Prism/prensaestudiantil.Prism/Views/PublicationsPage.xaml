@@ -7,15 +7,18 @@
              x:Class="prensaestudiantil.Prism.Views.PublicationsPage"
              BackgroundColor="{StaticResource ColorBackgroud}"
              Title="{Binding Title}">
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Icon="ic_action_add_circle_outline" Command="{Binding AddEditPublicationCommand}"/>
+    </ContentPage.ToolbarItems>
 
     <StackLayout
         Padding="10">
-        <Button 
+        <!--<Button 
             Command="{Binding AddPublicationCommand}" 
             IsEnabled="{Binding IsEnabled}"
             HorizontalOptions="FillAndExpand"
             Style="{StaticResource SecondaryButton}"
-            Text="Register User" />
+            Text="Add Publication" />-->
         <ListView 
             BackgroundColor="Transparent"
             HasUnevenRows="True"

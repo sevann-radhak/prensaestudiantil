@@ -1,0 +1,163 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:prism="http://prismlibrary.com"
+             prism:ViewModelLocator.AutowireViewModel="True"
+             xmlns:ffimageloading="clr-namespace:FFImageLoading.Forms;assembly=FFImageLoading.Forms"
+             x:Class="prensaestudiantil.Prism.Views.AddEditPublicationPage"
+             BackgroundColor="{StaticResource ColorBackgroud}"
+             Title ="Publications Manager">
+
+    <ScrollView>
+        <AbsoluteLayout>
+            <StackLayout
+            	AbsoluteLayout.LayoutBounds="0,0,1,1"
+            	AbsoluteLayout.LayoutFlags="All"
+            	Padding="10">
+
+                <ffimageloading:CachedImage
+                    Aspect="AspectFit" 
+	                CacheDuration= "50"
+	                DownsampleToViewSize = "true"
+	                ErrorPlaceholder= "ErrorImage"
+                    HeightRequest="150"
+	                LoadingPlaceholder= "LoaderImage"
+	                RetryDelay= "600"
+	                RetryCount= "3"
+	                Source="{Binding ImageSource}">
+                    <ffimageloading:CachedImage.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding ChangeImageCommand}"/>
+                    </ffimageloading:CachedImage.GestureRecognizers>
+                </ffimageloading:CachedImage>
+
+                <Label
+            	    FontSize="Micro"
+            	    HorizontalOptions="Center"
+            	    Text="Tap to Change Image"/>
+
+                <StackLayout
+	                HorizontalOptions="Center"
+	                Orientation="Horizontal">
+
+                    <Button
+    	                Command="{Binding AddImageCommand}"
+    	                IsVisible="{Binding IsEdit}"
+    	                Text="Add Image"/>
+
+                    <Button
+    	                Command="{Binding DeleteImageCommand}"
+    	                IsVisible="{Binding IsEdit}"
+    	                Style="{StaticResource DangerButton}"
+    	                Text="Delete Image"/>
+                </StackLayout>
+
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <Label
+                    	Grid.Row="0"
+                    	Grid.Column="0"
+                    	Text="Title"
+                    	VerticalOptions="Center"/>
+                    <Editor
+                    	Grid.Row="0"
+                    	Grid.Column="1" 
+                    	Placeholder="Enter a Title..."
+                    	Text="{Binding Publication.Title}"/>
+
+                    <Label
+                    	Grid.Row="1"
+                    	Grid.Column="0"
+                    	Text="Header"
+                    	VerticalOptions="Center"/>
+                    <Editor
+                    	Grid.Row="1"
+                    	Grid.Column="1"
+                        HeightRequest="150"
+                    	Placeholder="Enter the Header"
+                    	Text="{Binding Publication.Header}"></Editor>
+
+                    <Label
+                    	Grid.Row="2"
+                    	Grid.Column="0"
+                    	Text="Body"
+                    	VerticalOptions="Center"/>
+                    <Editor
+                    	Grid.Row="2"
+                    	Grid.Column="1"
+                        HeightRequest="300"
+                    	Placeholder="Enter the Body"
+                    	Text="{Binding Publication.Body}"/>
+
+                    <!--<Label
+                    	Grid.Row="3"
+                    	Grid.Column="0"
+                    	Text="Category"
+                    	VerticalOptions="Center"/>
+                    <Entry
+                    	Grid.Row="3"
+                    	Grid.Column="1"
+                        Keyboard="Telephone"
+                    	Placeholder="Select the Category"
+                    	Text="{Binding Publication.Category"/>-->
+
+                    <Label
+                	    Grid.Column="0"
+                	    Grid.Row="4"
+                	    Text="Category"
+                	    VerticalOptions="Center"/>
+
+                    <Picker
+                	    Grid.Column="1"
+                	    Grid.Row="4"
+                	    ItemDisplayBinding="{Binding Name}"
+                	    ItemsSource="{Binding PublicationCategories}"
+                	    SelectedItem="{Binding PublicationCategory}"
+                	    Title="Select a category"/>
+
+                    <Label
+                    	Grid.Row="5"
+                    	Grid.Column="0"
+                    	Text="Footer"
+                    	VerticalOptions="Center"/>
+                    <Editor
+                    	Grid.Row="5"
+                    	Grid.Column="1"
+                    	Placeholder="Enter the Footer"
+                    	Text="{Binding Publication.Footer}"/>
+                </Grid>
+                <StackLayout
+                    Orientation="Horizontal"
+                	VerticalOptions="EndAndExpand">
+                    <Button
+                	    Command="{Binding DeleteCommand}"
+                	    IsEnabled="{Binding IsEnabled}"
+                        IsVisible="{Binding IsEdit}"
+                        Style="{StaticResource DangerButton}"
+                	    Text="Delete"/>
+                    <Button
+                	    Command="{Binding SaveCommand}"
+                	    IsEnabled="{Binding IsEnabled}"
+                	    Text="Save"/>
+                </StackLayout>
+            </StackLayout>
+
+            <ActivityIndicator 
+                AbsoluteLayout.LayoutBounds=".5,.5,.1,.5"
+                AbsoluteLayout.LayoutFlags="All"
+                IsRunning="{Binding IsRunning}"/>
+        </AbsoluteLayout>
+    </ScrollView>
+
+</ContentPage>

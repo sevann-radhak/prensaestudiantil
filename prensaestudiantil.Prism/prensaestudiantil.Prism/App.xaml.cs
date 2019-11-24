@@ -54,6 +54,7 @@ namespace prensaestudiantil.Prism
             containerRegistry.RegisterForNavigation<RememberPasswordPage, RememberPasswordPageViewModel>();
             containerRegistry.RegisterForNavigation<ChangePasswordPage, ChangePasswordPageViewModel>();
             containerRegistry.RegisterForNavigation<ModifyUserPage, ModifyUserPageViewModel>();
+            containerRegistry.RegisterForNavigation<AddEditPublicationPage, AddEditPublicationPageViewModel>();
         }
     }
 }

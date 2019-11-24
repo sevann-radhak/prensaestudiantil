@@ -10,13 +10,18 @@ namespace prensaestudiantil.Prism.ViewModels
 {
     public class PublicationPageViewModel : ViewModelBase
     {
+        private readonly INavigationService _navigationService;
         private PublicationResponse _publication;
+        private DelegateCommand _editPublicationCommand;
 
         public PublicationPageViewModel(INavigationService navigationService)
             : base(navigationService)
         {
             Title = "Publication";
+            _navigationService = navigationService;
         }
+
+        public DelegateCommand EditPublicationCommand => _editPublicationCommand ?? (_editPublicationCommand = new DelegateCommand(EditPublicationAsync));
 
         public PublicationResponse Publication
         {
@@ -33,6 +38,12 @@ namespace prensaestudiantil.Prism.ViewModels
                 Publication = parameters.GetValue<PublicationResponse>("publication");
                 Title = Publication.Title;
             }
+        }
+
+        private async void EditPublicationAsync()
+        {
+            var parameters = new NavigationParameters { { "publication", Publication } };
+            await _navigationService.NavigateAsync("AddEditPublicationPage", parameters);
         }
     }
 }

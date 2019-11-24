@@ -16,12 +16,18 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="Views\AddEditPublicationPage.xaml.cs">
+      <DependentUpon>AddEditPublicationPage.xaml</DependentUpon>
+    </Compile>
     <Compile Update="Views\PublicationsPage.xaml.cs">
       <DependentUpon>PublicationsPage.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Update="Views\AddEditPublicationPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
     <EmbeddedResource Update="Views\ChangePasswordPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>

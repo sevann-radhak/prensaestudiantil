@@ -48,11 +48,11 @@ namespace prensaestudiantil.Prism.ViewModels
 
         public DelegateCommand SaveCommand => _saveCommand ?? (_saveCommand = new DelegateCommand(SaveAsync));
 
-        public UserResponse User
-        {
-            get => _user;
-            set => SetProperty(ref _user, value);
-        }
+            public UserResponse User
+            {
+                get => _user;
+                set => SetProperty(ref _user, value);
+            }
 
         private async void ChangePasswordAsync()
         {

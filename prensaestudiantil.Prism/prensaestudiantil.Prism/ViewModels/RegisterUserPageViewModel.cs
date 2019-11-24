@@ -3,11 +3,7 @@ using prensaestudiantil.Common.Helpers;
 using prensaestudiantil.Common.Models;
 using prensaestudiantil.Common.Services;
 using Prism.Commands;
-using Prism.Mvvm;
 using Prism.Navigation;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace prensaestudiantil.Prism.ViewModels
@@ -16,13 +12,8 @@ namespace prensaestudiantil.Prism.ViewModels
     {
         private readonly INavigationService _navigationService;
         private readonly IApiService _apiService;
-
-        //private string _email;
-        //private string _firstName;
         private bool _isEnabled;
         private bool _isRunning;
-        //private string _lastName;
-        //private string _phone;
         private DelegateCommand _registerUserCommand;
 
         public RegisterUserPageViewModel(
