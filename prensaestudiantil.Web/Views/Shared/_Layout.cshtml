@@ -3,7 +3,8 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - prensaestudiantil.Web</title>
+    <title>@ViewData["Title"] - Prensa Estudiantil</title>
+    <link href="~/Images/logo.png" rel="shortcut icon" type="image/x-icon" />
 
     <environment include="Development">
         <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
@@ -26,7 +27,7 @@
             color: #027368;
         }
 
-        .gray-color{
+        .gray-color {
             color: gray;
         }
 
@@ -49,13 +50,12 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a asp-area="" asp-controller="Home" asp-action="Index" class="navbar-brand">prensaestudiantil.Web</a>
+                <a asp-area="" asp-controller="Home" asp-action="Index" class="navbar-brand">Prensa Estudiantil</a>
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
-                    <li><a asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
                     <li><a asp-area="" asp-controller="Home" asp-action="Search">Buscar</a></li>
-                    <li><a asp-area="" asp-controller="Home" asp-action="Contact">Contact</a></li>
+                    <li><a asp-area="" asp-controller="YoutubeVideos" asp-action="Index">Videos</a></li>
                     @if (User.Identity.IsAuthenticated)
                     {
                         <li><a asp-area="" asp-controller="Publications" asp-action="Index">Publications</a></li>
@@ -71,12 +71,10 @@
                                     </ul>
                                 </li>*@
                             <li><a asp-area="" asp-controller="PublicationCategories" asp-action="Index">Categories</a></li>
-                            <li><a asp-area="" asp-controller="YoutubeVideos" asp-action="Index">Youtube Videos</a></li>
                             <li><a asp-area="" asp-controller="Account" asp-action="Index">Users</a></li>
                         }
                     }
-
-
+                    <li><a asp-area="" asp-controller="Home" asp-action="Contact">Contacto</a></li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
                     @if (User.Identity.IsAuthenticated)
@@ -99,7 +97,22 @@
         @RenderBody()
         <hr />
         <footer>
-            <p>&copy; 2019 - prensaestudiantil.Web</p>
+            <div style="margin: auto; text-align: center; font-size: xx-small">
+                <br clear="all" />
+                <div style=" border-bottom: 1px solid #027368;"> </div>
+                <br clear="all" />
+                prensaestudiantil.org
+                <br />
+                Todas las marcas registradas son propiedad de la compañía respectiva.
+                <br />
+                Se permite la reproducción total o parcial de cualquiera de los contenidos que aquí aparezca, así como su traducción a cualquier idioma sin autorización escrita de su titular.
+                <br />
+                <a rel="license" href="http://creativecommons.org/licenses/by-sa/3.0/" target="_blank">
+                    <br />
+                    <img alt="Licencia Creative Commons" title="Licencia Creative Commons" src="http://i.creativecommons.org/l/by-sa/3.0/80x15.png">
+                </a>
+            </div>
+            <br clear="all" />
         </footer>
     </div>
 

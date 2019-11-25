@@ -2,7 +2,7 @@
 
 namespace prensaestudiantil.Web.Data.Entities
 {
-    public class YoutubeVideo
+    public class YoutubeVideo : IEntity
     {
         public int Id { get; set; }
 

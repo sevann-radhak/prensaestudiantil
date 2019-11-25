@@ -85,6 +85,7 @@ namespace prensaestudiantil.Web
             services.AddScoped<IMailHelper, MailHelper>();
             services.AddScoped<IPublicationCategoryRepository, PublicationCategoryRepository>();
             services.AddScoped<IUserHelper, UserHelper>();
+            services.AddScoped<IYoutubeVideosRepository, YoutubeVideosRepository>();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }

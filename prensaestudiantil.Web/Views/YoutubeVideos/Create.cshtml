@@ -1,0 +1,38 @@
+﻿@model prensaestudiantil.Web.Data.Entities.YoutubeVideo
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h2>Create</h2>
+
+<h4>Youtube Video</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <partial name="_YoutubeVideo" />            
+        </form>
+    </div>
+
+    <partial name="_VideoModalHelp" />
+
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        $(document).ready(function () {
+            $('#modal-help').click(function () {
+                $("#help-modal").modal('show');
+            });
+            $('#close-modal-help').click(function () {
+                $("#help-modal").modal('hide');
+            });
+        });
+    </script>
+}
+
+

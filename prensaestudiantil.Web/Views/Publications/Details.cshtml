@@ -171,6 +171,7 @@
 
             <div style="width: 100%; text-align: justify; font-size: large">
                 <p>
+                    <span class="badge accent-color">@Html.DisplayFor(model => model.PublicationCategory.Name)</span>
                     @Html.Raw(Model.Header.Replace(Environment.NewLine, "<br/>"))
                 </p>
 
@@ -188,7 +189,6 @@
                 <p>
                     @if (Model.Body != null)
                     {
-                        <span class="badge badge-secondary">@Html.DisplayFor(model => model.PublicationCategory.Name)</span>
                         @Html.Raw(Model.Body.Replace(Environment.NewLine, "<br/>"))
                     }
                 </p>

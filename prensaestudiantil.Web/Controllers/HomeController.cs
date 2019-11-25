@@ -26,7 +26,7 @@ namespace prensaestudiantil.Web.Controllers
                 Publications = await _dataContext.Publications
                     .Include(p => p.PublicationCategory)
                     .OrderByDescending(p => p.Date)
-                    .Take(200).ToListAsync(),
+                    .Take(12).ToListAsync(),
                 OpinionPublications = await _dataContext.Publications
                     .Include(p => p.PublicationCategory)
                     .Where(p => p.PublicationCategory.Name == "Opinión")
@@ -34,7 +34,7 @@ namespace prensaestudiantil.Web.Controllers
                     .Take(3).ToListAsync(),
                 YoutubeVideos = await _dataContext.YoutubeVideos
                 .OrderByDescending(y => y.Id)
-                .Take(10)
+                .Take(8)
                 .ToListAsync()
             });
         }
@@ -45,7 +45,7 @@ namespace prensaestudiantil.Web.Controllers
                 .Include(p => p.User)
                 .Include(p => p.PublicationCategory)
                 .OrderByDescending(p => p.Date)
-                .Take(500)
+                .Take(200)
                 .ToListAsync());
         }
 

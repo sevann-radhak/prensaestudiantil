@@ -168,7 +168,6 @@ namespace prensaestudiantil.Web.Controllers
                     .Include(p => p.User)
                     .LastOrDefaultAsync();
 
-
                 return addImages
                     ? RedirectToAction(nameof(AddEditImages), new { id = publication.Id })
                     : RedirectToAction(nameof(Index));
@@ -335,17 +334,6 @@ namespace prensaestudiantil.Web.Controllers
             TempData["Success"] = "Publication updated successfully!";
             return RedirectToAction(nameof(Details), new { id = model.Id });
         }
-
-        // POST: Publications/Delete/5
-        //[HttpPost, ActionName("Delete")]
-        //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> DeleteConfirmed(int id)
-        //{
-        //    var publication = await _dataContext.Publications.FindAsync(id);
-        //    _dataContext.Publications.Remove(publication);
-        //    await _dataContext.SaveChangesAsync();
-        //    return RedirectToAction(nameof(Index));
-        //}
 
         private bool PublicationExists(int id)
         {

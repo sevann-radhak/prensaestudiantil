@@ -27,7 +27,7 @@ namespace prensaestudiantil.Web.Controllers
         // GET: PublicationCategories
         public IActionResult Index()
         {
-            return View(this._publicationCategoryRepository.GetAll().OrderBy(p => p.Name));
+            return View(_publicationCategoryRepository.GetAll().OrderBy(p => p.Name));
         }
 
         // GET: PublicationCategories/Details/5

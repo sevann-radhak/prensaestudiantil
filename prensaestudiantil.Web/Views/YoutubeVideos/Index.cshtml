@@ -1,0 +1,100 @@
+﻿@model IEnumerable<prensaestudiantil.Web.Data.Entities.YoutubeVideo>
+
+@{
+    ViewData["Title"] = "Videos";
+}
+
+<partial name="_AlertsDialog" />
+
+<link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css" />
+<br />
+
+@if (User.Identity.IsAuthenticated)
+{
+    <p style="float: right">
+        <a asp-action="Create" class="btn btn-primary btn-sm"><i class="glyphicon glyphicon-plus"></i> Create New </a>
+    </p>
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title" style="font-weight: bold">Videos</h3>
+            </div>
+            <div class="panel-body">
+                <table class="table table-hover table-responsive table-striped" id="VideosTable">
+                    <thead>
+                        <tr>
+                            <th>@Html.DisplayNameFor(model => model.FirstOrDefault().Id)</th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.FirstOrDefault().URL)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.FirstOrDefault().Name)
+                            </th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Id)
+                            </td>
+                            <td>
+                                <iframe src="https://www.youtube.com/embed/@Html.DisplayFor(modelItem => item.URL)" 
+                                        frameborder="0" 
+                                        allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" 
+                                        allowfullscreen></iframe>
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Name)
+                            </td>
+                            <td style="white-space: nowrap;">
+                                @if (User.Identity.IsAuthenticated)
+                                {
+                                    <a asp-action="Edit" class="btn btn-default btn-sm" asp-route-id="@item.Id"><i class="glyphicon glyphicon-pencil"></i> </a>
+                                    <button data-id="@item.Id" class="btn btn-danger btn-sm deleteItem" data-toggle="modal" data-target="#deleteDialog"><i class="glyphicon glyphicon-trash"></i></button>
+                                }
+                            </td>
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<partial name="_DeleteDialog" />
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#VideosTable').DataTable({
+                "order": [[0, "desc"]]
+            });
+
+            $(".alert").fadeTo(5000, 500).slideUp(500, function () {
+                $(".alert-dismissible").alert('close');
+            });
+
+            // Delete item
+            var item_to_delete;
+
+            $('.deleteItem').click((e) => {
+                item_to_delete = e.currentTarget.dataset.id;
+            });
+
+            $("#btnYesDelete").click(function () {
+                window.location.href = `/YoutubeVideos/Delete/${item_to_delete}`;
+            });
+        });
+    </script>
+}
+
