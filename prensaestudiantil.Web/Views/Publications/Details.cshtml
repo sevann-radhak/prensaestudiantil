@@ -1,112 +1,235 @@
-﻿@model prensaestudiantil.Web.Data.Entities.Publication
+﻿@model prensaestudiantil.Web.Models.PublicationViewModel
 
 @{
     ViewData["Title"] = @Html.DisplayFor(model => model.Title);
 }
 
-<br />
-
-@if (TempData["Error"] != null)
-{
-    <div class="alert alert-danger fade in">
-        <strong>Error!</strong> @TempData["Error"]
-    </div>
-}
-@if (TempData["Success"] != null)
-{
-    <div class="alert alert-success fade in">
-        <strong>Success!</strong> @TempData["Success"]
-    </div>
-}
-
-<div class="col-md-8">
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.Title)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Title)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.Header)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Header)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.Body)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Body)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.Footer)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Footer)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.Date)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Date)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.DateLocal)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.DateLocal)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.LastUpdate)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.LastUpdate)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.ImageUrl)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.ImageUrl)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.ImageDescription)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.ImageDescription)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.Author)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Author)
-        </dd>
-    </dl>
-</div>
-<div class="col-md-4">
-    @if (!string.IsNullOrEmpty(Model.ImageUrl))
-    {
-        <img src="@Url.Content(Model.ImageUrl)"
-             alt="@Model.Title"
-             title="@Model.Title"
-             style="width:300px;height:300px;max-width: 100%; height: auto;" />
-    }
-</div>
-
-<div>
-    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
-</div>
-
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @*Redes sociales plugins*@
+    <div id="fb-root"></div>
+    <script async defer crossorigin="anonymous" src="https://connect.facebook.net/es_LA/sdk.js#xfbml=1&version=v4.0"></script>
 
-    <script type="text/javascript">
-        $(document).ready(function () {
-            $(".alert").fadeTo(5000, 500).slideUp(500, function () {
-                $(".alert-dismissible").alert('close');
-            });
-        });
-    </script>
+    <div id="fb-root"></div>
+    <script async defer crossorigin="anonymous" src="https://connect.facebook.net/es_LA/sdk.js#xfbml=1&version=v4.0"></script>
 }
 
+<style>
+    .imagePublication {
+        text-align: center;
+        font-size: small;
+        text-align: right
+    }
+</style>
+
+
+<div class="col-md-12">
+    @if (Model.PublicationCategory.Name == "Opinión")
+    {
+        <h2 class="title" style="font-weight:bold">Opinión</h2>
+
+        <div style=" border-bottom: 2px solid #027368;"> </div>
+        <div style="width: 100%; padding-top: 10px;">
+            <div class="col-md-3">
+                @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                {
+                    <img src="@Url.Content(Model.ImageUrl)"
+                         alt="@Model.Title"
+                         title="@Model.Title"
+                         style="max-width: 100%; height: auto;" />
+                }
+            </div>
+
+            <div class="col-md-9">
+                <span class="title">@Html.DisplayFor(model => model.Author)</span>
+                <small>
+                    @if (Model.LastUpdate != null)
+                    {
+                        @Html.DisplayFor(model => model.LastUpdate) <small>actualizado</small>
+                    }
+                    else
+                    {
+                        @Html.DisplayFor(model => model.DateLocal)
+                    }
+                </small>
+                <div style="float: right">
+                    <div style="float: left;">
+                        <div class="fb-share-button"
+                             data-href="http://prensaestudiantil.org/Publications/Details/@Html.DisplayFor(model => model.Id)"
+                             data-layout="button_count" data-size="small">
+                            <a target="_blank"
+                               href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Flocalhost%3A54304%2FPublications%2FDetails%2F22&amp;src=sdkpreparse"
+                               class="fb-xfbml-parse-ignore">Compartir</a>
+                        </div>
+                    </div>
+
+                    <div style="float: left; margin-left: 10px;">
+                        <a href="https://twitter.com/share?ref_src=twsrc%5Etfw"
+                           class="twitter-share-button"
+                           data-text="@Html.DisplayFor(model => model.Title)"
+                           data-via="prensaestudiant" data-show-count="false">Tweet</a>
+                        <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+                    </div>
+                </div>
+
+                <h1 class="title">@Html.DisplayFor(model => model.Title)</h1>
+
+                <p style="text-align: justify">
+                    @Html.Raw(Model.Header.Replace(Environment.NewLine, "<br/>"))
+                </p>
+            </div>
+        </div>
+
+        <br clear="all" />
+        <div style=" border-bottom: 2px solid #027368;"> </div>
+        <br clear="all" />
+
+        <div class="col-md-4"></div>
+
+        <div class="col-md-8 mt-40">
+            <p style="text-align: justify">
+                @if (Model.Body != null)
+                {
+                    @Html.Raw(Model.Body.Replace(Environment.NewLine, "<br/>"))
+                }
+            </p>
+        </div>
+
+        <br clear="all" />
+
+        @*Show aditional images*@
+        <div style="width: 80%; margin: 0px auto">
+            @foreach (var image in Model.PublicationImages)
+            {
+                <div class="mt-20" style="border: 1px solid #D8D8D8; border-radius: 10px; padding: 10px;">
+                    <img class="card-img"
+                         src="@image.ImageFullPath"
+                         style="width: 100%; margin-bottom: 5px;"
+                         alt='@image.Description'
+                         title='@image.Description' />
+
+                    <span class="imagePublication"> @image.Description </span>
+                </div>
+            }
+        </div>
+
+        <br clear="all" />
+
+        <p class="font-size-small gray-color">
+            @Html.DisplayFor(model => model.Footer)
+        </p>
+
+        <div class="mt-20 gray-color" style="width: 100%; padding: 10px 0px 10px 0px; border-top: 1px solid #BCBCBC;">
+            Este es un espacio de opinión destinado a columnistas, blogueros, comunidades y similares. Las opiniones aquí expresadas pertenecen exclusivamente a los autores que ocupan los espacios destinados a este fin, por tanto no reflejan posición ni opinión de Prensa Estudiantil.
+        </div>
+
+        <div style="width: 100%; border-top: 1px solid #BCBCBC;">
+        </div>
+    }
+    else
+    {
+        <div class="col-md-8">
+
+            <h2 class="title"> @Html.DisplayFor(model => model.Title) </h2>
+
+            <div style="width: 100%; border-bottom: 1px solid #BCBCBC;">
+                <div class="gray-color" style="width: 50%; float: left;">
+                    <small>
+                        @if (Model.LastUpdate != null)
+                        {
+                            @Html.DisplayFor(model => model.LastUpdate) <small>actualizado</small>
+                        }
+                        else
+                        {
+
+                            @Html.DisplayFor(model => model.DateLocal)
+                        }
+                    </small>
+                </div>
+
+                <div style="float: right; text-align: right; margin-bottom: 4px;">
+                    <div style="float: left;">
+                        <div class="fb-share-button"
+                             data-href="http://prensaestudiantil.org/Publications/Details/@Html.DisplayFor(model => model.Id)"
+                             data-layout="button_count"
+                             data-size="small">
+                            <a target="_blank"
+                               href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Flocalhost%3A54304%2FPublications%2FDetails%2F22&amp;src=sdkpreparse"
+                               class="fb-xfbml-parse-ignore">Compartir</a>
+                        </div>
+                    </div>
+
+                    <div style="float: left; margin-left: 10px;">
+                        <a href="https://twitter.com/share?ref_src=twsrc%5Etfw" class="twitter-share-button" data-text="@Html.DisplayFor(model => model.Title)" data-via="prensaestudiant" data-show-count="false">Tweet</a>
+                        <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+                    </div>
+                </div>
+
+                <br clear="all" />
+            </div>
+
+            <br clear="all" />
+
+            <div style="width: 100%; text-align: justify; font-size: large">
+                <p>
+                    @Html.Raw(Model.Header.Replace(Environment.NewLine, "<br/>"))
+                </p>
+
+                @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                {
+                    <div class="black-background card" style="width: 100%; text-align: right">
+                        <img src="@Html.DisplayFor(model => model.ImageFullPath)"
+                             style="margin-top: 5px; width: 100%;"
+                             alt='@Model.Title'
+                             title='@Model.Title' />
+                        <h5 style="color: white; padding: 0px 5px 5px 5px;"> @Html.DisplayFor(model => model.ImageDescription) </h5>
+                    </div>
+                }
+
+                <p>
+                    @if (Model.Body != null)
+                    {
+                        <span class="badge badge-secondary">@Html.DisplayFor(model => model.PublicationCategory.Name)</span>
+                        @Html.Raw(Model.Body.Replace(Environment.NewLine, "<br/>"))
+                    }
+                </p>
+
+                <br clear="all" />
+
+                <p class="gray-color">
+                    <small> @Html.DisplayFor(model => model.Footer)</small>
+                </p>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+
+        </div>
+    }
+
+    <br clear="all" />
+
+    <div class="mt-20" style="text-align: left;">
+        <div style="float: left;">
+            <div class="fb-share-button" data-href="http://prensaestudiantil.org/Publications/Details/@Html.DisplayFor(model => model.Id)" data-layout="button_count" data-size="small"><a target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Flocalhost%3A54304%2FPublications%2FDetails%2F22&amp;src=sdkpreparse" class="fb-xfbml-parse-ignore">Compartir</a></div>
+        </div>
+
+        <div style="float: left; margin-left: 10px;">
+            <a href="https://twitter.com/share?ref_src=twsrc%5Etfw" class="twitter-share-button" data-text="@Html.DisplayFor(model => model.Title)" data-via="prensaestudiant" data-show-count="false">Tweet</a>
+            <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+        </div>
+
+        <br clear="all" />
+        <br clear="all" />
+
+        <div class="gray-color" style="border-top: 1px solid #D8D8D8; border-bottom: 1px solid #D8D8D8">
+            <small>
+                Prensa Estudiantil no se hace responsable por las opiniones emitidas en este espacio. Los comentarios aquí publicados son responsabilidad del usuario que los escribe. Prensa estudiantil recomienda el buen uso de este espacio ya que no serán eliminados ni censurados aquellos comentarios que utilicen un lenguaje soez, que ataquen a otras personas o sean publicidad de cualquier tipo.
+            </small>
+        </div>
+
+        <div class="fb-comments mt-40" data-href="http://prensaestudiantil.org/Publications/Details/@Html.DisplayFor(model => model.Id)" data-width="" data-numposts="50"></div>
+    </div>
+</div>
+
+<br clear="all" />
+<br clear="all" />

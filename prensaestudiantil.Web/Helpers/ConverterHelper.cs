@@ -107,6 +107,7 @@ namespace prensaestudiantil.Web.Helpers
                 ImageDescription = model.ImageDescription,
                 ImageUrl = model.ImageUrl,
                 LastUpdate = model.LastUpdate,
+                PublicationCategory = model.PublicationCategory,
                 PublicationCategoryId = model.PublicationCategory.Id,
                 PublicationImages = isNew ? new List<PublicationImage>() : model.PublicationImages,
                 Title = model.Title,

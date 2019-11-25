@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -12,6 +13,7 @@ using prensaestudiantil.Web.Models;
 
 namespace prensaestudiantil.Web.Controllers
 {
+    [Authorize]
     public class PublicationsController : Controller
     {
         private readonly DataContext _dataContext;
@@ -57,6 +59,11 @@ namespace prensaestudiantil.Web.Controllers
                 .Include(p => p.PublicationImages)
                 .Where(p => p.Id == id.Value)
                 .FirstOrDefaultAsync();
+
+            if (!await UserHasPermissionsOnPublicationAsync(publication))
+            {
+                return RedirectToAction("NotAuthorized", "Account");
+            }
 
             PublicationImageViewModel model = new PublicationImageViewModel
             {
@@ -163,7 +170,7 @@ namespace prensaestudiantil.Web.Controllers
 
 
                 return addImages
-                    ? RedirectToAction(nameof(AddEditImages), new { id = publication.Id})
+                    ? RedirectToAction(nameof(AddEditImages), new { id = publication.Id })
                     : RedirectToAction(nameof(Index));
             }
 
@@ -184,6 +191,11 @@ namespace prensaestudiantil.Web.Controllers
             if (publication == null)
             {
                 return NotFound();
+            }
+
+            if (!await UserHasPermissionsOnPublicationAsync(publication))
+            {
+                return RedirectToAction("NotAuthorized", "Account");
             }
 
             _dataContext.Publications.Remove(publication);
@@ -247,6 +259,7 @@ namespace prensaestudiantil.Web.Controllers
         }
 
         // GET: Publications/Details/5
+        [AllowAnonymous]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -257,13 +270,14 @@ namespace prensaestudiantil.Web.Controllers
             var publication = await _dataContext.Publications
                 .Include(p => p.User)
                 .Include(p => p.PublicationCategory)
+                .Include(p => p.PublicationImages)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (publication == null)
             {
                 return NotFound();
             }
 
-            return View(publication);
+            return View(_converterHelper.ToPublicationViewModel(publication, false));
         }
 
         public async Task<IActionResult> Edit(int? id)
@@ -278,6 +292,11 @@ namespace prensaestudiantil.Web.Controllers
                .Include(p => p.PublicationImages)
                .Include(p => p.User)
                .Where(p => p.Id == id).FirstOrDefaultAsync();
+
+            if (!await UserHasPermissionsOnPublicationAsync(publication))
+            {
+                return RedirectToAction("NotAuthorized", "Account");
+            }
 
             PublicationViewModel model = _converterHelper.ToPublicationViewModel(publication, false);
             model.PublicationCategories = _combosHelper.GetComboPublicationCategories();
@@ -331,6 +350,15 @@ namespace prensaestudiantil.Web.Controllers
         private bool PublicationExists(int id)
         {
             return _dataContext.Publications.Any(e => e.Id == id);
+        }
+
+        private async Task<bool> UserHasPermissionsOnPublicationAsync(Publication publication)
+        {
+            var user = await _userHelper.GetUserByEmailAsync(User.Identity.Name);
+
+            return !User.IsInRole("Manager") && publication.User != user
+                ? false
+                : true;
         }
     }
 }
