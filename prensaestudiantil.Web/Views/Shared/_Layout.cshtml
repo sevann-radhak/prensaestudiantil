@@ -44,46 +44,49 @@
     </style>
 </head>
 <body>
-    <nav class="navbar navbar-inverse navbar-fixed-top">
-        <div class="container">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a asp-area="" asp-controller="Home" asp-action="Index" class="navbar-brand">Prensa Estudiantil</a>
-            </div>
-            <div class="navbar-collapse collapse">
-                <ul class="nav navbar-nav">
-                    <li><a asp-area="" asp-controller="Home" asp-action="Search">Buscar</a></li>
-                    <li><a asp-area="" asp-controller="YoutubeVideos" asp-action="Index">Videos</a></li>
-                    @if (User.Identity.IsAuthenticated)
-                    {
-                        <li><a asp-area="" asp-controller="Publications" asp-action="Index">Publicaciones</a></li>
-                        @if (User.IsInRole("Manager"))
-                        {
-                            <li><a asp-area="" asp-controller="PublicationCategories" asp-action="Index">Categorías</a></li>
-                            <li><a asp-area="" asp-controller="Account" asp-action="Index">Usuarios</a></li>
-                        }
-                    }
-                    <li><a asp-area="" asp-controller="Home" asp-action="Contact">Contacto</a></li>
-                </ul>
-                <ul class="nav navbar-nav navbar-right">
-                    @if (User.Identity.IsAuthenticated)
-                    {
-                        <li><a asp-area="" asp-controller="Account" asp-action="MyProfile">@User.Identity.Name</a></li>
-                        <li><a asp-area="" asp-controller="Account" asp-action="Logout">Logout</a></li>
-                    }
-                </ul>
-            </div>
-        </div>
-    </nav>
-
     <partial name="_CookieConsentPartial" />
 
-    <div class="container body-content" style="border: 1px solid gray; margin-top: 20px; padding-top: 10px; margin-bottom: 2px; border-radius: 10px;">
+    <div class="container body-content" 
+         style="border: 1px solid #027368; background-color: white; margin-top: 20px; padding-top: 10px; margin-bottom: 2px; border-radius: 10px;">
+        <img src="~/images/header_image.jpg" alt="Prensa Estudiantil" title="Prensa Estudiantil" class="img-responsive" />
+        <nav class="navbar navbar-inverse">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a asp-area="" asp-controller="Home" asp-action="Index" class="navbar-brand">Prensa Estudiantil</a>
+                </div>
+                <div class="navbar-collapse collapse">
+                    <ul class="nav navbar-nav">
+                        <li><a asp-area="" asp-controller="Home" asp-action="Search">Buscar</a></li>
+                        <li><a asp-area="" asp-controller="YoutubeVideos" asp-action="Index">Videos</a></li>
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <li><a asp-area="" asp-controller="Publications" asp-action="Index">Publicaciones</a></li>
+                            @if (User.IsInRole("Manager"))
+                            {
+                                <li><a asp-area="" asp-controller="PublicationCategories" asp-action="Index">Categorías</a></li>
+                                <li><a asp-area="" asp-controller="Account" asp-action="Index">Usuarios</a></li>
+                            }
+                        }
+                        <li><a asp-area="" asp-controller="Home" asp-action="Contact">Contacto</a></li>
+                    </ul>
+                    <ul class="nav navbar-nav navbar-right">
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <li><a asp-area="" asp-controller="Account" asp-action="MyProfile">@User.Identity.Name</a></li>
+                            <li><a asp-area="" asp-controller="Account" asp-action="Logout">Logout</a></li>
+                            <li> . </li>
+                            <li> . </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </nav>
         @RenderBody()
         <hr />
         <footer>
