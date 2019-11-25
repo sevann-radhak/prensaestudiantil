@@ -11,7 +11,7 @@ namespace prensaestudiantil.Web.Data.Entities
         [StringLength(11, MinimumLength = 11, ErrorMessage = "The field {0} needs to have 11 characters")]
         public string URL { get; set; }
 
-        [Display(Name = "Title")]
+        [Display(Name = "Título")]
         [Required(ErrorMessage = "The field {0} is mandatory.")]
         public string Name { get; set; }
 

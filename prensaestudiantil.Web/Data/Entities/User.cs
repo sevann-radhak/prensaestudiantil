@@ -7,24 +7,24 @@ namespace prensaestudiantil.Web.Data.Entities
 {
     public class User : IdentityUser
     {
-        [Display(Name = "First Name")]
+        [Display(Name = "Primer Nombre")]
         [MaxLength(60, ErrorMessage = "The {0} field can not have more than {1} characters.")]
         [Required(ErrorMessage = "The field {0} is mandatory.")]
         public string FirstName { get; set; }
 
-        [Display(Name = "Last Name")]
+        [Display(Name = "Apellidos")]
         [MaxLength(60, ErrorMessage = "The {0} field can not have more than {1} characters.")]
         [Required(ErrorMessage = "The field {0} is mandatory.")]
         public string LastName { get; set; }
 
-        [Display(Name = "Is Enabled?")]
+        [Display(Name = "Usuario Activo?")]
         public bool IsEnabled { get; set; }
 
-        [Display(Name = "Main Image")]
+        [Display(Name = "Foto")]
         public string ImageUrl { get; set; }
 
         // Only read
-        [Display(Name = "Name")]
+        [Display(Name = "Nombre")]
         public string FullName => $"{FirstName} {LastName}";
 
         // TODO: Change the path when publish
@@ -37,7 +37,7 @@ namespace prensaestudiantil.Web.Data.Entities
         public ICollection<string> Roles { get; set; }
 
         [NotMapped]
-        [Display(Name = "Is Admin?")]
+        [Display(Name = "Es Administrador?")]
         public bool IsManager { get; set; }
 
         // Foreing keys

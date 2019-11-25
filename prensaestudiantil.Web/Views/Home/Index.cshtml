@@ -11,6 +11,10 @@
     <div class="col-md-9 col-sm-9 col-lg-9 col-xs-9" margin-top: 10px;">
         <partial name="_Carrousel" />
     </div>
+    <div class="col-md-3 col-sm-3 col-lg-3 col-xs-3">
+        <a class="twitter-timeline" data-height="480" data-theme="light" data-link-color="#027368" href="https://twitter.com/prensaestudiant?ref_src=twsrc%5Etfw">Tweets by prensaestudiant</a>
+        <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+    </div>
 </div>
 
 <div class="row">
@@ -28,7 +32,12 @@
             if (i == 1)
             {
                 divClass = "col-md-9 col-sm-9 col-lg-9 col-xs-9";
-                <img class="col-md-3 col-sm-3 col-lg-3 col-xs-3" src="~/images/logo.png" />
+        <br />
+        <br />
+        <div class="col-md-3 col-sm-3 col-lg-3 col-xs-3" >
+            <img class="img-responsive" src="~/images/logo.png" />
+               <partial name="_Opinion" />
+            </div>
             }
             else
             {
@@ -39,56 +48,34 @@
                 divClass = "col-md-6";
             }
 
-            <div class="@divClass" style="margin-top: 6px; float: right">
-                <div style="border: 1px solid #D8D8D8; border-radius: 10px; padding: 10px;">
-                    <div class="card-title">
-                        <a asp-action="Details" asp-controller="Publications" asp-route-id="@item.Id" class="title h4"> @item.Title </a>
-                        <p>
-                            <span class="badge accent-color">@Html.DisplayFor(modelItem => item.PublicationCategory.Name)</span>
-                            <small class="text-muted" style="font-size: x-small">@Html.DisplayFor(modelItem => item.DateLocal)</small>
-                        </p>
-                    </div>
+        <div class="@divClass" style="margin-top: 6px; float: right">
+            <div style="border: 1px solid #D8D8D8; border-radius: 10px; padding: 10px;">
+                <div class="card-title">
+                    <a asp-action="Details" asp-controller="Publications" asp-route-id="@item.Id" class="title h4"> @item.Title </a>
+                    <p>
+                        <span class="badge accent-color">@Html.DisplayFor(modelItem => item.PublicationCategory.Name)</span>
+                        <small class="text-muted" style="font-size: x-small">@Html.DisplayFor(modelItem => item.DateLocal)</small>
+                    </p>
+                </div>
 
-                    <div class="car-body">
-                        <a href="Publications/Details/@item.Id" class="black-color">
-                            <img class="card-img"
-                                 src="@Html.DisplayFor(modelItem => item.ImageFullPath)"
-                                 style="margin-top: 5px; width: 100%;"
-                                 alt='@item.Title'
-                                 title='@item.Title' />
-                        </a>
+                <div class="car-body">
+                    <a href="Publications/Details/@item.Id" class="black-color">
+                        <img class="card-img"
+                             src="@Html.DisplayFor(modelItem => item.ImageFullPath)"
+                             style="margin-top: 5px; width: 100%;"
+                             alt='@item.Title'
+                             title='@item.Title' />
+                    </a>
 
-                        <p class="card-text" style="text-align: justify">
-                            @Html.DisplayFor(modelItem => item.Header)
-                            <a asp-action="Details" asp-controller="Publications" asp-route-id="@item.Id" class="title"> [+] </a>
-                        </p>
-                    </div>
+                    <p class="card-text" style="text-align: justify">
+                        @Html.DisplayFor(modelItem => item.Header)
+                        <a asp-action="Details" asp-controller="Publications" asp-route-id="@item.Id" class="title"> [+] </a>
+                    </p>
                 </div>
             </div>
+        </div>
         }
     </div>
 
-    <div class="col-md-3 col-sm-3 col-lg-3 col-xs-3">
-        @foreach (var item in Model.YoutubeVideos)
-        {
-            <p>
-                <span>@item.Name</span>
-                <iframe src="https://www.youtube.com/embed/@Html.DisplayFor(modelItem => item.URL)"
-                        frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
-                        allowfullscreen
-                        width="100%"></iframe>
-            </p>
-        }
-    </div>
+    <partial name="_YoutubeVideos" />
 </div>
-
-@section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-    <script src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
-
-    <script type="text/javascript">
-        $(document).ready(function () {
-            $('#PublicationsTable').DataTable();
-        });
-    </script>
-}

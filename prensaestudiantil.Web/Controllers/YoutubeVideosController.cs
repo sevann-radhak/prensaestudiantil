@@ -49,7 +49,7 @@ namespace prensaestudiantil.Web.Controllers
                 //_dataContext.Add(youtubeVideo);
                 //await _dataContext.SaveChangesAsync();
                 await _youtubeVideosRepository.CreateAsync(youtubeVideo);
-                TempData["Success"] = "Video loaded successfully!";
+                TempData["Success"] = "Video cargado exitosamente!";
                 return RedirectToAction(nameof(Index));
             }
             return View(youtubeVideo);
@@ -132,23 +132,11 @@ namespace prensaestudiantil.Web.Controllers
             }
             catch (Exception ex)
             {
-                if ((ex.InnerException != null
-                    && ex.InnerException.InnerException != null
-                    && ex.InnerException.InnerException.Message.Contains("REFERENCE"))
-                    ||
-                    (ex.InnerException != null && ex.InnerException.Message.Contains("REFERENCE"))
-                   )
-                {
-                    TempData["Error"] = "Can not delete this record because has related records";
-                }
-                else
-                {
-                    TempData["Error"] = $"Can not delete this record. Call support! {ex}";
-                }
+                TempData["Error"] = $"No se pudo eliminar el registro. Comuníquese con el administrador!: {ex}";
                 return RedirectToAction(nameof(Index));
             }
 
-            TempData["Success"] = "Video deleted successfully!";
+            TempData["Success"] = "Video eliminado exitosamente!";
             return RedirectToAction(nameof(Index));
         }
 

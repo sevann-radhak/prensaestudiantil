@@ -26,6 +26,9 @@
             font-weight: bold;
             color: #027368;
         }
+        .color-primary-background{
+            background-color: #027368;
+        }
 
         .gray-color {
             color: gray;
@@ -58,20 +61,11 @@
                     <li><a asp-area="" asp-controller="YoutubeVideos" asp-action="Index">Videos</a></li>
                     @if (User.Identity.IsAuthenticated)
                     {
-                        <li><a asp-area="" asp-controller="Publications" asp-action="Index">Publications</a></li>
+                        <li><a asp-area="" asp-controller="Publications" asp-action="Index">Publicaciones</a></li>
                         @if (User.IsInRole("Manager"))
                         {
-                            @*<li class="dropdown">
-                                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">File<b class="caret"></b></a>
-                                    <ul class="dropdown-menu">
-                                        <li><a asp-area="" asp-controller="Publications" asp-action="Index">Publications</a></li>
-                                        <li><a asp-area="" asp-controller="PublicationCategories" asp-action="Index">Publication Categories</a></li>
-                                        <li><a asp-area="" asp-controller="YoutubeVideos" asp-action="Index">Youtube Videos</a></li>
-                                        <li><a asp-area="" asp-controller="Users" asp-action="Index">Users</a></li>
-                                    </ul>
-                                </li>*@
-                            <li><a asp-area="" asp-controller="PublicationCategories" asp-action="Index">Categories</a></li>
-                            <li><a asp-area="" asp-controller="Account" asp-action="Index">Users</a></li>
+                            <li><a asp-area="" asp-controller="PublicationCategories" asp-action="Index">Categorías</a></li>
+                            <li><a asp-area="" asp-controller="Account" asp-action="Index">Usuarios</a></li>
                         }
                     }
                     <li><a asp-area="" asp-controller="Home" asp-action="Contact">Contacto</a></li>
@@ -81,10 +75,6 @@
                     {
                         <li><a asp-area="" asp-controller="Account" asp-action="MyProfile">@User.Identity.Name</a></li>
                         <li><a asp-area="" asp-controller="Account" asp-action="Logout">Logout</a></li>
-                    }
-                    else
-                    {
-                        <li><a asp-area="" asp-controller="Account" asp-action="Login">Login</a></li>
                     }
                 </ul>
             </div>

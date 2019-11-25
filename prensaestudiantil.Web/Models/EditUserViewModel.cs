@@ -6,7 +6,7 @@ namespace prensaestudiantil.Web.Models
 {
     public class EditUserViewModel : User
     {
-        [Display(Name = "Image")]
+        [Display(Name = "Foto")]
         public IFormFile ImageFile { get; set; }
     }
 }

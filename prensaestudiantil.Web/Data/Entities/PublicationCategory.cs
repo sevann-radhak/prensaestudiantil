@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace prensaestudiantil.Web.Data.Entities
 {
@@ -10,11 +7,10 @@ namespace prensaestudiantil.Web.Data.Entities
     {
         public int Id { get; set; }
 
-        [Display(Name = "Category")]
+        [Display(Name = "Categoría")]
         [Required(ErrorMessage = "The field {0} is mandatory.")]
         public string Name { get; set; }
 
-        // Foreing key
         public ICollection<Publication> Publications { get; set; }
     }
 }

@@ -12,7 +12,7 @@
 @if (User.Identity.IsAuthenticated)
 {
     <p style="float: right">
-        <a asp-action="Create" class="btn btn-primary btn-sm"><i class="glyphicon glyphicon-plus"></i> Create New </a>
+        <a asp-action="Create" class="btn btn-primary btn-sm"><i class="glyphicon glyphicon-plus"></i> Crear Nuevo </a>
     </p>
 }
 
@@ -26,13 +26,9 @@
                 <table class="table table-hover table-responsive table-striped" id="VideosTable">
                     <thead>
                         <tr>
-                            <th>@Html.DisplayNameFor(model => model.FirstOrDefault().Id)</th>
-                            <th>
-                                @Html.DisplayNameFor(model => model.FirstOrDefault().URL)
-                            </th>
-                            <th>
-                                @Html.DisplayNameFor(model => model.FirstOrDefault().Name)
-                            </th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
                             <th></th>
                         </tr>
                     </thead>
@@ -40,9 +36,7 @@
                         @foreach (var item in Model)
                         {
                         <tr>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.Id)
-                            </td>
+                            <td> </td>
                             <td>
                                 <iframe src="https://www.youtube.com/embed/@Html.DisplayFor(modelItem => item.URL)" 
                                         frameborder="0" 

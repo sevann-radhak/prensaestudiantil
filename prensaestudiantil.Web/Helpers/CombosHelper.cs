@@ -1,9 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
 using prensaestudiantil.Web.Data;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace prensaestudiantil.Web.Helpers
 {
@@ -23,9 +21,6 @@ namespace prensaestudiantil.Web.Helpers
                 { Text = pt.Name, Value = $"{pt.Id}" })
                 .OrderBy(pt => pt.Text)
                 .ToList();
-
-            //list.Insert(0, new SelectListItem
-            //    { Text = "Select a Category", Value = "0" });
 
             return list;
         }

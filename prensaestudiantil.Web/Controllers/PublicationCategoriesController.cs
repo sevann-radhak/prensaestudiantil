@@ -105,7 +105,8 @@ namespace prensaestudiantil.Web.Controllers
                 }
                 catch (DbUpdateConcurrencyException ex)
                 {
-                    ModelState.AddModelError(string.Empty, $"Fatal error, try again or call support. Error: {ex.Message}");
+                    ModelState.AddModelError(string.Empty, $"Fatal error, intente nuevamente o comuníquese con " +
+                        $"el administrador. Error: {ex.Message}");
                 }
                 return RedirectToAction(nameof(Index));
             }
@@ -132,7 +133,8 @@ namespace prensaestudiantil.Web.Controllers
             }
             catch (DbUpdateConcurrencyException ex)
             {
-                TempData["Error"] = $"Fatal error, try again or call support. Error: {ex.Message}";
+                TempData["Error"] = $"Fatal error, intente nuevamente o comuníquese con " +
+                    $"el administrador. Error: {ex.Message}";
             }
 
             return RedirectToAction(nameof(Index));

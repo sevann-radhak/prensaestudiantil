@@ -6,10 +6,10 @@ namespace prensaestudiantil.Web.Data.Entities
     {
         public int Id { get; set; }
 
-        [Display(Name = "Image")]
+        [Display(Name = "Imagen")]
         public string ImageUrl { get; set; }
 
-        [Display(Name = "Description")]
+        [Display(Name = "Descripción")]
         public string Description { get; set; }
 
         // TODO: Change the path when publish
@@ -18,7 +18,6 @@ namespace prensaestudiantil.Web.Data.Entities
             //: $"https://localhost:44348{ImageUrl.Substring(1)}";
             : $"https://prensaestudiantil.azurewebsites.net{ImageUrl.Substring(1)}";
 
-        // Foreing key
         public Publication Publication { get; set; }
     }
 }

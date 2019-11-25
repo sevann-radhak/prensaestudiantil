@@ -17,9 +17,6 @@ using System.Threading.Tasks;
 
 namespace prensaestudiantil.Web.Controllers
 {
-    // TODO: complete the actios (update, delete) users
-    // TODO: actions for edit users
-    // TODO: create user with password or send email with token?
     public class AccountController : Controller
     {
         private readonly DataContext _dataContext;
@@ -48,7 +45,6 @@ namespace prensaestudiantil.Web.Controllers
             var users = _dataContext.Users.Include(u => u.Publications);
 
             //TODO: fix user roles, try select
-            // Verify  if user is manager (admin)
             foreach (var user in users)
             {
                 // TODO: change hardcode roleName
@@ -74,7 +70,7 @@ namespace prensaestudiantil.Web.Controllers
                     var result = await _userHelper.ChangePasswordAsync(user, model.OldPassword, model.NewPassword);
                     if (result.Succeeded)
                     {
-                        TempData["Success"] = "Password updated succssesfully";
+                        TempData["Success"] = "Contraseña actualizada exitosamente";
                         return RedirectToAction(nameof(Details), new { id = user.Id });
                     }
                     else
@@ -84,7 +80,7 @@ namespace prensaestudiantil.Web.Controllers
                 }
                 else
                 {
-                    ModelState.AddModelError(string.Empty, "User no found.");
+                    ModelState.AddModelError(string.Empty, "Usuario no encontrado.");
                 }
             }
 
@@ -341,48 +337,6 @@ namespace prensaestudiantil.Web.Controllers
             return View(model);
         }
 
-        public IActionResult Login()
-        {
-            if (User.Identity.IsAuthenticated)
-            {
-                return RedirectToAction("Index", "Home");
-            }
-
-            return View();
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> Login(LoginViewModel model)
-        {
-            if (ModelState.IsValid)
-            {
-                var user = await _userHelper.GetUserByEmailAsync(model.Username);
-                if(user == null)
-                {
-                    ModelState.AddModelError(string.Empty, "User not found.");
-                    return View(model);
-                }
-                if (!user.IsEnabled)
-                {
-                    TempData["Error"] = "User disabled.";
-                    return View();
-                }
-                Microsoft.AspNetCore.Identity.SignInResult result = await _userHelper.LoginAsync(model);
-                if (result.Succeeded)
-                {
-                    if (Request.Query.Keys.Contains("ReturnUrl"))
-                    {
-                        return Redirect(Request.Query["ReturnUrl"].First());
-                    }
-
-                    return RedirectToAction("Index", "Home");
-                }
-            }
-
-            ModelState.AddModelError(string.Empty, "Email or Password incorrect :(");
-            return View(model);
-        }
-
         public async Task<IActionResult> Logout()
         {
             await _userHelper.LogoutAsync();
@@ -405,6 +359,48 @@ namespace prensaestudiantil.Web.Controllers
             return View();
         }
 
+        public IActionResult Prensa()
+        {
+            if (User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Prensa(LoginViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = await _userHelper.GetUserByEmailAsync(model.Username);
+                if (user == null)
+                {
+                    ModelState.AddModelError(string.Empty, "Usuario no encontrado.");
+                    return View(model);
+                }
+                if (!user.IsEnabled)
+                {
+                    TempData["Error"] = "Useruario no habilidato.";
+                    return View();
+                }
+                Microsoft.AspNetCore.Identity.SignInResult result = await _userHelper.LoginAsync(model);
+                if (result.Succeeded)
+                {
+                    if (Request.Query.Keys.Contains("ReturnUrl"))
+                    {
+                        return Redirect(Request.Query["ReturnUrl"].First());
+                    }
+
+                    return RedirectToAction("Index", "Home");
+                }
+            }
+
+            ModelState.AddModelError(string.Empty, "Email o Contraseña incorrectos.");
+            return View(model);
+        }
+
         public IActionResult RecoverPassword()
         {
             return View();
@@ -418,7 +414,7 @@ namespace prensaestudiantil.Web.Controllers
                 var user = await _userHelper.GetUserByEmailAsync(model.Email);
                 if (user == null)
                 {
-                    ModelState.AddModelError(string.Empty, "The email doesn't correspont to a registered user.");
+                    ModelState.AddModelError(string.Empty, "El Email no corresponde con ningún usuario registrado.");
                     return View(model);
                 }
 
@@ -431,7 +427,7 @@ namespace prensaestudiantil.Web.Controllers
                     $"To reset the password click in this link:</br></br>" +
                     $"<a href = \"{link}\">Reset Password</a>");
 
-                TempData["Success"] = "The instructions to recover your password has been sent to email.";
+                TempData["Success"] = "Las instrucciones para recuperar la contraseña fueron enviadas al correo.";
                 return View();
             }
 
@@ -451,16 +447,18 @@ namespace prensaestudiantil.Web.Controllers
             {
                 if (_userHelper.ResetPasswordAsync(user, model.Token, model.Password).Result.Succeeded)
                 {
-                    await _userHelper.LoginAsync(new LoginViewModel { Password = model.Password, RememberMe = false, Username = model.UserName });
-                    TempData["Success"] = "Password reset successfully!";
-                    return RedirectToAction(nameof(Index));
+                    await _userHelper.LoginAsync(
+                        new LoginViewModel { Password = model.Password, RememberMe = false, Username = model.UserName });
+                    TempData["Success"] = "Contraseña actualizada exitosamente!";
+                    return RedirectToAction(nameof(Details), new { id = user.Id });
                 }
 
-                TempData["Error"] = "Error while resetting the password. Try again or call support";
+                TempData["Error"] = "Error mientras se actualizaba la contraseña. " +
+                    "Intente nuevamente o llame al administrador";
                 return View(model);
             }
 
-            TempData["Error"] = "User not found.";
+            TempData["Error"] = "Usuario no econtrado.";
             return View(model);
         }
 

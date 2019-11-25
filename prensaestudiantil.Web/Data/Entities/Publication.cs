@@ -9,45 +9,45 @@ namespace prensaestudiantil.Web.Data.Entities
     {
         public int Id { get; set; }
 
-        [Display(Name = "Title*")]
+        [Display(Name = "Título")]
         [Required(ErrorMessage = "The field {0} is mandatory.")]
         [MaxLength(150, ErrorMessage = "The {0} field can not have more than {1} characters.")]
         public string Title { get; set; }
 
-        [Display(Name = "Header*")]
+        [Display(Name = "Encabezado")]
         [Required(ErrorMessage = "The field {0} is mandatory.")]
         [DataType(DataType.MultilineText)]
         public string Header { get; set; }
 
-        [Display(Name = "Body")]
+        [Display(Name = "Cuerpo")]
         [DataType(DataType.MultilineText)]
         public string Body { get; set; }
 
-        [Display(Name = "Footer")]
+        [Display(Name = "Pie de página")]
         [MaxLength(250, ErrorMessage = "The {0} field can not have more than {1} characters.")]
         public string Footer { get; set; }
 
-        [Display(Name = "Publication Date")]
+        [Display(Name = "Fecha")]
         [DisplayFormat(DataFormatString = "{0:yyyy/MM/dd HH:mm:ss}", ApplyFormatInEditMode = true)]
         public DateTime Date { get; set; }
 
-        [Display(Name = "Modify Date")]
+        [Display(Name = "Actualización")]
         [DisplayFormat(DataFormatString = "{0:yyyy/MM/dd HH:mm:ss}", ApplyFormatInEditMode = true)]
         public DateTime? LastUpdate { get; set; }
 
-        [Display(Name = "Main Image")]
+        [Display(Name = "Imagen")]
         public string ImageUrl { get; set; }
 
-        [Display(Name = "Image Description")]
+        [Display(Name = "Descripción Imagen")]
         [MaxLength(150, ErrorMessage = "The {0} field can not have more than {1} characters.")]
         public string ImageDescription { get; set; }
 
         // Only for external references for author
-        [Display(Name = "Author")]
+        [Display(Name = "Autor")]
         [MaxLength(60, ErrorMessage = "The {0} field can not have more than {1} characters.")]
         public string Author { get; set; }
 
-        [Display(Name = "Publication Date")]
+        [Display(Name = "Fecha")]
         [DisplayFormat(DataFormatString = "{0:yyyy/MM/dd HH:mm:ss}", ApplyFormatInEditMode = true)]
         public DateTime DateLocal => Date.ToLocalTime();
 
@@ -56,7 +56,7 @@ namespace prensaestudiantil.Web.Data.Entities
             ? null
             : $"https://prensaestudiantil.azurewebsites.net{ImageUrl.Substring(1)}";
 
-        [Display(Name = "User")]
+        [Display(Name = "Usuario")]
         public User User { get; set; }
 
         //TODO modify and fix the last update date

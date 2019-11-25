@@ -135,7 +135,7 @@ namespace prensaestudiantil.Web.Controllers
                 var user = await _userHelper.GetUserByEmailAsync(User.Identity.Name);
                 if (user == null)
                 {
-                    ModelState.AddModelError(string.Empty, "User not found. Call support.");
+                    ModelState.AddModelError(string.Empty, "Usuario no encontrado. Comuníquese con el administrador");
                     model.PublicationCategories = _combosHelper.GetComboPublicationCategories();
 
                     return View(model);
@@ -161,7 +161,7 @@ namespace prensaestudiantil.Web.Controllers
                     return View(model);
                 }
 
-                TempData["Success"] = "Publication created successfully!";
+                TempData["Success"] = "Noticia creada exitosamente!";
 
                 // TODO: fix the publicationId recover method... Need create and get it back 
                 var publication = await _dataContext.Publications
@@ -212,16 +212,16 @@ namespace prensaestudiantil.Web.Controllers
                     (ex.InnerException != null && ex.InnerException.Message.Contains("REFERENCE"))
                    )
                 {
-                    TempData["Error"] = "Can not delete this record because has related records";
+                    TempData["Error"] = "No se puede eliminar esta Noticia porque tiene registros asociados.";
                 }
                 else
                 {
-                    TempData["Error"] = $"Can not delete this record. Call support! {ex}";
+                    TempData["Error"] = $"No se pudo eliminar. Comuníquese con el administrador! {ex}";
                 }
                 return RedirectToAction(nameof(Index));
             }
 
-            TempData["Success"] = "Publications deleted successfully!";
+            TempData["Success"] = "Noticia eliminada exitosamente!";
             return RedirectToAction(nameof(Index));
         }
 
@@ -331,7 +331,7 @@ namespace prensaestudiantil.Web.Controllers
                 }
             }
 
-            TempData["Success"] = "Publication updated successfully!";
+            TempData["Success"] = "Noticia actualizada exitosamente!";
             return RedirectToAction(nameof(Details), new { id = model.Id });
         }
 
