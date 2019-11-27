@@ -2,6 +2,8 @@
 
 @{
     ViewData["Title"] = @Html.DisplayFor(model => model.Title);
+    ViewData["Content"] = @Html.DisplayFor(model => model.Header);
+    ViewData["Img"] = @Html.DisplayFor(model => model.ImageFullPath);
 }
 
 @section Scripts {
@@ -34,11 +36,11 @@
                     <img src="@Url.Content(Model.ImageUrl)"
                          alt="@Model.Title"
                          title="@Model.Title"
-                         style="max-width: 100%; height: auto;" />
+                         style="max-width: 100%;" />
                 }
             </div>
 
-            <div class="col-md-9">
+            <div class="col-md-9 col-lg-9">
                 <span class="title">@Html.DisplayFor(model => model.Author)</span>
                 <small>
                     @if (Model.LastUpdate != null)
@@ -65,9 +67,9 @@
         <div style=" border-bottom: 2px solid #027368;"> </div>
         <br clear="all" />
 
-        <div class="col-md-4"></div>
+        <div class="col-md-4 col-lg-4"></div>
 
-        <div class="col-md-8 mt-40">
+        <div class="col-md-8 col-lg-8">
             <p style="text-align: justify">
                 @if (Model.Body != null)
                 {
@@ -91,7 +93,7 @@
     }
     else
     {
-        <div class="col-md-8">
+        <div class="col-md-8 col-lg-8">
 
             <h2 class="title"> @Html.DisplayFor(model => model.Title) </h2>
 
@@ -149,8 +151,8 @@
             </div>
         </div>
 
-        <div class="col-md-4">
-            <a class="twitter-timeline" data-height="900" data-theme="light" data-link-color="#027368" href="https://twitter.com/prensaestudiant?ref_src=twsrc%5Etfw">Tweets by prensaestudiant</a>
+        <div class="col-md-4 col-lg-4">
+            <a class="twitter-timeline" data-height="1200" data-theme="light" data-link-color="#027368" href="https://twitter.com/prensaestudiant?ref_src=twsrc%5Etfw">Tweets by prensaestudiant</a>
             <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
         </div>
     }

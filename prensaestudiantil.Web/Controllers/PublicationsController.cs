@@ -332,7 +332,7 @@ namespace prensaestudiantil.Web.Controllers
             }
 
             TempData["Success"] = "Noticia actualizada exitosamente!";
-            return RedirectToAction(nameof(Details), new { id = model.Id });
+            return RedirectToAction(nameof(Index));
         }
 
         private bool PublicationExists(int id)

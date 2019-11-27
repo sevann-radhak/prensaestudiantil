@@ -2,26 +2,28 @@
 
 @{
     ViewData["Title"] = "Prensa Estudiantil";
+    ViewData["Content"] = "Prensa Estudiantil es una expresión del sentir del estudiantado colombiano";
+    ViewData["Img"] = "~/images/logo.png";
 }
 
 <link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css" />
 <br />
 
 <div class="row">
-    <div class="col-md-9 col-sm-9 col-lg-9 col-xs-9" margin-top: 10px;">
+    <div class="col-md-9 col-sm-12 col-xs-12" margin-top: 10px;">
         <partial name="_Carrousel" />
     </div>
-    <div class="col-md-3 col-sm-3 col-lg-3 col-xs-3">
+    <div class="col-md-3">
         <a class="twitter-timeline" data-height="480" data-theme="light" data-link-color="#027368" href="https://twitter.com/prensaestudiant?ref_src=twsrc%5Etfw">Tweets by prensaestudiant</a>
         <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
     </div>
 </div>
 
 <div class="row">
-    <div class="col-md-9 col-sm-9 col-lg-9 col-xs-9">
+    <div class="col-md-9 col-lg-9">
         @{
             int i = 0;
-            string divClass = "col-md-6";
+            string divClass = "col-md-6 col-lg-6";
         }
 
         @*List publications in main page*@
@@ -31,10 +33,10 @@
 
             if (i == 1)
             {
-                divClass = "col-md-9 col-sm-9 col-lg-9 col-xs-9";
+                divClass = "col-md-9";
         <br />
         <br />
-        <div class="col-md-3 col-sm-3 col-lg-3 col-xs-3" >
+        <div class="col-md-3 col-lg-3 col-xs-12 col-sm-12" >
             <img class="img-responsive" src="~/images/logo.png" />
                <partial name="_Opinion" />
             </div>
@@ -45,21 +47,29 @@
                 {
                     break;
                 }
-                divClass = "col-md-6";
+                divClass = "col-md-6 col-lg-6 col-sm-12 col-xs-12";
             }
 
         <div class="@divClass" style="margin-top: 6px; float: right">
             <div style="border: 1px solid #D8D8D8; border-radius: 10px; padding: 10px;">
                 <div class="card-title">
-                    <a asp-action="Details" asp-controller="Publications" asp-route-id="@item.Id" class="title h4"> @item.Title </a>
-                    <p>
-                        <span class="badge accent-color">@Html.DisplayFor(modelItem => item.PublicationCategory.Name)</span>
-                        <small class="text-muted" style="font-size: x-small">@Html.DisplayFor(modelItem => item.DateLocal)</small>
-                    </p>
+                    <a asp-action="Details" 
+                       asp-controller="Publications" 
+                       asp-route-id="@item.Id" 
+                       class="btn-link title h4">
+                            @item.Title
+                        </a>
+                        <p>
+                            <span class="badge accent-color">@Html.DisplayFor(modelItem => item.PublicationCategory.Name)</span>
+                            <small class="text-muted" style="font-size: x-small">@Html.DisplayFor(modelItem => item.DateLocal)</small>
+                        </p>
                 </div>
 
                 <div class="car-body">
-                    <a href="Publications/Details/@item.Id" class="black-color">
+                    <a asp-action="Details" 
+                       asp-controller="Publications" 
+                       asp-route-id="@item.Id" 
+                       class="black-color">
                         <img class="card-img"
                              src="@Html.DisplayFor(modelItem => item.ImageFullPath)"
                              style="margin-top: 5px; width: 100%;"
@@ -69,7 +79,10 @@
 
                     <p class="card-text" style="text-align: justify">
                         @Html.DisplayFor(modelItem => item.Header)
-                        <a asp-action="Details" asp-controller="Publications" asp-route-id="@item.Id" class="title"> [+] </a>
+                        <a asp-action="Details" 
+                           asp-controller="Publications" 
+                           asp-route-id="@item.Id" 
+                           class="title"> [+] </a>
                     </p>
                 </div>
             </div>

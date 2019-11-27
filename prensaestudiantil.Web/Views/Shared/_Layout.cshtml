@@ -4,6 +4,10 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - Prensa Estudiantil</title>
+    <meta property="og:title" content="@ViewData["Title"]" />
+    <meta property="og:description" content="@ViewData["Content"]" />
+    <meta property="og:image" content="@ViewData["Img"]" />
+    <link href="@ViewData["Img"]" rel="image_src" />
     <link href="~/Images/logo.png" rel="shortcut icon" type="image/x-icon" />
 
     <environment include="Development">
@@ -18,6 +22,14 @@
     </environment>
 
     <style>
+        body {
+            padding-top: 0px;
+            padding-bottom: 20px;
+            background: #093028; /* fallback for old browsers */
+            background: -webkit-linear-gradient(to right, #027368, #093028); /* Chrome 10-25, Safari 5.1-6 */
+            background: linear-gradient(to right, #027368, #093028); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+        }
+
         .border-radius {
             border-radius: 15px;
         }
@@ -26,7 +38,8 @@
             font-weight: bold;
             color: #027368;
         }
-        .color-primary-background{
+
+        .color-primary-background {
             background-color: #027368;
         }
 
@@ -46,9 +59,14 @@
 <body>
     <partial name="_CookieConsentPartial" />
 
-    <div class="container body-content" 
+    <div class="container body-content"
          style="border: 1px solid #027368; background-color: white; margin-top: 20px; padding-top: 10px; margin-bottom: 2px; border-radius: 10px;">
-        <img src="~/images/header_image.jpg" alt="Prensa Estudiantil" title="Prensa Estudiantil" class="img-responsive" />
+        <a href="/">
+            <img src="~/images/header_image.jpg"
+                 alt="Prensa Estudiantil"
+                 title="Prensa Estudiantil"
+                 class="img-responsive" />
+        </a>
         <nav class="navbar navbar-inverse">
             <div class="container">
                 <div class="navbar-header">

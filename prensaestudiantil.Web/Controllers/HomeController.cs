@@ -22,7 +22,7 @@ namespace prensaestudiantil.Web.Controllers
         {
             return View(new MainIndexViewModel
             {
-                PublicationImages = _dataContext.PublicationImages.Take(10).ToList(),
+                PublicationImages = _dataContext.PublicationImages.OrderByDescending(pi => pi.Id).Take(10).ToList(),
                 Publications = await _dataContext.Publications
                     .Include(p => p.PublicationCategory)
                     .OrderByDescending(p => p.Date)

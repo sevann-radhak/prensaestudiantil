@@ -1,12 +1,6 @@
 ﻿/* Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification\ 
 for details on configuring this project to bundle and minify static web assets. */
-body {
-    padding-top: 0px;
-    padding-bottom: 20px;
-    background: #093028; /* fallback for old browsers */
-    background: -webkit-linear-gradient(to right, #027368, #093028); /* Chrome 10-25, Safari 5.1-6 */
-    background: linear-gradient(to right, #027368, #093028); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
-}
+
 
 /* Wrapping element */
 /* Set some basic padding to keep content from hitting the edges */
