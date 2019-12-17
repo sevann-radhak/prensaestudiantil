@@ -30,7 +30,7 @@ namespace prensaestudiantil.Web.Data.Entities
         // TODO: Change the path when publish
         public string ImageFullPath => string.IsNullOrEmpty(ImageUrl)
              ? $"https://prensaestudiantil.azurewebsites.net/images/Users/noImage.png"
-             : $"https://prensaestudiantil.azurewebsites.net{ImageUrl.Substring(1)}";
+             : $"https://prensaestudiantil.org{ImageUrl.Substring(1)}";
 
         [NotMapped]
         [Display(Name = "Roles")]
