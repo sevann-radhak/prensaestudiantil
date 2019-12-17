@@ -3,7 +3,12 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - prensaestudiantil.Web</title>
+    <title>@ViewData["Title"] - Prensa Estudiantil</title>
+    <meta property="og:title" content="@ViewData["Title"]" />
+    <meta property="og:description" content="@ViewData["Content"]" />
+    <meta property="og:image" content="@ViewData["Img"]" />
+    <link href="@ViewData["Img"]" rel="image_src" />
+    <link href="~/Images/logo.png" rel="shortcut icon" type="image/x-icon" />
 
     <environment include="Development">
         <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
@@ -15,64 +20,110 @@
               asp-fallback-test-class="sr-only" asp-fallback-test-property="position" asp-fallback-test-value="absolute" />
         <link rel="stylesheet" href="~/css/site.min.css" asp-append-version="true" />
     </environment>
+
+    <style>
+        body {
+            padding-top: 0px;
+            padding-bottom: 20px;
+            background: #093028; /* fallback for old browsers */
+            background: -webkit-linear-gradient(to right, #027368, #093028); /* Chrome 10-25, Safari 5.1-6 */
+            background: linear-gradient(to right, #027368, #093028); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+        }
+
+        .border-radius {
+            border-radius: 15px;
+        }
+
+        .title {
+            font-weight: bold;
+            color: #027368;
+        }
+
+        .color-primary-background {
+            background-color: #027368;
+        }
+
+        .gray-color {
+            color: gray;
+        }
+
+        a:hover {
+            color: #048ABF;
+        }
+
+        .accent-color {
+            background-color: #048ABF
+        }
+    </style>
 </head>
 <body>
-    <nav class="navbar navbar-inverse navbar-fixed-top">
-        <div class="container">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a asp-area="" asp-controller="Home" asp-action="Index" class="navbar-brand">prensaestudiantil.Web</a>
-            </div>
-            <div class="navbar-collapse collapse">
-                <ul class="nav navbar-nav">
-                    <li><a asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
-                    <li><a asp-area="" asp-controller="Home" asp-action="About">About</a></li>
-                    <li><a asp-area="" asp-controller="Home" asp-action="Contact">Contact</a></li>
-                    @*<li><a asp-area="" asp-controller="Users" asp-action="Index">User</a></li>*@
-                    @if (User.Identity.IsAuthenticated && User.IsInRole("Manager"))
-                    {
-                        @*<li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">File<b class="caret"></b></a>
-                            <ul class="dropdown-menu">
-                                <li><a asp-area="" asp-controller="Publications" asp-action="Index">Publications</a></li>
-                                <li><a asp-area="" asp-controller="PublicationCategories" asp-action="Index">Publication Categories</a></li>
-                                <li><a asp-area="" asp-controller="YoutubeVideos" asp-action="Index">Youtube Videos</a></li>
-                                <li><a asp-area="" asp-controller="Users" asp-action="Index">Users</a></li>
-                            </ul>
-                        </li>*@
-                        <li><a asp-area="" asp-controller="Publications" asp-action="Index">Publications</a></li>
-                        <li><a asp-area="" asp-controller="PublicationCategories" asp-action="Index">Categories</a></li>
-                        <li><a asp-area="" asp-controller="YoutubeVideos" asp-action="Index">Youtube Videos</a></li>
-                        <li><a asp-area="" asp-controller="Account" asp-action="Index">Users</a></li>
-                    }
-                </ul>
-                <ul class="nav navbar-nav navbar-right">
-                    @if (User.Identity.IsAuthenticated)
-                    {
-                        <li><a asp-area="" asp-controller="Account" asp-action="ChangeUser">@User.Identity.Name</a></li>
-                        <li><a asp-area="" asp-controller="Account" asp-action="Logout">Logout</a></li>
-                    }
-                    else
-                    {
-                        <li><a asp-area="" asp-controller="Account" asp-action="Login">Login</a></li>
-                    }
-                </ul>
-            </div>
-        </div>
-    </nav>
-
     <partial name="_CookieConsentPartial" />
 
-    <div class="container body-content">
+    <div class="container body-content"
+         style="border: 1px solid #027368; background-color: white; margin-top: 20px; padding-top: 10px; margin-bottom: 2px; border-radius: 10px;">
+        <a href="/">
+            <img src="~/images/header_image.jpg"
+                 alt="Prensa Estudiantil"
+                 title="Prensa Estudiantil"
+                 class="img-responsive" />
+        </a>
+        <nav class="navbar navbar-inverse">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a asp-area="" asp-controller="Home" asp-action="Index" class="navbar-brand">Prensa Estudiantil</a>
+                </div>
+                <div class="navbar-collapse collapse">
+                    <ul class="nav navbar-nav">
+                        <li><a asp-area="" asp-controller="Home" asp-action="Search">Buscar</a></li>
+                        <li><a asp-area="" asp-controller="YoutubeVideos" asp-action="Index">Videos</a></li>
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <li><a asp-area="" asp-controller="Publications" asp-action="Index">Publicaciones</a></li>
+                            @if (User.IsInRole("Manager"))
+                            {
+                                <li><a asp-area="" asp-controller="PublicationCategories" asp-action="Index">Categorías</a></li>
+                                <li><a asp-area="" asp-controller="Account" asp-action="Index">Usuarios</a></li>
+                            }
+                        }
+                        <li><a asp-area="" asp-controller="Home" asp-action="Contact">Contacto</a></li>
+                    </ul>
+                    <ul class="nav navbar-nav navbar-right">
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <li><a asp-area="" asp-controller="Account" asp-action="MyProfile">@User.Identity.Name</a></li>
+                            <li><a asp-area="" asp-controller="Account" asp-action="Logout">Logout</a></li>
+                            <li> . </li>
+                            <li> . </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </nav>
         @RenderBody()
         <hr />
         <footer>
-            <p>&copy; 2019 - prensaestudiantil.Web</p>
+            <div style="margin: auto; text-align: center; font-size: xx-small">
+                <br clear="all" />
+                <div style=" border-bottom: 1px solid #027368;"> </div>
+                <br clear="all" />
+                prensaestudiantil.org
+                <br />
+                Todas las marcas registradas son propiedad de la compañía respectiva.
+                <br />
+                Se permite la reproducción total o parcial de cualquiera de los contenidos que aquí aparezca, así como su traducción a cualquier idioma sin autorización escrita de su titular.
+                <br />
+                <a rel="license" href="http://creativecommons.org/licenses/by-sa/3.0/" target="_blank">
+                    <br />
+                    <img alt="Licencia Creative Commons" title="Licencia Creative Commons" src="http://i.creativecommons.org/l/by-sa/3.0/80x15.png">
+                </a>
+            </div>
+            <br clear="all" />
         </footer>
     </div>
 

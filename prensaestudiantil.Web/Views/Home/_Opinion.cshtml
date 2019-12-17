@@ -1,0 +1,26 @@
+﻿@model prensaestudiantil.Web.Models.MainIndexViewModel
+
+<br clear="all" />
+<div class="color-primary-background">
+    <span style="font-weight: bold; color:white; letter-spacing: 1pt; padding: 4px; margin: 0px auto">OPINIÓN</span>
+    <div class="col-md-12" style="border: 1px solid #027368; background-color: white">
+        @foreach (var opinion in Model.OpinionPublications)
+        {
+        <div class="mt-20">
+            <span style="font-size: small" class="title">
+                <a href="Publications/Details/@opinion.Id">
+                    @opinion.Title
+                </a>
+            </span>
+            <img class="card-img"
+                 src="@opinion.ImageFullPath"
+                 style="margin-top: 5px; width: 100%;"
+                 alt='@opinion.Title'
+                 title='@opinion.Title' />
+        </div>
+        <span style="float: right;font-size: 9px;">Por: <b>@opinion.Author</b></span>
+
+        <hr style="border:1px solid #027368;">
+        }
+    </div>
+</div>

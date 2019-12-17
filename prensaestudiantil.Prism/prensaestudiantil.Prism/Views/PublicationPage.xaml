@@ -1,0 +1,67 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:prism="http://prismlibrary.com"
+             prism:ViewModelLocator.AutowireViewModel="True"
+             xmlns:ffimageloading="clr-namespace:FFImageLoading.Forms;assembly=FFImageLoading.Forms"
+             x:Class="prensaestudiantil.Prism.Views.PublicationPage"
+             BackgroundColor="{StaticResource ColorBackgroud}"
+             Title="{Binding Title}">
+
+    <StackLayout
+        Padding="10">
+        <ScrollView>
+            <StackLayout>
+                <Label 
+                FontAttributes="Bold"
+                Text="{Binding Publication.Title}"
+                TextColor="{StaticResource ColorPrimary}"/>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <Label       
+                    FontAttributes="Bold"      
+                    Grid.Column="0"
+                    Text="{Binding Publication.DateLocal}"
+                    TextColor="{StaticResource ColorSecondary}"/>
+                    <Label 
+                    Grid.Column="1"
+                    Text="{Binding Publication.PublicationCategory}"
+                    TextColor="{StaticResource ColorSecondary}"/>
+                </Grid>
+                <ffimageloading:CachedImage
+                    Aspect="AspectFit" 
+	                CacheDuration= "50"
+	                DownsampleToViewSize = "true"
+	                ErrorPlaceholder= "ErrorImage"
+	                Grid.Column="0"
+                    HeightRequest="300"
+	                LoadingPlaceholder= "LoaderImage"
+	                RetryDelay= "600"
+	                RetryCount= "3"
+	                Source="{Binding Publication.ImageUrl}"/>
+
+                <Label 
+                Text="{Binding Publication.Header}"
+                TextColor="{StaticResource ColorFont}"/>
+                <Label 
+                Text="{Binding Publication.Body}"
+                TextColor="{StaticResource ColorFont}"/>
+                <Label 
+                Text="{Binding Publication.Footer}"
+                TextColor="{StaticResource ColorSecondary}"/>
+            </StackLayout>
+
+        </ScrollView>
+        <Button
+            Command="{Binding EditPublicationCommand}"
+            Style="{StaticResource SecondaryButton}"
+            Text="Edit"/>
+    </StackLayout>
+
+</ContentPage>

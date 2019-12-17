@@ -1,0 +1,14 @@
+﻿@model prensaestudiantil.Web.Models.MainIndexViewModel
+
+<div class="col-md-3">
+    @foreach (var item in Model.YoutubeVideos)
+    {
+        <p>
+            <span class="title">@item.Name</span>
+            <iframe src="https://www.youtube.com/embed/@Html.DisplayFor(modelItem => item.URL)"
+                    frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+                    allowfullscreen
+                    width="100%"></iframe>
+        </p>
+    }
+</div>

@@ -10,18 +10,11 @@ namespace prensaestudiantil.Web.Data
         {
         }
 
-        // TODO: delete comments and files 
-        //public DbSet<Manager> Managers { get; set; }
-
         public DbSet<PublicationCategory> PublicationCategories { get; set; }
 
         public DbSet<PublicationImage> PublicationImages { get; set; }
 
-        //public DbSet<User> Users { get; set; }
-
         public DbSet<Publication> Publications { get; set; }
-
-        //public DbSet<Writer> Writers { get; set; }
 
         public DbSet<YoutubeVideo> YoutubeVideos { get; set; }
     }

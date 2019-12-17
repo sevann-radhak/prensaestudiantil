@@ -1,29 +1,24 @@
-﻿using Microsoft.AspNetCore.Identity;
-using prensaestudiantil.Web.Data;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
 using prensaestudiantil.Web.Data.Entities;
 using prensaestudiantil.Web.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace prensaestudiantil.Web.Helpers
 {
     public class UserHelper : IUserHelper
     {
-        private readonly DataContext _context;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly SignInManager<User> _signInManager;
         private readonly UserManager<User> _userManager;
 
         public UserHelper(
-            DataContext dataContext,
             UserManager<User> userManager,
             RoleManager<IdentityRole> roleManager,
             SignInManager<User> signInManager
             )
         {
-            _context = dataContext;
             _roleManager = roleManager;
             _signInManager = signInManager;
             _userManager = userManager;
@@ -39,19 +34,54 @@ namespace prensaestudiantil.Web.Helpers
             await _userManager.AddToRoleAsync(user, roleName);
         }
 
+        public async Task<IdentityResult> ChangePasswordAsync(User user, string oldPassword, string newPassword)
+        {
+            return await _userManager.ChangePasswordAsync(user, oldPassword, newPassword);
+        }
+        
+        public async Task<IdentityResult> ConfirmEmailAsync(User user, string token)
+        {
+            return await _userManager.ConfirmEmailAsync(user, token);
+        }
+
+        public async Task<bool> DeleteUserAsync(User user)
+        {
+            try
+            {
+                IdentityResult response = await _userManager.DeleteAsync(user);
+                return response.Succeeded;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+
+
+        }
+
         public async Task CheckRoleAsync(string roleName)
         {
-            var roleExists = await _roleManager.RoleExistsAsync(roleName);
+            bool roleExists = await _roleManager.RoleExistsAsync(roleName);
             if (!roleExists)
             {
                 await _roleManager.CreateAsync(new IdentityRole { Name = roleName });
             }
         }
 
+        public async Task<string> GenerateEmailConfirmationTokenAsync(User user)
+        {
+            return await _userManager.GenerateEmailConfirmationTokenAsync(user);
+        }
+
+        public async Task<string> GeneratePasswordResetTokenAsync(User user)
+        {
+            return await _userManager.GeneratePasswordResetTokenAsync(user);
+        }
+
         public async Task<IList<string>> GetRolesAsync(string email)
         {
-            var user = await _userManager.FindByEmailAsync(email);
-            if(user == null)
+            User user = await _userManager.FindByEmailAsync(email);
+            if (user == null)
             {
                 return null;
             }
@@ -71,12 +101,17 @@ namespace prensaestudiantil.Web.Helpers
 
         public async Task<bool> IsInRoleAsync(string email, string roleName)
         {
-            var user = await _userManager.FindByEmailAsync(email);
+            User user = await _userManager.FindByEmailAsync(email);
             if (user == null)
             {
                 return false;
             }
 
+            return await _userManager.IsInRoleAsync(user, roleName);
+        }
+
+        public async Task<bool> IsUserInRoleAsync(User user, string roleName)
+        {
             return await _userManager.IsInRoleAsync(user, roleName);
         }
 
@@ -94,24 +129,19 @@ namespace prensaestudiantil.Web.Helpers
             await _signInManager.SignOutAsync();
         }
 
-        public async Task<bool> IsUserInRoleAsync(User user, string roleName)
+        public async Task RemoveUserFromRole(User user, string roleName)
         {
-            return await _userManager.IsInRoleAsync(user, roleName);
+            await _userManager.RemoveFromRoleAsync(user, roleName);
         }
 
-        public async Task<bool> DeleteUserAsync(User user)
+        public async Task<IdentityResult> ResetPasswordAsync(User user, string token, string password)
         {
-            try
-            {
-                var response = await _userManager.DeleteAsync(user);
-                return response.Succeeded;
-            }
-            catch (Exception)
-            {
-                return false;
-            }
+            return await _userManager.ResetPasswordAsync(user, token, password);
+        }
 
-            
+        public async Task<IdentityResult> UpdateUserAsync(User user)
+        {
+            return await _userManager.UpdateAsync(user);
         }
 
         public async Task<SignInResult> ValidatePasswordAsync(User user, string password)
@@ -121,7 +151,5 @@ namespace prensaestudiantil.Web.Helpers
                 password,
                 false);
         }
-
-
     }
 }

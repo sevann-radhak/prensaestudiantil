@@ -1,0 +1,21 @@
+﻿@model prensaestudiantil.Web.Models.PublicationViewModel
+
+<div style="float: right">
+    <div style="float: left;">
+        <div class="fb-share-button"
+             data-href="http://prensaestudiantil.org/Publications/Details/@Html.DisplayFor(model => model.Id)"
+             data-layout="button_count" data-size="small">
+            <a target="_blank"
+               href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Flocalhost%3A54304%2FPublications%2FDetails%2F22&amp;src=sdkpreparse"
+               class="fb-xfbml-parse-ignore">Compartir</a>
+        </div>
+    </div>
+
+    <div style="float: left; margin-left: 10px;">
+        <a href="https://twitter.com/share?ref_src=twsrc%5Etfw"
+           class="twitter-share-button"
+           data-text="@Html.DisplayFor(model => model.Title)"
+           data-via="prensaestudiant" data-show-count="false">Tweet</a>
+        <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+    </div>
+</div>

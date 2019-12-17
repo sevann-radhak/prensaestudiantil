@@ -1,0 +1,20 @@
+﻿@model prensaestudiantil.Web.Models.PublicationViewModel
+
+@*Show aditional images*@
+    <div style="width: 80%; margin: 0px auto">
+
+        <br clear="all" />
+        @foreach (var image in Model.PublicationImages)
+        {
+            <div class="mt-20" style="border: 1px solid #D8D8D8; border-radius: 10px; padding: 10px;">
+                <img class="card-img"
+                     src="@image.ImageFullPath"
+                     style="width: 100%; margin-bottom: 5px;"
+                     alt='@image.Description'
+                     title='@image.Description' />
+
+                <span class="imagePublication"> @image.Description </span>
+            </div>
+            <br clear="all" />
+        }
+    </div>

@@ -1,0 +1,52 @@
+﻿@model prensaestudiantil.Web.Models.LoginViewModel
+@{
+    ViewData["Title"] = "Login";
+}
+
+<h2>Login</h2>
+
+<partial name="_AlertsDialog" />
+
+<div class="row">
+    <div class="col-md-4 offset-md-4">
+        <form method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Username">Email</label>
+                <input asp-for="Username" class="form-control" />
+                <span asp-validation-for="Username" class="text-warning"></span>
+            </div>
+            <script src="~/lib/jquery-validation/dist/jquery.validate.js"></script>
+            <div class="form-group">
+                <label asp-for="Password">Contraseña</label>
+                <input asp-for="Password" type="password" class="form-control" />
+                <span asp-validation-for="Password" class="text-warning"></span>
+            </div>
+            <div class="form-group">
+                <div class="form-check">
+                    <input asp-for="RememberMe" type="checkbox" class="form-check-input" />
+                    <label asp-for="RememberMe" class="form-check-label">Mantener sesión iniciada</label>
+                </div>
+                <span asp-validation-for="RememberMe" class="text-warning"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Login" class="btn btn-success" />
+                <a class="btn btn-link" href="/Account/RecoverPassword">Olvidó la Contraseña?</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function () {           
+            $(".alert").fadeTo(5000, 500).slideUp(500, function () {
+                $(".alert-dismissible").alert('close');
+            });
+        });
+    </script>
+}

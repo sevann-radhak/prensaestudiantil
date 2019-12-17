@@ -1,0 +1,46 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<prism:PrismApplication xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:prism="clr-namespace:Prism.DryIoc;assembly=Prism.DryIoc.Forms"
+             x:Class="prensaestudiantil.Prism.App">
+	<Application.Resources>
+
+        <ResourceDictionary>
+
+            <!-- Parameters -->
+            <x:String x:Key="UrlAPI">https://prensaestudiantil.azurewebsites.net/</x:String>
+
+            <!-- Colors -->
+            <Color x:Key="ColorBackgroud">#FFFFFF</Color>
+            <Color x:Key="ColorPrimary">#027368</Color>
+            <Color x:Key="ColorSecondary">#048ABF</Color>
+            <Color x:Key="ColorDanger">#F25116</Color>
+            <Color x:Key="ColorAccent">#048ABF</Color>
+            <Color x:Key="ColorFont">#0D0D0D</Color>
+            <Color x:Key="ColorFontInverse">#FFFFFF</Color>
+
+            <!-- Styles -->
+            <Style TargetType="Button">
+                <Setter Property="BackgroundColor" Value="{StaticResource ColorPrimary}" />
+                <Setter Property="HorizontalOptions" Value="FillAndExpand" />
+                <Setter Property="TextColor" Value="{StaticResource ColorFontInverse}" />
+            </Style>
+            <Style x:Key="SecondaryButton"  TargetType="Button">
+                <Setter Property="BackgroundColor" Value="{StaticResource ColorSecondary}" />
+            </Style>
+            <Style x:Key="DangerButton"  TargetType="Button">
+                <Setter Property="BackgroundColor" Value="{StaticResource ColorDanger}" />
+            </Style>
+
+            <Style TargetType="Label">
+                <Setter Property="TextColor" Value="{StaticResource ColorFont}" />
+            </Style>
+
+            <Style x:Key="NamesLength" TargetType="Entry">
+                <Setter Property="MaxLength" Value="60" />
+            </Style>
+
+        </ResourceDictionary>
+
+    </Application.Resources>
+</prism:PrismApplication>

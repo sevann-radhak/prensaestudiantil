@@ -9,6 +9,7 @@ namespace prensaestudiantil.Web.Helpers
     {
         public async Task<string> UploadImageAsync(IFormFile imageFile)
         {
+            // TODO: fix folder for users
             string guid = Guid.NewGuid().ToString();
             string file = $"{guid}{imageFile.FileName}";
             string path = Path.Combine(

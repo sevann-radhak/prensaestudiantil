@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using prensaestudiantil.Common.Models;
@@ -17,27 +18,62 @@ namespace prensaestudiantil.Web.Controllers.API
     public class UsersController : ControllerBase
     {
         private readonly DataContext _dataContext;
+        private readonly IConverterHelper _converterHelper;
         private readonly IUserHelper _userHelper;
+        private readonly IMailHelper _mailHelper;
 
         public UsersController(
             DataContext dataContext,
-            IUserHelper userHelper)
+            IConverterHelper converterHelper,
+            IUserHelper userHelper,
+            IMailHelper mailHelper)
         {
             _dataContext = dataContext;
+            _converterHelper = converterHelper;
             _userHelper = userHelper;
+            _mailHelper = mailHelper;
+        }
+
+        [HttpPost]
+        [Route("ChangePassword")]
+        public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordRequest request)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var user = await _userHelper.GetUserByEmailAsync(request.Email);
+            if (user == null)
+            {
+                return BadRequest(new Response<object>
+                {
+                    Message = "This email is not assigned to any user."
+                });
+            }
+
+            var result = await _userHelper.ChangePasswordAsync(user, request.OldPassword, request.NewPassword);
+            if (!result.Succeeded)
+            {
+                return BadRequest(new Response<object>
+                {
+                    Message = result.Errors.FirstOrDefault().Description
+                });
+            }
+
+            return Ok(new Response<object>
+            {
+                Message = "The password was changed successfully!"
+            });
         }
 
         [HttpPost]
         [Route("GetUserByEmail")]
-        public async Task<IActionResult> GetUserByEmail(EmailRequest request)
+        public async Task<IActionResult> GetUserByEmailAsync(EmailRequest request)
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest(new Response<object>
-                {
-                    IsSuccess = false,
-                    Message = "Login failed."
-                });
+                return BadRequest(ModelState);
             }
 
             User user = await _dataContext.Users
@@ -50,16 +86,13 @@ namespace prensaestudiantil.Web.Controllers.API
 
             if (user == null)
             {
-                return NotFound(new Response<object>
-                {
-                    IsSuccess = false,
-                    Message = "User not found."
-                });
+                return NotFound("User not found.");
             }
 
-            UserResponse response = new UserResponse
+            return Ok(new UserResponse
             {
                 Id = user.Id,
+                Email = user.Email,
                 FirstName = user.FirstName,
                 ImageUrl = user.ImageFullPath,
                 LastName = user.LastName,
@@ -84,20 +117,92 @@ namespace prensaestudiantil.Web.Controllers.API
                     }).ToList(),
                     Title = p.Title,
                     User = p.User.FullName
-                }).ToList(),
+                }).OrderByDescending(p => p.Date)
+                .ToList(),
+                PhoneNumber = user.PhoneNumber,
                 Roles = await _userHelper.GetRolesAsync(user.Email),
                 YoutubeVideos = user.YoutubeVideos?.Select(y => new YoutubeVideoResponse
                 {
                     Name = y.Name,
                     URL = y.URL
                 }).ToList()
+            });
+        }
+
+        [HttpPost]
+        [Route("PostUser")]
+        public async Task<IActionResult> PostUser([FromBody] UserRequest request)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var user = await _userHelper.GetUserByEmailAsync(request.Email);
+            if (user != null)
+            {
+                return BadRequest("This Email is already registered.");
+            }
+
+            user = new User
+            {
+                Email = request.Email,
+                FirstName = request.FirstName,
+                LastName = request.LastName,
+                PhoneNumber = request.Phone,
+                UserName = request.Email
             };
 
-            return Ok(new Response<UserResponse>
+            var result = await _userHelper.AddUserAsync(user, user.Email);
+            if (result != IdentityResult.Success)
             {
-                IsSuccess = true,
-                Result = response
-            });
+                return BadRequest(result.Errors.FirstOrDefault().Description);
+            }
+
+            UserResponse userResponse = await _converterHelper.GetUSerResponseViewModelByEmail(user.Email);
+            var userNew = await _userHelper.GetUserByEmailAsync(request.Email);
+            await _userHelper.AddUserToRoleAsync(user, "Writer");
+
+            var myToken = await _userHelper.GenerateEmailConfirmationTokenAsync(userNew);
+            var tokenLink = Url.Action("ConfirmEmail", "Account", new
+            {
+                userid = user.Id,
+                token = myToken
+            }, protocol: HttpContext.Request.Scheme);
+
+            _mailHelper.SendMail(request.Email, "Prensa Estudiantil - Email confirmation", $"<h1>Prensa Estudiantil - Email Confirmation</h1>" +
+                $"To allow the user, " +
+                $"please click on this link:</br></br><a href = \"{tokenLink}\">Confirm Email</a>");
+
+            return Ok(userResponse);
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> PutUser([FromBody] UserRequest request)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var userEntity = await _userHelper.GetUserByEmailAsync(request.Email);
+            if (userEntity == null)
+            {
+                return BadRequest("User not found.");
+            }
+
+            userEntity.FirstName = request.FirstName;
+            userEntity.LastName = request.LastName;
+            userEntity.PhoneNumber = request.Phone;
+
+            var respose = await _userHelper.UpdateUserAsync(userEntity);
+            if (!respose.Succeeded)
+            {
+                return BadRequest(respose.Errors.FirstOrDefault().Description);
+            }
+
+            var updatedUser = await _userHelper.GetUserByEmailAsync(request.Email);
+            return Ok(updatedUser);
         }
     }
 }

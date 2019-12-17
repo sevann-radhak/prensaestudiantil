@@ -1,0 +1,132 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:prism="http://prismlibrary.com"
+             prism:ViewModelLocator.AutowireViewModel="True"
+             xmlns:ffimageloading="clr-namespace:FFImageLoading.Forms;assembly=FFImageLoading.Forms"
+             x:Class="prensaestudiantil.Prism.Views.UserPage"
+             BackgroundColor="{StaticResource ColorBackgroud}"
+             Title ="{Binding Title}">
+
+    <AbsoluteLayout>
+        <StackLayout 
+                AbsoluteLayout.LayoutBounds="0,0,1,1"
+                AbsoluteLayout.LayoutFlags="All"
+        	    Padding="10">
+
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <Label
+                	    Grid.Row="0"
+                	    Grid.Column="0"
+                	    Text="First Name"
+                	    VerticalOptions="Center"/>
+                <Entry
+                	    Grid.Row="0"
+                	    Grid.Column="1"
+                	    Placeholder="First Name..."
+                	    Text="{Binding User.FirstName}"/>
+
+                <Label
+                	    Grid.Row="1"
+                	    Grid.Column="0"
+                	    Text="Last Name"
+                	    VerticalOptions="Center"/>
+                <Entry
+                	    Grid.Row="1"
+                	    Grid.Column="1"
+                	    Placeholder="Last name..."
+                	    Text="{Binding User.LastName}"/>
+
+                <Label
+                	    Grid.Row="2"
+                	    Grid.Column="0"
+                	    Text="Phone"
+                	    VerticalOptions="Center"/>
+                <Entry
+                	    Grid.Row="2"
+                	    Grid.Column="1"
+                        Keyboard="Telephone"
+                	    Placeholder="Phonenumber..."
+                	    Text="{Binding User.PhoneNumber}"/>
+            </Grid>
+            <ListView 
+                    BackgroundColor="Transparent"
+                    HasUnevenRows="True"
+                    ItemsSource="{Binding Publications}"
+                    SeparatorVisibility="None">
+
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <ViewCell>
+                            <Frame 
+                            CornerRadius="5"
+                            Margin="0,0,0,5">
+                                <Frame.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding SelectPublicationCommand}" />
+                                </Frame.GestureRecognizers>
+                                <StackLayout>
+
+                                    <Label 
+                                    FontAttributes="Bold"
+                                    Text="{Binding Title}"
+                                    TextColor="{StaticResource ColorPrimary}"/>
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="*" />
+                                        </Grid.RowDefinitions>
+
+                                        <Grid
+                                            Grid.Row="0">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="*" />
+                                            </Grid.ColumnDefinitions>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto"/>
+                                            </Grid.RowDefinitions>
+                                            <ffimageloading:CachedImage
+                                            Aspect="AspectFit"
+	                                        CacheDuration= "50"
+	                                        DownsampleToViewSize = "true"
+	                                        ErrorPlaceholder= "ErrorImage"
+	                                        Grid.Column="0"
+	                                        LoadingPlaceholder= "LoaderImage"
+	                                        RetryCount= "3"
+	                                        RetryDelay= "600"
+	                                        Source="{Binding ImageUrl}"
+                                            WidthRequest="200"/>
+                                            <StackLayout
+                                            Grid.Column="1">
+                                                <Label 
+                                                Text="{Binding PublicationCategory}"
+                                                TextColor="{StaticResource ColorSecondary}"/>
+                                                <Label 
+                                                Text="{Binding DateLocal}"
+                                                TextColor="{StaticResource ColorSecondary}"/>
+                                            </StackLayout>
+                                        </Grid>
+                                        <Label 
+                                        Grid.Row="1"
+                                        Text="{Binding Header}"
+                                        TextColor="{StaticResource ColorFont}"/>
+                                    </Grid>
+                                </StackLayout>
+                            </Frame>
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </StackLayout>
+        <ActivityIndicator 
+                AbsoluteLayout.LayoutBounds=".5,.5,.1,.5"
+                AbsoluteLayout.LayoutFlags="All"
+                IsRunning="{Binding IsRunning}"/>
+    </AbsoluteLayout>
+
+</ContentPage>

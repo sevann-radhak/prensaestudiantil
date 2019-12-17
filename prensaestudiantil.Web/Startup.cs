@@ -9,6 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using prensaestudiantil.Web.Data;
 using prensaestudiantil.Web.Data.Entities;
+using prensaestudiantil.Web.Data.Repositories;
 using prensaestudiantil.Web.Helpers;
 using System.Text;
 
@@ -33,16 +34,28 @@ namespace prensaestudiantil.Web
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
+            // Not authorized action
+            services.ConfigureApplicationCookie(options =>
+            {
+                options.LoginPath = "/Account/NotAuthorized";
+                options.AccessDeniedPath = "/Account/NotAuthorized";
+            });
+
+
             // Sevice configuration for UserHelper class
             services.AddIdentity<User, IdentityRole>(cfg =>
             {
+                cfg.Tokens.AuthenticatorTokenProvider = TokenOptions.DefaultAuthenticatorProvider;
+                cfg.SignIn.RequireConfirmedEmail = true;
                 cfg.User.RequireUniqueEmail = true;
                 cfg.Password.RequireDigit = false;
                 cfg.Password.RequiredUniqueChars = 0;
                 cfg.Password.RequireLowercase = false;
                 cfg.Password.RequireNonAlphanumeric = false;
                 cfg.Password.RequireUppercase = false;
-            }).AddEntityFrameworkStores<DataContext>();
+            })
+                .AddDefaultTokenProviders()
+                .AddEntityFrameworkStores<DataContext>();
 
             // DbContext
             services.AddDbContext<DataContext>(cfg =>
@@ -66,10 +79,13 @@ namespace prensaestudiantil.Web
 
             // Injections
             services.AddTransient<SeedDb>(); // Execute seed
-            services.AddScoped<IUserHelper, UserHelper>(); // All about users and roles managment
             services.AddScoped<ICombosHelper, CombosHelper>();
             services.AddScoped<IConverterHelper, ConverterHelper>();
-            services.AddScoped<IImageHelper, ImageHelper>();
+            services.AddScoped<IImageHelper, ImageHelper>(); 
+            services.AddScoped<IMailHelper, MailHelper>();
+            services.AddScoped<IPublicationCategoryRepository, PublicationCategoryRepository>();
+            services.AddScoped<IUserHelper, UserHelper>();
+            services.AddScoped<IYoutubeVideosRepository, YoutubeVideosRepository>();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
@@ -87,6 +103,7 @@ namespace prensaestudiantil.Web
                 app.UseHsts();
             }
 
+            app.UseStatusCodePagesWithReExecute("/error/{0}");
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseAuthentication();

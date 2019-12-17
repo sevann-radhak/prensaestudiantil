@@ -1,0 +1,91 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:prism="http://prismlibrary.com"
+             prism:ViewModelLocator.AutowireViewModel="True"
+             x:Class="prensaestudiantil.Prism.Views.ModifyUserPage"
+             BackgroundColor="{StaticResource ColorBackgroud}"
+             Title ="{Binding Title}">
+
+    <ScrollView>
+        <AbsoluteLayout>
+            <StackLayout 
+                AbsoluteLayout.LayoutBounds="0,0,1,1"
+                AbsoluteLayout.LayoutFlags="All"
+        	    Padding="10">
+                <Button 
+                    Command="{Binding RegisterUserCommand}" 
+                    IsEnabled="{Binding IsEnabled}"
+                    HorizontalOptions="FillAndExpand"
+                    Style="{StaticResource SecondaryButton}"
+                    Text="Register User" />
+
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Label
+                	    Grid.Row="0"
+                	    Grid.Column="0"
+                	    Text="First Name"
+                	    VerticalOptions="Center"/>
+                    <Entry
+                        Keyboard="Plain"
+                	    Grid.Row="0"
+                	    Grid.Column="1"
+                	    Style="{StaticResource NamesLength}"
+                	    Placeholder="First Name..."
+                	    Text="{Binding User.FirstName}"/>
+
+                    <Label
+                	    Grid.Row="1"
+                	    Grid.Column="0"
+                	    Text="Last Name"
+                	    VerticalOptions="Center"/>
+                    <Entry
+                	    Grid.Row="1"
+                	    Grid.Column="1"
+                        MaxLength="60"
+                	    Placeholder="Last name..."
+                	    Text="{Binding User.LastName}"/>
+
+                    <Label
+                	    Grid.Row="2"
+                	    Grid.Column="0"
+                	    Text="Phone"
+                	    VerticalOptions="Center"/>
+                    <Entry
+                	    Grid.Row="2"
+                	    Grid.Column="1"
+                        Keyboard="Telephone"
+                	    Placeholder="Phonenumber..."
+                	    Text="{Binding User.PhoneNumber}"/>
+                </Grid>
+
+                <StackLayout
+            	    Orientation="Horizontal"
+                    VerticalOptions="EndAndExpand">
+                    <Button
+                	    Command="{Binding ChangePasswordCommand}"
+                	    HorizontalOptions="FillAndExpand"
+                	    IsEnabled="{Binding IsEnabled}"
+                	    Style="{StaticResource DangerButton}"
+                	    Text="Change Password"/>
+                    <Button
+                	    Command="{Binding SaveCommand}"
+                	    HorizontalOptions="FillAndExpand"
+                	    IsEnabled="{Binding IsEnabled}"
+                	    Text="Save"/>
+
+                </StackLayout>
+            </StackLayout>
+            <ActivityIndicator 
+                AbsoluteLayout.LayoutBounds=".5,.5,.1,.5"
+                AbsoluteLayout.LayoutFlags="All"
+                IsRunning="{Binding IsRunning}"/>
+        </AbsoluteLayout>
+    </ScrollView>
+
+</ContentPage>
