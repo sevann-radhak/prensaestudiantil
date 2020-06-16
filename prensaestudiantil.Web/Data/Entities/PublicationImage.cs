@@ -16,7 +16,7 @@ namespace prensaestudiantil.Web.Data.Entities
         public string ImageFullPath => string.IsNullOrEmpty(ImageUrl)
             ? $"{string.Empty}"
             //: $"https://localhost:44348{ImageUrl.Substring(1)}";
-            : $"https://prensaestudiantil.org{ImageUrl.Substring(1)}";
+            : $"https://prensaestudiantil.azurewebsites.net{ImageUrl.Substring(1)}";
 
         public Publication Publication { get; set; }
     }
