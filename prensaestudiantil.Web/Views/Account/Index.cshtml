@@ -68,9 +68,13 @@
                                 </td>
 
                                 <td style="white-space: nowrap;">
-                                    <a asp-action="EditUser" class="btn btn-default btn-sm" asp-route-id="@item.Id"><i class="glyphicon glyphicon-pencil"></i> </a>
                                     <a asp-action="Details" class="btn btn-default btn-sm" asp-route-id="@item.Id"><i class="glyphicon glyphicon-list"> </i> </a>
-                                    <button data-id="@item.Id" class="btn btn-danger btn-sm deleteItem" data-toggle="modal" data-target="#deleteDialog"><i class="glyphicon glyphicon-trash"></i></button>
+
+                                    @if (User.IsInRole("Manager"))
+                                    {
+                                        <a asp-action="EditUser" class="btn btn-default btn-sm" asp-route-id="@item.Id"><i class="glyphicon glyphicon-pencil"></i> </a>
+                                        <button data-id="@item.Id" class="btn btn-danger btn-sm deleteItem" data-toggle="modal" data-target="#deleteDialog"><i class="glyphicon glyphicon-trash"></i></button>
+                                    }
                                 </td>
                             </tr>
                         }
