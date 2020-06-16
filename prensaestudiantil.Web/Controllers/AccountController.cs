@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using prensaestudiantil.Common.Models;
 using prensaestudiantil.Web.Data;
 using prensaestudiantil.Web.Data.Entities;
 using prensaestudiantil.Web.Helpers;
@@ -42,10 +43,10 @@ namespace prensaestudiantil.Web.Controllers
         [Authorize(Roles = "Manager")]
         public async Task<IActionResult> Index()
         {
-            var users = _dataContext.Users.Include(u => u.Publications);
+            Microsoft.EntityFrameworkCore.Query.IIncludableQueryable<User, System.Collections.Generic.ICollection<Publication>> users = _dataContext.Users.Include(u => u.Publications);
 
             //TODO: fix user roles, try select
-            foreach (var user in users)
+            foreach (User user in users)
             {
                 // TODO: change hardcode roleName
                 user.IsManager = await _userHelper.IsInRoleAsync(user.Email, "Manager");
@@ -64,10 +65,10 @@ namespace prensaestudiantil.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = await _userHelper.GetUserByEmailAsync(User.Identity.Name);
+                User user = await _userHelper.GetUserByEmailAsync(User.Identity.Name);
                 if (user != null)
                 {
-                    var result = await _userHelper.ChangePasswordAsync(user, model.OldPassword, model.NewPassword);
+                    IdentityResult result = await _userHelper.ChangePasswordAsync(user, model.OldPassword, model.NewPassword);
                     if (result.Succeeded)
                     {
                         TempData["Success"] = "Contraseña actualizada exitosamente";
@@ -94,13 +95,13 @@ namespace prensaestudiantil.Web.Controllers
                 return NotFound();
             }
 
-            var user = await _userHelper.GetUserByIdAsync(userId);
+            User user = await _userHelper.GetUserByIdAsync(userId);
             if (user == null)
             {
                 return NotFound();
             }
 
-            var result = await _userHelper.ConfirmEmailAsync(user, token);
+            IdentityResult result = await _userHelper.ConfirmEmailAsync(user, token);
             if (!result.Succeeded)
             {
                 return NotFound();
@@ -125,17 +126,18 @@ namespace prensaestudiantil.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = await AddUser(model);
-                if (user == null)
+                Response<User> user = await AddUser(model);
+
+                if (!user.IsSuccess)
                 {
-                    ModelState.AddModelError(string.Empty, "This email is already used.");
+                    ModelState.AddModelError(string.Empty, user.Message);
                     return View(model);
                 }
 
-                var myToken = await _userHelper.GenerateEmailConfirmationTokenAsync(user);
-                var tokenLink = Url.Action("ConfirmEmail", "Account", new
+                string myToken = await _userHelper.GenerateEmailConfirmationTokenAsync(user.Result);
+                string tokenLink = Url.Action("ConfirmEmail", "Account", new
                 {
-                    userid = user.Id,
+                    userid = user.Result.Id,
                     token = myToken
                 }, protocol: HttpContext.Request.Scheme);
 
@@ -156,24 +158,24 @@ namespace prensaestudiantil.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = await _userHelper.GetUserByEmailAsync(model.Username);
+                User user = await _userHelper.GetUserByEmailAsync(model.Username);
                 if (user != null)
                 {
-                    var result = await _userHelper.ValidatePasswordAsync(
+                    Microsoft.AspNetCore.Identity.SignInResult result = await _userHelper.ValidatePasswordAsync(
                         user,
                         model.Password);
 
                     if (result.Succeeded)
                     {
-                        var claims = new[]
+                        Claim[] claims = new[]
                         {
                             new Claim(JwtRegisteredClaimNames.Sub, user.Email),
                             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
                         };
 
-                        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Tokens:Key"]));
-                        var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-                        var token = new JwtSecurityToken(
+                        SymmetricSecurityKey key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Tokens:Key"]));
+                        SigningCredentials credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+                        JwtSecurityToken token = new JwtSecurityToken(
                             _configuration["Tokens:Issuer"],
                             _configuration["Tokens:Audience"],
                             claims,
@@ -219,14 +221,14 @@ namespace prensaestudiantil.Web.Controllers
                 return NotFound();
             }
 
-            var currentUser = await _userHelper.GetUserByEmailAsync(User.Identity.Name);
+            User currentUser = await _userHelper.GetUserByEmailAsync(User.Identity.Name);
             if (!(currentUser.Id == id || await _userHelper.IsInRoleAsync(currentUser.Email, "Manager")))
             {
                 return BadRequest();
             }
 
 
-            var user = await _dataContext.Users
+            User user = await _dataContext.Users
                 .Include(p => p.Publications)
                 .ThenInclude(p => p.PublicationCategory)
                 .Include(p => p.Publications)
@@ -234,7 +236,7 @@ namespace prensaestudiantil.Web.Controllers
                 .Include(u => u.YoutubeVideos)
                 .FirstOrDefaultAsync(u => u.Id == id);
 
-            var prueba = _userHelper.GetUserByEmailAsync(user.UserName).Result;
+            User prueba = _userHelper.GetUserByEmailAsync(user.UserName).Result;
             if (user == null)
             {
                 return NotFound();
@@ -253,13 +255,13 @@ namespace prensaestudiantil.Web.Controllers
                 return NotFound();
             }
 
-            var user = await _userHelper.GetUserByIdAsync(id);
+            User user = await _userHelper.GetUserByIdAsync(id);
             if (user == null)
             {
                 return NotFound();
             }
 
-            var loggedUser = await _userHelper.GetUserByEmailAsync(User.Identity.Name);
+            User loggedUser = await _userHelper.GetUserByEmailAsync(User.Identity.Name);
             if (loggedUser != user && !await _userHelper.IsUserInRoleAsync(loggedUser, "Manager"))
             {
                 TempData["Error"] = "You can not perform this action.";
@@ -267,7 +269,7 @@ namespace prensaestudiantil.Web.Controllers
 
             }
 
-            var model = new EditUserViewModel
+            EditUserViewModel model = new EditUserViewModel
             {
                 Id = user.Id,
                 FirstName = user.FirstName,
@@ -289,21 +291,21 @@ namespace prensaestudiantil.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = await _userHelper.GetUserByIdAsync(model.Id);
+                User user = await _userHelper.GetUserByIdAsync(model.Id);
                 if (user == null)
                 {
                     TempData["Error"] = "User not found.";
                     return RedirectToAction(nameof(Index));
                 }
 
-                var loggedUser = await _userHelper.GetUserByEmailAsync(User.Identity.Name);
+                User loggedUser = await _userHelper.GetUserByEmailAsync(User.Identity.Name);
                 if (loggedUser == null)
                 {
                     TempData["Error"] = "User not found.";
                     return RedirectToAction(nameof(Index));
                 }
 
-                var path = model.ImageUrl;
+                string path = model.ImageUrl;
                 user.FirstName = model.FirstName;
                 user.ImageUrl = model.ImageFile != null ? await _imageHelper.UploadImageAsync(model.ImageFile) : path;
                 user.LastName = model.LastName;
@@ -346,7 +348,7 @@ namespace prensaestudiantil.Web.Controllers
         [Authorize]
         public async Task<IActionResult> MyProfile()
         {
-            var user = await _userHelper.GetUserByEmailAsync(User.Identity.Name);
+            User user = await _userHelper.GetUserByEmailAsync(User.Identity.Name);
             if (user == null)
             {
                 return NotFound();
@@ -374,7 +376,7 @@ namespace prensaestudiantil.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = await _userHelper.GetUserByEmailAsync(model.Username);
+                User user = await _userHelper.GetUserByEmailAsync(model.Username);
                 if (user == null)
                 {
                     ModelState.AddModelError(string.Empty, "Usuario no encontrado.");
@@ -411,15 +413,15 @@ namespace prensaestudiantil.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = await _userHelper.GetUserByEmailAsync(model.Email);
+                User user = await _userHelper.GetUserByEmailAsync(model.Email);
                 if (user == null)
                 {
                     ModelState.AddModelError(string.Empty, "El Email no corresponde con ningún usuario registrado.");
                     return View(model);
                 }
 
-                var myToken = await _userHelper.GeneratePasswordResetTokenAsync(user);
-                var link = Url.Action(
+                string myToken = await _userHelper.GeneratePasswordResetTokenAsync(user);
+                string link = Url.Action(
                     "ResetPassword",
                     "Account",
                     new { token = myToken }, protocol: HttpContext.Request.Scheme);
@@ -442,7 +444,7 @@ namespace prensaestudiantil.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> ResetPassword(ResetPasswordViewModel model)
         {
-            var user = await _userHelper.GetUserByEmailAsync(model.UserName);
+            User user = await _userHelper.GetUserByEmailAsync(model.UserName);
             if (user != null)
             {
                 if (_userHelper.ResetPasswordAsync(user, model.Token, model.Password).Result.Succeeded)
@@ -475,9 +477,9 @@ namespace prensaestudiantil.Web.Controllers
         }
 
         [Authorize(Roles = "Manager")]
-        private async Task<User> AddUser(AddUserViewModel model)
+        private async Task<Response<User>> AddUser(AddUserViewModel model)
         {
-            var user = new User
+            User user = new User
             {
                 Email = model.Username,
                 FirstName = model.FirstName,
@@ -489,17 +491,25 @@ namespace prensaestudiantil.Web.Controllers
 
             user.ImageUrl = model.ImageFile != null ? await _imageHelper.UploadImageAsync(model.ImageFile) : null;
 
-            var result = await _userHelper.AddUserAsync(user, model.UserName);
+            IdentityResult result = await _userHelper.AddUserAsync(user, model.UserName);
             if (result != IdentityResult.Success)
             {
-                return null;
+                return new Response<User>
+                {
+                    IsSuccess = false,
+                    Message = result.Errors?.ToList()?.FirstOrDefault().Description?.ToString()
+                };
             }
 
-            var newUser = await _userHelper.GetUserByEmailAsync(model.Username);
+            User newUser = await _userHelper.GetUserByEmailAsync(model.Username);
             //TODO: modify harcode
             await _userHelper.AddUserToRoleAsync(newUser, "Writer");
 
-            return newUser;
+            return new Response<User>
+            {
+                IsSuccess = true,
+                Result = newUser
+            };
         }
 
         protected override void Dispose(bool disposing)
